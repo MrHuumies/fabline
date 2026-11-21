@@ -31,6 +31,8 @@ Current tasks:
   stochastic power; mean and CVaR objectives separate.
 - [Wired cascade](power-cascade.md) — predict which entities lose power after a
   marked wire fault on a graph with loops and bridges.
+- [Wire repair](power-wire-repair.md) — prioritize budgeted wire repairs by
+  restoration impact and skip zero-impact loops.
 - [Power allocation](power-allocation.md) — three-action priority scheduling
   under a tight generator budget.
 - [Fault + power interaction](fault-power.md) — four-action repair and priority

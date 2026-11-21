@@ -134,30 +134,17 @@ class FactoryWorld:
         index = min(len(factors) - 1, max(0, self.state.tick - 1))
         return factors[index]
 
-    def _apply_wire_fault(self) -> None:
-        """Fail the configured wire once, before connectivity is computed."""
+    def fail_wire(self, wire_id: int) -> bool:
+        """Mark a wire failed and emit the transition once."""
 
-        if self.power.topology != "wired":
-            return
-        if (
-            self.power.wire_fault_tick <= 0
-            or self.state.tick != self.power.wire_fault_tick
-        ):
-            return
         wire = next(
-            (
-                item
-                for item in self.state.power_wires
-                if item.id == self.power.wire_fault_id
-            ),
+            (item for item in self.state.power_wires if item.id == wire_id),
             None,
         )
         if wire is None:
-            raise RuntimeError(
-                "scheduled wire fault references a missing wire"
-            )
+            raise RuntimeError(f"wire {wire_id} does not exist")
         if wire.failed:
-            return
+            return False
         wire.failed = True
         self._emit(
             "power_wire_fault",
@@ -169,6 +156,43 @@ class FactoryWorld:
                 "by": wire.by,
             },
         )
+        return True
+
+    def repair_wire(self, wire_id: int) -> bool:
+        """Mark a wire repaired and emit the transition once."""
+
+        wire = next(
+            (item for item in self.state.power_wires if item.id == wire_id),
+            None,
+        )
+        if wire is None:
+            raise RuntimeError(f"wire {wire_id} does not exist")
+        if not wire.failed:
+            return False
+        wire.failed = False
+        self._emit(
+            "power_wire_repair",
+            {
+                "wire_id": wire.id,
+                "ax": wire.ax,
+                "ay": wire.ay,
+                "bx": wire.bx,
+                "by": wire.by,
+            },
+        )
+        return True
+
+    def _apply_wire_fault(self) -> None:
+        """Fail the configured wire once, before connectivity is computed."""
+
+        if self.power.topology != "wired":
+            return
+        if (
+            self.power.wire_fault_tick <= 0
+            or self.state.tick != self.power.wire_fault_tick
+        ):
+            return
+        self.fail_wire(self.power.wire_fault_id)
 
     def _power(self) -> None:
         """Allocate generator capacity and update powered/brownout state."""

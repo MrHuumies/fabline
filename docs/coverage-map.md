@@ -211,10 +211,11 @@ generative layout/recipe tasks.
 - **P0 coverage is complete.** Calibration, partial observability,
   representative architecture baselines, and risk-sensitive control are all
   implemented and documented.
-- **P1 wired power:** mechanic implemented and measured (RFC 0007, ADR 0017,
-  experiment 0032). Cascade-size `graph_mp` R² 0.431 vs vector 0.264; paired
-  difference +0.167 [0.048, 0.309]. Repair control (phase 1B) is the next
-  question; wire capacity and multi-generator redundancy are follow-ups.
+- **P1 wired power:** phase 1A and 1B complete. Cascade-size `graph_mp` R²
+  0.431 vs vector 0.264 (0032). Budgeted wire repair: outage-ranked policy 260
+  vs noop 79; tabular Q 212 with zero wasted repairs and 0.68 success (0033).
+  Wire capacity, repair time/travel, and multi-generator redundancy are
+  follow-ups.
 
 ## What not to add yet
 

@@ -12,6 +12,7 @@ from fabline.env.control import ControlConfig
 from fabline.env.fault_power import FaultPowerConfig
 from fabline.env.fault_recovery import FaultRecoveryConfig
 from fabline.env.power_allocation import PowerAllocationConfig
+from fabline.env.wire_repair import WireRepairConfig
 from fabline.harness.data import load_dataset
 from fabline.harness.fault_power import (
     run_fault_power,
@@ -35,6 +36,10 @@ from fabline.harness.power_allocation import (
 from fabline.harness.runner import run_throughput_benchmark
 from fabline.harness.shared_suite import SharedSuiteConfig, run_shared_suite
 from fabline.harness.suite import SuiteConfig, run_suite
+from fabline.harness.wire_repair import (
+    run_wire_repair,
+    write_wire_repair_report,
+)
 from fabline.obs.base import build_observation
 from fabline.record.replay import validate_replay
 from fabline.record.writer import write_dataset
@@ -499,6 +504,68 @@ def cmd_power_allocation(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_wire_repair(args: argparse.Namespace) -> int:
+    config = FactoryConfig(
+        width=16,
+        height=8,
+        ticks_per_episode=500,
+        decision_interval=10,
+        entity_budget=32,
+        rock_density=0.0,
+        ore_patches=1,
+        starter_line=True,
+        emit_events=True,
+    )
+    repair = WireRepairConfig(
+        episode_ticks=500,
+        decision_interval=10,
+        repair_budget=args.repair_budget,
+        repair_cost=args.repair_cost,
+        success_score=args.success_score,
+        power=PowerConfig(
+            enabled=True,
+            topology="wired",
+            generator_count=1,
+            generator_capacity=args.capacity,
+            generator_radius=8,
+            wire_redundancy=2,
+        ),
+    )
+    seeds = tuple(int(value) for value in args.seeds.split(","))
+    results = run_wire_repair(
+        config,
+        repair,
+        episodes=args.episodes,
+        train_episodes=args.train_episodes,
+        seeds=seeds,
+        train_seed_start=args.train_seed_start,
+    )
+    report = write_wire_repair_report(
+        args.out,
+        results,
+        config={
+            "repair_budget": args.repair_budget,
+            "repair_cost": args.repair_cost,
+            "restoration_reward": repair.restoration_reward,
+            "wasted_penalty": repair.wasted_penalty,
+            "success_score": args.success_score,
+            "generator_capacity": args.capacity,
+            "fault_ticks": list(repair.fault_ticks),
+            "seeds": list(seeds),
+            "train_seed_start": args.train_seed_start,
+            "train_episodes": args.train_episodes,
+        },
+    )
+    print(
+        json.dumps(
+            {"report": str(report), "results": results},
+            indent=2,
+            sort_keys=True,
+        )
+    )
+    return 0
+
+
 def cmd_replay(args: argparse.Namespace) -> int:
     config = load_config(args.config)
     replay = json.loads(Path(args.replay).read_text(encoding="utf-8"))
@@ -661,6 +728,21 @@ def build_parser() -> argparse.ArgumentParser:
     power_allocation.add_argument("--capacity-jitter", type=int, default=0)
     power_allocation.add_argument("--variation-period", type=int, default=20)
     power_allocation.set_defaults(func=cmd_power_allocation)
+
+    wire_repair = subparsers.add_parser(
+        "wire-repair",
+        help="run the wired-power wire-repair control benchmark",
+    )
+    wire_repair.add_argument("--out", type=str, default="results/wire-repair")
+    wire_repair.add_argument("--episodes", type=int, default=5)
+    wire_repair.add_argument("--train-episodes", type=int, default=100)
+    wire_repair.add_argument("--seeds", type=str, default="0,1,2")
+    wire_repair.add_argument("--train-seed-start", type=int, default=1000)
+    wire_repair.add_argument("--repair-budget", type=int, default=2)
+    wire_repair.add_argument("--repair-cost", type=float, default=1.0)
+    wire_repair.add_argument("--success-score", type=int, default=150)
+    wire_repair.add_argument("--capacity", type=int, default=12)
+    wire_repair.set_defaults(func=cmd_wire_repair)
 
     replay = subparsers.add_parser("replay", help="validate a replay file")
     replay.add_argument("--replay", type=str, required=True)

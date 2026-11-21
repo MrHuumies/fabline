@@ -8,6 +8,8 @@ are pinned separately; see [`benchmarks/factory-v0.1/card.md`](benchmarks/factor
 - Add opt-in wired power: wire-edge graph with loops, bridge/loop faults, and a
   cascade-size task. `graph_mp` R² 0.431 vs vector 0.264 (0032).
 - Add the wired cascade dataset and task cards.
+- Add budgeted wire repair control: outage-ranked repair 260 vs noop 79;
+  tabular Q 212 with zero wasted repairs (0033).
 
 ## [0.1.1] — 2026-11-21
 
