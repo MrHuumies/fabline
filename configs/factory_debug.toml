@@ -1,0 +1,33 @@
+# Debug configuration for the M1 factory.
+# Defaults are documented in src/fabline/worlds/factory/config.py.
+
+width = 32
+height = 32
+ticks_per_episode = 500
+decision_interval = 10
+entity_budget = 64
+
+miner_ticks_per_ore = 4
+miner_output_capacity = 1
+belt_capacity = 1
+
+furnace_ticks = 8
+furnace_input_capacity = 4
+furnace_output_capacity = 2
+
+assembler_ticks = 12
+assembler_ingot_cost = 2
+assembler_input_capacity = 6
+assembler_output_capacity = 2
+
+depot_ingot_score = 2
+depot_gear_score = 10
+
+rock_density = 0.06
+ore_patches = 4
+ore_patch_radius = 1
+starter_line = true
+
+emit_events = true
+max_events = 100000
+history_window = 100

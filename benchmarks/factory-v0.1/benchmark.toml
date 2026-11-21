@@ -1,0 +1,61 @@
+# factory-v0.1 benchmark specification.
+# The runner uses the same defaults; this file is the human-readable contract.
+
+[benchmark]
+name = "factory-v0.1"
+status = "frozen"
+date = "2026-11-21"
+world_version = "factory-0.1.0"
+plan = "compositional-v0.1"
+command = ".venv/bin/python -m fabline shared-suite --out results/factory-v0.1"
+
+[factory]
+width = 16
+height = 8
+ticks_per_episode = 500
+decision_interval = 10
+entity_budget = 32
+rock_density = 0.02
+ore_patches = 2
+starter_line = true
+
+[episode]
+warmup_ticks = 100
+warmup_jitter = 20
+episode_ticks = 300
+sample_interval = 10
+horizon = 50
+bottleneck_horizon = 30
+
+[splits]
+train = ["ingot", "gear", "extra_ingot"]
+val = ["ingot", "gear"]
+test = ["extra_gear"]
+shift = ["shift_gear"]
+
+[episodes_per_scenario]
+train = 10
+val = 2
+test = 6
+shift = 6
+
+[tasks]
+throughput = ["vector", "grid", "entities"]
+next_state = true
+masked_grid = true
+bottleneck = true
+control = true
+control_dynamics = true
+
+[control]
+episode_ticks = 300
+decision_interval = 10
+build_penalty = 0.05
+success_score = 20
+train_episodes = 200
+eval_episodes_per_seed = 5
+seeds = [0, 1, 2]
+
+[metrics]
+confidence = 0.95
+bootstrap_samples = 200

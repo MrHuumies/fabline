@@ -1,0 +1,273 @@
+{
+  "benchmark": "factory-v0.1",
+  "config_hash": "5f0d54f34731d40a0dd8826b591de38cf3e8da30a2066ce285939515599cb475",
+  "dataset": {
+    "bottleneck": {
+      "assembler": 323,
+      "belt": 101,
+      "furnace": 428
+    },
+    "episodes": 46,
+    "future_score": {
+      "max": 30.0,
+      "mean": 19.78638458251953,
+      "min": 10.0,
+      "std": 8.88879680633545
+    },
+    "samples": 852,
+    "scenarios": {
+      "extra_gear": 6,
+      "extra_ingot": 10,
+      "gear": 12,
+      "ingot": 12,
+      "shift_gear": 6
+    },
+    "splits": {
+      "shift": 6,
+      "test": 6,
+      "train": 30,
+      "val": 4
+    }
+  },
+  "fabline_version": "0.1.0",
+  "note": "Expected summary from the M3 reference run. Small library-version differences are acceptable.",
+  "plan": "compositional-v0.1",
+  "replays_validated": 46,
+  "results": {
+    "bottleneck": {
+      "gbdt_test_accuracy": {
+        "ci": [
+          0.7543181818181818,
+          0.9
+        ],
+        "value": 0.8272727272727273
+      },
+      "gbdt_test_balanced": {
+        "ci": [
+          0.6860898036336633,
+          0.8412857832526951
+        ],
+        "value": 0.7723855092276145
+      },
+      "majority_test_balanced": {
+        "ci": [
+          0.3333333333333333,
+          0.3333333333333333
+        ],
+        "value": 0.3333333333333333
+      }
+    },
+    "control-dynamics": {
+      "copy_test_cosine": {
+        "ci": [
+          0.9231474614911459,
+          0.9489548587370302
+        ],
+        "value": 0.9363461935996659
+      },
+      "linear_test_cosine": {
+        "ci": [
+          0.9528993755856066,
+          0.9681189566931052
+        ],
+        "value": 0.9608802639763108
+      },
+      "linear_test_mse": {
+        "ci": [
+          0.007473922378998877,
+          0.009543753491432655
+        ],
+        "value": 0.008537269871676698
+      }
+    },
+    "expand-control": {
+      "behavior_cloning": {
+        "mean_reward": 139.7,
+        "mean_score": 140.0,
+        "mean_steps": 30.0,
+        "path_complete_rate": 1.0,
+        "reward_ci": [
+          139.7,
+          139.7
+        ],
+        "score_ci": [
+          140.0,
+          140.0
+        ],
+        "std_score": 0.0,
+        "success_ci": [
+          1.0,
+          1.0
+        ],
+        "success_rate": 1.0
+      },
+      "random": {
+        "mean_reward": 0.9933333333333326,
+        "mean_score": 2.0,
+        "mean_steps": 30.0,
+        "path_complete_rate": 0.5333333333333333,
+        "reward_ci": [
+          -1.0850833333333336,
+          5.0150833333333305
+        ],
+        "score_ci": [
+          0.0,
+          6.0
+        ],
+        "std_score": 7.483314773547883,
+        "success_ci": [
+          0.0,
+          0.2
+        ],
+        "success_rate": 0.06666666666666667
+      },
+      "scripted": {
+        "mean_reward": 139.7,
+        "mean_score": 140.0,
+        "mean_steps": 30.0,
+        "path_complete_rate": 1.0,
+        "reward_ci": [
+          139.7,
+          139.7
+        ],
+        "score_ci": [
+          140.0,
+          140.0
+        ],
+        "std_score": 0.0,
+        "success_ci": [
+          1.0,
+          1.0
+        ],
+        "success_rate": 1.0
+      },
+      "tabular_q": {
+        "mean_reward": 143.03333333333333,
+        "mean_score": 143.33333333333334,
+        "mean_steps": 30.0,
+        "path_complete_rate": 1.0,
+        "reward_ci": [
+          141.03333333333333,
+          145.7
+        ],
+        "score_ci": [
+          141.33333333333334,
+          146.0
+        ],
+        "std_score": 4.714045207910316,
+        "success_ci": [
+          1.0,
+          1.0
+        ],
+        "success_rate": 1.0
+      }
+    },
+    "masked-grid": {
+      "copy_test_cosine": {
+        "ci": [
+          0.7636363636363637,
+          0.9002272727272728
+        ],
+        "value": 0.8272727272727273
+      },
+      "mlp_test_cosine": {
+        "ci": [
+          0.6255858252833529,
+          0.6618004704383201
+        ],
+        "value": 0.6437534719259883
+      },
+      "mlp_test_mse": {
+        "ci": [
+          0.0339115616139359,
+          0.038751023828282063
+        ],
+        "value": 0.036472749938553796
+      }
+    },
+    "next-state": {
+      "copy_test_cosine": {
+        "ci": [
+          0.9972640569510288,
+          0.9975677496472989
+        ],
+        "value": 0.9974212562271164
+      },
+      "linear_test_cosine": {
+        "ci": [
+          0.9997398916961859,
+          0.9998454688059522
+        ],
+        "value": 0.9997964711231062
+      }
+    },
+    "throughput-entities": {
+      "gbdt_test_r2": {
+        "ci": [
+          -17.28142127728332,
+          -7.810300027828443
+        ],
+        "value": -11.111078334461277
+      },
+      "graph_mp_test_r2": {
+        "ci": null,
+        "value": 0.3475608279591853
+      },
+      "linear_test_r2": {
+        "ci": [
+          -9.000503022476517,
+          -3.7046850643145683
+        ],
+        "value": -5.570490859456809
+      }
+    },
+    "throughput-grid": {
+      "gbdt_test_r2": {
+        "ci": [
+          -3.1921161464344023,
+          -1.002819746631071
+        ],
+        "value": -1.7894409295862932
+      },
+      "linear_test_r2": {
+        "ci": [
+          -14.623534798254326,
+          -6.562811202593639
+        ],
+        "value": -9.472755282608846
+      },
+      "mlp_test_r2": {
+        "ci": [
+          -9.753934767212998,
+          -4.241879167175892
+        ],
+        "value": -6.292226262701646
+      }
+    },
+    "throughput-vector": {
+      "gbdt_shift_r2": {
+        "ci": [
+          0.9475891978985941,
+          0.9910846324922913
+        ],
+        "value": 0.9736937968424096
+      },
+      "gbdt_test_r2": {
+        "ci": [
+          0.282328464607908,
+          0.7851686363274215
+        ],
+        "value": 0.5749948316964995
+      },
+      "linear_test_r2": {
+        "ci": [
+          0.6852774682700652,
+          0.8320624534767417
+        ],
+        "value": 0.7780317804186729
+      }
+    }
+  },
+  "runtime_seconds": 50.35403947200393,
+  "world_version": "factory-0.1.0"
+}
