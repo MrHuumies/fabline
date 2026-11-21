@@ -5,18 +5,37 @@ are pinned separately; see [`benchmarks/factory-v0.1/card.md`](benchmarks/factor
 
 ## [Unreleased]
 
-- Add calibration metrics (Brier, NLL, ECE) to the stochastic power benchmark.
-- Add the model/benchmark/mechanic coverage map.
-- Add masked feature-window partial-observability task and adapters.
-- Add architecture baselines: sequence models, grid CNN, and end-to-end MPNN.
-- Add a reliability-contract risk-sensitive task (partial negative: the 20%
-  tail gain is unstable on clustered seeds).
-- Add a failure-dense follow-up (negative: the tail gate fails again; seed-block
-  distribution shift dominates).
-- Fix the contract episode sampler (overlapping blocks) and add a unique,
-  interleaved evaluation; clean CVaR gain +13.55 [10.50, 16.95].
-- Confirm the contract task on fresh seeds: +17.05 CVaR [13.25, 21.15] for a
-  4.59 mean premium; all gates pass.
+## [0.1.1] — 2026-11-21
+
+P0 model coverage after 0.1.0. The frozen `factory-v0.1` benchmark is unchanged.
+
+### Prediction and calibration
+
+- Brier, NLL, and ECE calibration metrics for the stochastic power benchmark.
+
+### Partial observability
+
+- deterministic feature-dropout, grid-fog, and delayed-observation adapters;
+- masked feature-window throughput task with a single-frame and four-frame view.
+
+### Architecture baselines
+
+- sequence models on the masked-window task;
+- grid CNN on clear and moving-fog views;
+- end-to-end MPNN on the entity graph, against flattened and `graph_mp`
+  baselines.
+
+### Risk-sensitive control
+
+- reliability-contract task under stochastic power;
+- corrected episode sampling and a unique, interleaved evaluation design;
+- replicated CVaR gain of roughly 13–17 points for a roughly 5-point mean
+  premium. The task is a P0 benchmark candidate outside frozen `factory-v0.1`.
+
+### Docs
+
+- coverage map and P0 experiment summaries;
+- Apache-2.0 code; CC-BY-4.0 docs, cards, and synthetic data.
 
 ## [0.1.0] — 2026-11-21
 
