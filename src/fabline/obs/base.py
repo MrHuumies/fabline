@@ -104,11 +104,19 @@ def build_observation(
         from .vector import VectorObservation
 
         return FeatureDropoutObservation(VectorObservation(config), dropout=0.2)
-    if name in ("power", "power_grid", "power_control"):
+    if name in (
+        "power",
+        "power_grid",
+        "power_control",
+        "power_topology",
+        "power_wires",
+    ):
         from .power import (
             PowerControlObservation,
             PowerGridObservation,
             PowerObservation,
+            PowerTopologyObservation,
+            PowerWiresObservation,
         )
 
         power_config = power or PowerConfig()
@@ -116,6 +124,10 @@ def build_observation(
             return PowerObservation(config, power_config)
         if name == "power_control":
             return PowerControlObservation(config, power_config)
+        if name == "power_topology":
+            return PowerTopologyObservation(config, power_config)
+        if name == "power_wires":
+            return PowerWiresObservation(config, power_config)
         return PowerGridObservation(config, power_config)
     if name == "fault_power":
         from .interaction import FaultPowerObservation

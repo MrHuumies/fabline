@@ -64,6 +64,25 @@ class PowerSource:
 
 
 @dataclass
+class PowerWire:
+    """An orthogonal wire edge between two adjacent cells.
+
+    Wires are infrastructure, not entities: they do not occupy the entity grid.
+    A failed wire is removed from the connectivity graph.
+    """
+
+    id: int
+    ax: int
+    ay: int
+    bx: int
+    by: int
+    failed: bool = False
+
+    def cells(self) -> tuple[tuple[int, int], tuple[int, int]]:
+        return (self.ax, self.ay), (self.bx, self.by)
+
+
+@dataclass
 class Entity:
     id: int
     type: EntityType
@@ -140,6 +159,7 @@ class WorldState:
     history: list[tuple[int, int, int]]
     events: list[Event]
     power_sources: list[PowerSource] = field(default_factory=list)
+    power_wires: list[PowerWire] = field(default_factory=list)
     power_load_factors: list[int] = field(default_factory=list)
     power_capacity_factors: list[int] = field(default_factory=list)
     power_priority: int = 0
@@ -190,6 +210,18 @@ class WorldState:
                     "capacity": source.capacity,
                 }
                 for source in sorted(self.power_sources, key=lambda item: item.id)
+            ]
+        if self.power_wires:
+            result["power_wires"] = [
+                {
+                    "id": wire.id,
+                    "ax": wire.ax,
+                    "ay": wire.ay,
+                    "bx": wire.bx,
+                    "by": wire.by,
+                    "failed": wire.failed,
+                }
+                for wire in sorted(self.power_wires, key=lambda item: item.id)
             ]
         if self.power_load_factors or self.power_capacity_factors:
             result["power_load_factors"] = list(self.power_load_factors)

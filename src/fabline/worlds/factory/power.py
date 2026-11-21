@@ -15,6 +15,7 @@ from .state import Entity, EntityType
 @dataclass(frozen=True)
 class PowerConfig:
     enabled: bool = False
+    topology: str = "radius"
     generator_count: int = 2
     generator_capacity: int = 12
     generator_radius: int = 6
@@ -26,8 +27,13 @@ class PowerConfig:
     load_jitter: int = 0
     capacity_jitter: int = 0
     variation_period: int = 20
+    wire_redundancy: int = 2
+    wire_fault_tick: int = 0
+    wire_fault_id: int = 0
 
     def __post_init__(self) -> None:
+        if self.topology not in {"radius", "wired"}:
+            raise ValueError("topology must be 'radius' or 'wired'")
         if self.generator_count <= 0:
             raise ValueError("generator_count must be positive")
         if self.generator_capacity <= 0:
@@ -49,6 +55,19 @@ class PowerConfig:
             raise ValueError("capacity_jitter must be in [0, 100]")
         if self.variation_period <= 0:
             raise ValueError("variation_period must be positive")
+        if self.wire_redundancy < 0:
+            raise ValueError("wire_redundancy must be non-negative")
+        if self.wire_fault_tick < 0:
+            raise ValueError("wire_fault_tick must be non-negative")
+        if self.wire_fault_id < 0:
+            raise ValueError("wire_fault_id must be non-negative")
+        if self.topology == "radius":
+            if self.wire_fault_tick or self.wire_fault_id:
+                raise ValueError("wire faults require topology='wired'")
+        elif self.wire_fault_tick > 0 and self.wire_fault_id <= 0:
+            raise ValueError("a scheduled wire fault requires wire_fault_id")
+        if self.topology == "wired" and self.generator_count != 1:
+            raise ValueError("wired topology currently requires one generator")
 
     def demand(self, entity_type: EntityType) -> int:
         if entity_type is EntityType.MINER:

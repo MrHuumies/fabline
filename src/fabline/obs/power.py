@@ -7,6 +7,11 @@ import numpy as np
 from fabline.worlds.factory.config import FactoryConfig
 from fabline.worlds.factory.power import PowerConfig
 from fabline.worlds.factory.state import Entity, EntityType, WorldState
+from fabline.worlds.factory.wire import (
+    entity_connected,
+    reachable_cells,
+    wire_summary,
+)
 
 from .base import ObservationSpec, craft_ticks, input_capacity, output_capacity
 
@@ -237,3 +242,112 @@ class PowerControlObservation:
             dtype=np.float32,
         )
         return np.concatenate([power, extras]).astype(np.float32)
+
+
+POWER_TOPOLOGY_FEATURES = (
+    "wire_count_norm",
+    "failed_wire_ratio",
+    "connected_ratio",
+    "disconnected_ratio",
+    "component_count_norm",
+    "max_component_ratio",
+    "redundancy_ratio",
+    "fault_marker",
+)
+
+POWER_WIRE_CHANNELS = (
+    "horizontal_wire",
+    "vertical_wire",
+    "failed_wire",
+    "connected_wire",
+)
+
+
+class PowerTopologyObservation:
+    """Aggregate wire-graph features for the wired topology."""
+
+    def __init__(self, config: FactoryConfig, power: PowerConfig) -> None:
+        self.config = config
+        self.power = power
+        self.spec = ObservationSpec(
+            name="power_topology",
+            version="0.1.0",
+            shape=(len(POWER_TOPOLOGY_FEATURES),),
+            feature_names=POWER_TOPOLOGY_FEATURES,
+        )
+
+    def observe(self, state: WorldState) -> np.ndarray:
+        if not self.power.enabled or not state.power_wires:
+            return np.zeros(len(POWER_TOPOLOGY_FEATURES), dtype=np.float32)
+        summary = wire_summary(state.power_wires)
+        wires = state.power_wires
+        active = _active(list(state.entities.values()), self.power)
+        reachable: set[tuple[int, int]] = set()
+        for source in state.power_sources:
+            reachable |= reachable_cells(source, state.power_wires)
+        connected = sum(
+            1 for entity in active if entity_connected(entity, reachable, wires)
+        )
+        connected_ratio = connected / len(active) if active else 0.0
+        values = (
+            summary.wire_count / max(1, state.width * state.height),
+            (
+                summary.failed_wire_count / summary.wire_count
+                if summary.wire_count
+                else 0.0
+            ),
+            connected_ratio,
+            1.0 - connected_ratio,
+            (
+                summary.component_count / summary.wire_count
+                if summary.wire_count
+                else 0.0
+            ),
+            (
+                summary.max_component_size / summary.node_count
+                if summary.node_count
+                else 0.0
+            ),
+            (
+                summary.redundancy / summary.wire_count
+                if summary.wire_count
+                else 0.0
+            ),
+            1.0 if summary.failed_wire_count else 0.0,
+        )
+        return np.asarray(values, dtype=np.float32)
+
+
+class PowerWiresObservation:
+    """A `(H, W, 4)` view of horizontal, vertical, failed, and live wires."""
+
+    def __init__(self, config: FactoryConfig, power: PowerConfig) -> None:
+        self.config = config
+        self.power = power
+        self.shape = (config.height, config.width, len(POWER_WIRE_CHANNELS))
+        self.spec = ObservationSpec(
+            name="power_wires",
+            version="0.1.0",
+            shape=self.shape,
+            feature_names=POWER_WIRE_CHANNELS,
+        )
+
+    def observe(self, state: WorldState) -> np.ndarray:
+        out = np.zeros(self.shape, dtype=np.float32)
+        if not self.power.enabled or not state.power_wires:
+            return out
+        reachable: set[tuple[int, int]] = set()
+        for source in state.power_sources:
+            reachable |= reachable_cells(source, state.power_wires)
+        for wire in state.power_wires:
+            channel = 0 if wire.ay == wire.by else 1
+            cells = ((wire.ax, wire.ay), (wire.bx, wire.by))
+            for x, y in cells:
+                out[y, x, channel] = 1.0
+                if wire.failed:
+                    out[y, x, 2] = 1.0
+                if not wire.failed and all(
+                    cell in reachable for cell in cells
+                ):
+                    out[y, x, 3] = 1.0
+        return out

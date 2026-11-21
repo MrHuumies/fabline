@@ -5,6 +5,10 @@ are pinned separately; see [`benchmarks/factory-v0.1/card.md`](benchmarks/factor
 
 ## [Unreleased]
 
+- Add opt-in wired power: wire-edge graph with loops, bridge/loop faults, and a
+  cascade-size task. `graph_mp` R² 0.431 vs vector 0.264 (0032).
+- Add the wired cascade dataset and task cards.
+
 ## [0.1.1] — 2026-11-21
 
 P0 model coverage after 0.1.0. The frozen `factory-v0.1` benchmark is unchanged.

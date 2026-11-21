@@ -16,6 +16,7 @@ from .faults import FaultConfig
 from .generator import Scenario, generate_state
 from .power import PowerConfig
 from .state import Entity, EntityType, Item, WorldState
+from .wire import entity_connected, reachable_cells
 
 
 class FactoryWorld:
@@ -133,15 +134,53 @@ class FactoryWorld:
         index = min(len(factors) - 1, max(0, self.state.tick - 1))
         return factors[index]
 
+    def _apply_wire_fault(self) -> None:
+        """Fail the configured wire once, before connectivity is computed."""
+
+        if self.power.topology != "wired":
+            return
+        if (
+            self.power.wire_fault_tick <= 0
+            or self.state.tick != self.power.wire_fault_tick
+        ):
+            return
+        wire = next(
+            (
+                item
+                for item in self.state.power_wires
+                if item.id == self.power.wire_fault_id
+            ),
+            None,
+        )
+        if wire is None:
+            raise RuntimeError(
+                "scheduled wire fault references a missing wire"
+            )
+        if wire.failed:
+            return
+        wire.failed = True
+        self._emit(
+            "power_wire_fault",
+            {
+                "wire_id": wire.id,
+                "ax": wire.ax,
+                "ay": wire.ay,
+                "bx": wire.bx,
+                "by": wire.by,
+            },
+        )
+
     def _power(self) -> None:
         """Allocate generator capacity and update powered/brownout state."""
 
         if not self.power.enabled:
             return
+        self._apply_wire_fault()
         entities = sorted(self.state.entities.values(), key=lambda item: item.id)
         previous = {entity.id: entity.powered for entity in entities}
         load_factor = self._load_factor()
         capacity_factor = self._capacity_factor()
+        wired = self.power.topology == "wired"
 
         for entity in entities:
             if self.power.scaled_demand(entity, load_factor) == 0:
@@ -170,16 +209,29 @@ class FactoryWorld:
                     entity.id,
                 )
             )
+        wires = self.state.power_wires
         for source in sorted(
             self.state.power_sources, key=lambda item: item.id
         ):
             remaining = source.capacity * capacity_factor // 100
+            reachable = (
+                reachable_cells(source, self.state.power_wires)
+                if wired
+                else None
+            )
             for entity in consumers:
                 if entity.powered:
                     continue
-                distance = abs(entity.x - source.x) + abs(entity.y - source.y)
-                if distance > self.power.generator_radius:
-                    continue
+                if wired:
+                    assert reachable is not None
+                    if not entity_connected(entity, reachable, wires):
+                        continue
+                else:
+                    distance = abs(entity.x - source.x) + abs(
+                        entity.y - source.y
+                    )
+                    if distance > self.power.generator_radius:
+                        continue
                 demand = self.power.scaled_demand(entity, load_factor)
                 if demand <= remaining:
                     entity.powered = True

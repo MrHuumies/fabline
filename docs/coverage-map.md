@@ -164,11 +164,14 @@ Scores are qualitative: **diagnostic value**, **reuse of existing code**, and
 
 ### P1 — one small extension
 
-Choose **one**:
+**Chosen: wired power topology.** Phase 1A adds a seeded wire-edge graph with
+branches and loops, deterministic wire faults, and a per-entity cascade
+prediction task (RFC 0007, ADR 0017, experiment 0032). Repair control is phase
+1B and is deferred until the prediction label is shown to be learnable and not
+saturated by a coordinate baseline.
 
-- **Wired power topology:** turn the radius grid into a graph with wires,
-  cascading failures, and topology repair. This exposes GNN/planning weaknesses
-  and reuses the power mechanic.
+The alternative remains:
+
 - **Larger/random layouts:** add scale and layout-shift splits. This exposes
   CNN/MLP generalization weaknesses and reuses the generator.
 
@@ -207,7 +210,11 @@ generative layout/recipe tasks.
   `factory-v0.1`.
 - **P0 coverage is complete.** Calibration, partial observability,
   representative architecture baselines, and risk-sensitive control are all
-  implemented and documented. The next decision is P1 scope.
+  implemented and documented.
+- **P1 wired power:** mechanic implemented and measured (RFC 0007, ADR 0017,
+  experiment 0032). Cascade-size `graph_mp` R² 0.431 vs vector 0.264; paired
+  difference +0.167 [0.048, 0.309]. Repair control (phase 1B) is the next
+  question; wire capacity and multi-generator redundancy are follow-ups.
 
 ## What not to add yet
 

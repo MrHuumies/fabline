@@ -50,6 +50,8 @@ make render-install
   (Brier, NLL, ECE).
 - **Stochastic power:** seeded load/capacity variation for uncertain prediction
   and control.
+- **Wired power (opt-in):** wire-edge graph with loops, bridge and loop faults,
+  and a cascade-size prediction task.
 - **Partial observability:** feature dropout, grid fog, delayed observations,
   and a masked feature-window throughput task.
 - **Architecture baselines:** sequence models, grid CNN, and end-to-end MPNN

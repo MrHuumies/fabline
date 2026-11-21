@@ -31,6 +31,8 @@ retained for provenance.
   [10.50, 16.95].
 - [0031 — Contract confirmation](0031-contract-confirm/summary.md) — fresh-seed
   replication passes all gates: +17.05 CVaR [13.25, 21.15].
+- [0032 — Wired cascade](0032-wired-cascade/summary.md) — graph_mp R² 0.431 vs
+  vector 0.264 on wired-power cascade size.
 
 The frozen benchmark is documented separately in
 [`benchmarks/factory-v0.1/card.md`](../../benchmarks/factory-v0.1/card.md).

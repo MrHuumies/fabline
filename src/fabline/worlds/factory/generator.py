@@ -16,6 +16,7 @@ from .state import (
     WorldState,
     empty_delivered,
 )
+from .wire import generate_wires
 
 
 @dataclass(frozen=True)
@@ -214,6 +215,21 @@ def generate_state(
         if len(power_sources) < power.generator_count:
             raise RuntimeError("not enough empty tiles for power generators")
 
+    power_wires = (
+        generate_wires(
+            width,
+            height,
+            tiles,
+            occupancy,
+            power_sources,
+            entities,
+            power,
+            seed,
+        )
+        if power is not None and power.enabled
+        else []
+    )
+
     load_factors: list[int] = []
     capacity_factors: list[int] = []
     if (
@@ -249,6 +265,7 @@ def generate_state(
         history=[],
         events=[],
         power_sources=power_sources,
+        power_wires=power_wires,
         power_load_factors=load_factors,
         power_capacity_factors=capacity_factors,
     )

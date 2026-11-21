@@ -9,3 +9,4 @@ One RFC per new mechanic or major world change. Use
 - [0004 — Power grid and brownouts](0004-power-grid.md)
 - [0005 — Power allocation control](0005-power-allocation.md)
 - [0006 — Stochastic power variation](0006-stochastic-power.md)
+- [0007 — Wired power topology and cascades](0007-wired-power.md)
