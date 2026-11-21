@@ -194,7 +194,11 @@ generative layout/recipe tasks.
   fog-robust than flattened MLP (0026); end-to-end MPNN transfers on the
   compositional split but trails `graph_mp` by 0.09 (0027). Flattened views
   collapse on the held-out combination while relational views stay positive.
-- **Risk-sensitive control:** not started.
+- **Risk-sensitive control:** started with a reliability-contract task (0028).
+  Mean and CVaR select different targets, but the 20% tail gain fails on a
+  seed-clustered test block; the effect is in the worst 5–10%. This is a
+  partial negative and needs a regime with more frequent misses before it is a
+  stable benchmark.
 
 ## What not to add yet
 

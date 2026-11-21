@@ -27,6 +27,8 @@ Current tasks:
   opt-in power views.
 - [Partial throughput](partial-throughput.md) — masked-feature future-score
   prediction with a single-frame and a 4-frame window view.
+- [Reliability contract](power-contract.md) — choose a delivery target under
+  stochastic power; mean and CVaR objectives separate.
 - [Power allocation](power-allocation.md) — three-action priority scheduling
   under a tight generator budget.
 - [Fault + power interaction](fault-power.md) — four-action repair and priority

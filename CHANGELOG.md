@@ -9,6 +9,8 @@ are pinned separately; see [`benchmarks/factory-v0.1/card.md`](benchmarks/factor
 - Add the model/benchmark/mechanic coverage map.
 - Add masked feature-window partial-observability task and adapters.
 - Add architecture baselines: sequence models, grid CNN, and end-to-end MPNN.
+- Add a reliability-contract risk-sensitive task (partial negative: the 20%
+  tail gain is unstable on clustered seeds).
 
 ## [0.1.0] — 2026-11-21
 

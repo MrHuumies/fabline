@@ -22,6 +22,8 @@ retained for provenance.
   grid but is less fog-robust than the flattened MLP.
 - [0027 — End-to-end MPNN](0027-graph-mpnn/summary.md) — relational structure
   transfers on the held-out combination; MPNN trails `graph_mp` by 0.09.
+- [0028 — Reliability contract](0028-risk-contract/summary.md) — mean and CVaR
+  select different targets, but the 20% tail gain fails on clustered test seeds.
 
 The frozen benchmark is documented separately in
 [`benchmarks/factory-v0.1/card.md`](../../benchmarks/factory-v0.1/card.md).

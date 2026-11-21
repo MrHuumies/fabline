@@ -54,6 +54,8 @@ make render-install
   and a masked feature-window throughput task.
 - **Architecture baselines:** sequence models, grid CNN, and end-to-end MPNN
   against flattened and feature-engineering baselines.
+- **Risk-sensitive contract:** choose a delivery target under stochastic power;
+  mean and CVaR objectives separate, with a documented tail-stability caveat.
 
 Every mechanic is opt-in. The frozen `factory-v0.1` benchmark is action-free and
 does not depend on faults or power.
