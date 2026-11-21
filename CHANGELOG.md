@@ -3,6 +3,10 @@
 All notable changes to FABLINE are recorded here. World and benchmark versions
 are pinned separately; see [`benchmarks/factory-v0.1/card.md`](benchmarks/factory-v0.1/card.md).
 
+## [Unreleased]
+
+- Add the model/benchmark/mechanic coverage map.
+
 ## [0.1.0] — 2026-11-21
 
 First public release candidate.

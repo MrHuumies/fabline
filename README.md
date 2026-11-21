@@ -83,6 +83,9 @@ You can also generate the core sample yourself:
 
 - [`project_intent.md`](project_intent.md) — goals and non-goals.
 - [`docs/testbed.md`](docs/testbed.md) — what the testbed is for.
+- [`docs/research-axes.md`](docs/research-axes.md) — the questions it supports.
+- [`docs/coverage-map.md`](docs/coverage-map.md) — model families, benchmark
+  families, and candidate mechanics.
 - [`docs/world.md`](docs/world.md) — factory mechanics.
 - [`docs/interface.md`](docs/interface.md) — state, observation, and action
   contracts.
