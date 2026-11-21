@@ -10,6 +10,16 @@
 - **Pre-registration:** [`preregistration.md`](preregistration.md)
 - **Benchmark:** none; `factory-v0.1` unchanged
 
+## Correction (2026-11-21)
+
+The original runner expanded each block with `seed + episode`, so adjacent
+blocks overlapped. The reported 400 / 400 scores are evaluations, not unique
+episodes: the train set had 49 unique episode seeds (100–148) and the test set
+49 (140–188), with overlap on 140–148. The numbers below are retained as the
+historical result of that sampler. Experiment
+[`0030`](../0030-contract-eval-design/summary.md) fixes the expansion, uses
+disjoint interleaved blocks, and re-runs the task.
+
 ## Result in one paragraph
 
 **A failure-dense regime does not fix the tail-stability problem.** Train

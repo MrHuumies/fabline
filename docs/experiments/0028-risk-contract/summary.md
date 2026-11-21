@@ -8,6 +8,16 @@
 - **Pre-registration:** [`preregistration.md`](preregistration.md)
 - **Benchmark:** none; `factory-v0.1` unchanged
 
+## Correction (2026-11-21)
+
+The original runner expanded each block with `seed + episode`, so adjacent
+blocks overlapped. The reported 400 / 200 scores are evaluations, not unique
+episodes: the train set had 49 unique episode seeds (40–88) and the test set 29
+(80–108), with overlap on 80–88. The numbers below are retained as the
+historical result of that sampler. Experiment
+[`0030`](../0030-contract-eval-design/summary.md) fixes the expansion, uses
+disjoint interleaved blocks, and re-runs the task.
+
 ## Result in one paragraph
 
 **The mean/CVaR tradeoff exists, but the pre-registered tail gain does not

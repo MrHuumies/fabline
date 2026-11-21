@@ -13,6 +13,8 @@ are pinned separately; see [`benchmarks/factory-v0.1/card.md`](benchmarks/factor
   tail gain is unstable on clustered seeds).
 - Add a failure-dense follow-up (negative: the tail gate fails again; seed-block
   distribution shift dominates).
+- Fix the contract episode sampler (overlapping blocks) and add a unique,
+  interleaved evaluation; clean CVaR gain +13.55 [10.50, 16.95].
 
 ## [0.1.0] — 2026-11-21
 

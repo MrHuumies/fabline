@@ -194,12 +194,13 @@ generative layout/recipe tasks.
   fog-robust than flattened MLP (0026); end-to-end MPNN transfers on the
   compositional split but trails `graph_mp` by 0.09 (0027). Flattened views
   collapse on the held-out combination while relational views stay positive.
-- **Risk-sensitive control:** two reliability-contract experiments (0028,
-  0029). The mean/CVaR target direction is stable, but the pre-registered 20%
-  tail gain fails in both the reference and the failure-dense regime. Seed-block
-  distribution shift dominates the tail estimate. This is a negative about the
-  benchmark, not about risk sensitivity; stop tuning regimes and fix the
-  evaluation design or use per-episode independent failures.
+- **Risk-sensitive control:** three reliability-contract experiments (0028,
+  0029, 0030). The first two had a sampling defect: block expansion overlapped
+  adjacent blocks, so train/test were not disjoint. Fixing the expansion and
+  using unique interleaved seeds (0030) aligns the distributions (mean 129.96
+  vs 129.94) and gives a clean CVaR gain of +13.55 [10.50, 16.95]. The
+  pre-registered +15 gate is missed by 1.45, but the CI includes it and excludes
+  zero. The task is measurable; the gate needs re-baselining on fresh seeds.
 
 ## What not to add yet
 

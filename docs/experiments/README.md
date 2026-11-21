@@ -26,6 +26,9 @@ retained for provenance.
   select different targets, but the 20% tail gain fails on clustered test seeds.
 - [0029 — Failure-dense contract](0029-risk-contract-dense/summary.md) — a harsher
   regime still fails the pre-registered 20% tail gate; the benchmark is unstable.
+- [0030 — Contract evaluation design](0030-contract-eval-design/summary.md) —
+  unique interleaved seeds fix the train/test shift; clean CVaR gain +13.55
+  [10.50, 16.95].
 
 The frozen benchmark is documented separately in
 [`benchmarks/factory-v0.1/card.md`](../../benchmarks/factory-v0.1/card.md).

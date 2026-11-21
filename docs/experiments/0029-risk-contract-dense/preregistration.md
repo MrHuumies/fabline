@@ -1,6 +1,8 @@
 # Experiment 0029 — Reliability contract in a failure-dense power regime
 
 - **Status:** complete (H3 fails; see [`summary.md`](summary.md))
+- **Correction:** the block expansion overlapped adjacent blocks; see the
+  sampling note in the summary. Experiment 0030 fixes it.
 - **Date:** 2026-11-21
 - **Type:** P0 risk-sensitive control experiment; follow-up to
   [`0028`](../0028-risk-contract/summary.md)

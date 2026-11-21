@@ -1,6 +1,8 @@
 # Experiment 0028 — Reliability-contract selection under stochastic power
 
 - **Status:** complete (H3 fails; see [`summary.md`](summary.md))
+- **Correction:** the block expansion overlapped adjacent blocks; see the
+  sampling note in the summary. Experiment 0030 fixes it.
 - **Date:** 2026-11-21
 - **Type:** P0 risk-sensitive control experiment
 - **Task:** `factory.power.contract.v1` (debug/P0, not in `factory-v0.1`)
