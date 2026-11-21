@@ -151,8 +151,10 @@ Scores are qualitative: **diagnostic value**, **reuse of existing code**, and
    CNN, and RNN/SSM on the existing graph, grid, and sequence tasks. This tests
    whether current tasks discriminate architectures before adding mechanics.
 2. **Partial observability wrappers:** fog, delayed sensors, dropout, and
-   observation masks on existing tasks. This exposes memory and belief-state
-   weaknesses cheaply.
+   observation masks on existing tasks. Wrappers are implemented. A masked
+   feature-window task now shows the intended effect: a single masked frame
+   loses R²; a 4-frame window recovers about 70% for linear/GBDT. See
+   [experiment 0024](experiments/0024-masked-window/summary.md).
 3. **Calibration and risk:** calibration metrics are implemented for stochastic
    power (Brier, NLL, ECE); risk-sensitive control variants are still future
    work. See [experiment 0022](experiments/0022-calibration-stochastic-power/summary.md).
@@ -185,8 +187,10 @@ generative layout/recipe tasks.
 ### P0 progress
 
 - **Calibration metrics:** done for stochastic power (experiment 0022).
-- **Representative baselines:** next.
-- **Partial observability:** next.
+- **Partial-observability wrappers:** done. Pure-delay pilot saturated (0023);
+  masked feature-window task passes its gates (0024).
+- **Representative baselines:** next; RNN/Transformer/CNN should be tested on the
+  masked-window and grid-fog tasks.
 - **Risk-sensitive control:** not started.
 
 ## What not to add yet

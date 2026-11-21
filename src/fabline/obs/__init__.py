@@ -7,6 +7,7 @@ from .entities import EntitiesObservation, GraphObservation
 from .grid import GridObservation
 from .interaction import FaultPowerObservation
 from .line import LineStateObservation
+from .partial import DelayedObservation, FeatureDropoutObservation, GridFogObservation
 from .power import PowerControlObservation, PowerGridObservation, PowerObservation
 from .sensors import (
     DiagnosticsObservation,
@@ -19,7 +20,10 @@ __all__ = [
     "DiagnosticsObservation",
     "EntitiesObservation",
     "FaultPowerObservation",
+    "DelayedObservation",
+    "FeatureDropoutObservation",
     "GraphObservation",
+    "GridFogObservation",
     "GridObservation",
     "LineStateObservation",
     "ObservationSpec",

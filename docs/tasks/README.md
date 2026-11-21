@@ -25,6 +25,8 @@ Current tasks:
   diagnostic views.
 - [Brownout prediction](power-brownout.md) — brownout-within-horizon over
   opt-in power views.
+- [Partial throughput](partial-throughput.md) — masked-feature future-score
+  prediction with a single-frame and a 4-frame window view.
 - [Power allocation](power-allocation.md) — three-action priority scheduling
   under a tight generator budget.
 - [Fault + power interaction](fault-power.md) — four-action repair and priority

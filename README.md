@@ -50,6 +50,8 @@ make render-install
   (Brier, NLL, ECE).
 - **Stochastic power:** seeded load/capacity variation for uncertain prediction
   and control.
+- **Partial observability:** feature dropout, grid fog, delayed observations,
+  and a masked feature-window throughput task.
 
 Every mechanic is opt-in. The frozen `factory-v0.1` benchmark is action-free and
 does not depend on faults or power.

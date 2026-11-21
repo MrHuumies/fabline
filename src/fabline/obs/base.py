@@ -94,6 +94,16 @@ def build_observation(
         from .line import LineStateObservation
 
         return LineStateObservation(config)
+    if name == "grid_fog":
+        from .grid import GridObservation
+        from .partial import GridFogObservation
+
+        return GridFogObservation(GridObservation(config), radius=3)
+    if name == "vector_dropout":
+        from .partial import FeatureDropoutObservation
+        from .vector import VectorObservation
+
+        return FeatureDropoutObservation(VectorObservation(config), dropout=0.2)
     if name in ("power", "power_grid", "power_control"):
         from .power import (
             PowerControlObservation,

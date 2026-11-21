@@ -14,6 +14,8 @@ retained for provenance.
   scheduling under a tight generator budget.
 - [0022 — Calibration on stochastic power](0022-calibration-stochastic-power/summary.md)
   — Brier, NLL, and ECE; calibration is not skill.
+- [0024 — Masked feature window](0024-masked-window/summary.md) — 60% feature
+  dropout; a 4-frame window recovers most of the lost R² for linear/GBDT.
 
 The frozen benchmark is documented separately in
 [`benchmarks/factory-v0.1/card.md`](../../benchmarks/factory-v0.1/card.md).
