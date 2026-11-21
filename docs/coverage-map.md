@@ -189,8 +189,11 @@ generative layout/recipe tasks.
 - **Calibration metrics:** done for stochastic power (experiment 0022).
 - **Partial-observability wrappers:** done. Pure-delay pilot saturated (0023);
   masked feature-window task passes its gates (0024).
-- **Representative baselines:** next; RNN/Transformer/CNN should be tested on the
-  masked-window and grid-fog tasks.
+- **Representative baselines:** complete for P0. Sequence baselines are a
+  bounded negative (0025); grid CNN nearly solves the clear grid but is less
+  fog-robust than flattened MLP (0026); end-to-end MPNN transfers on the
+  compositional split but trails `graph_mp` by 0.09 (0027). Flattened views
+  collapse on the held-out combination while relational views stay positive.
 - **Risk-sensitive control:** not started.
 
 ## What not to add yet

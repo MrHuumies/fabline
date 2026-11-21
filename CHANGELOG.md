@@ -8,6 +8,7 @@ are pinned separately; see [`benchmarks/factory-v0.1/card.md`](benchmarks/factor
 - Add calibration metrics (Brier, NLL, ECE) to the stochastic power benchmark.
 - Add the model/benchmark/mechanic coverage map.
 - Add masked feature-window partial-observability task and adapters.
+- Add architecture baselines: sequence models, grid CNN, and end-to-end MPNN.
 
 ## [0.1.0] — 2026-11-21
 

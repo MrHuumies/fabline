@@ -52,6 +52,8 @@ make render-install
   and control.
 - **Partial observability:** feature dropout, grid fog, delayed observations,
   and a masked feature-window throughput task.
+- **Architecture baselines:** sequence models, grid CNN, and end-to-end MPNN
+  against flattened and feature-engineering baselines.
 
 Every mechanic is opt-in. The frozen `factory-v0.1` benchmark is action-free and
 does not depend on faults or power.

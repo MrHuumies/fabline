@@ -16,6 +16,12 @@ retained for provenance.
   — Brier, NLL, and ECE; calibration is not skill.
 - [0024 — Masked feature window](0024-masked-window/summary.md) — 60% feature
   dropout; a 4-frame window recovers most of the lost R² for linear/GBDT.
+- [0025 — Sequence baselines](0025-sequence-baselines/summary.md) — Transformer
+  +0.078 over flat MLP, below the gate; GBDT remains strongest.
+- [0026 — Grid CNN](0026-grid-cnn/summary.md) — CNN nearly solves the clear
+  grid but is less fog-robust than the flattened MLP.
+- [0027 — End-to-end MPNN](0027-graph-mpnn/summary.md) — relational structure
+  transfers on the held-out combination; MPNN trails `graph_mp` by 0.09.
 
 The frozen benchmark is documented separately in
 [`benchmarks/factory-v0.1/card.md`](../../benchmarks/factory-v0.1/card.md).

@@ -54,6 +54,22 @@ Test R², with 95% bootstrap CIs over test rows.
 | GBDT | 1.000 | 0.593 | 0.883 |
 | MLP | 0.613 | −0.194 | 0.002 |
 
+## Sequence baseline
+
+On the same task, five seeds, 50 epochs:
+
+| model | test R² |
+|---|---:|
+| flat MLP | 0.577 |
+| GRU | 0.608 |
+| Transformer | 0.655 |
+| temporal CNN | 0.248 |
+| GBDT reference | 0.883 |
+
+The Transformer improves +0.078 over the flat MLP, below the +0.10 gate. GBDT
+remains strongest on this small, two-value, four-frame tabular task. See
+[`experiments/0025-sequence-baselines`](../experiments/0025-sequence-baselines/summary.md).
+
 ## Known pitfalls
 
 - **Two label values.** GBDT on the full frame is at ceiling.
@@ -75,3 +91,4 @@ Test R², with 95% bootstrap CIs over test rows.
 ## Changelog
 
 - 2026-11-21 — card created; P0 masked-window results added.
+- 2026-11-21 — sequence baseline comparison added.
