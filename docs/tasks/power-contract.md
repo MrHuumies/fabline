@@ -58,10 +58,21 @@ task. The target does not change the world; it changes only the payoff.
 | mean-optimal (130) | 138.90 | 104.00 |
 | CVaR-optimal (120) | 131.40 | 106.50 |
 
+### 0028 — reference regime (30/20/20)
+
 The mean/CVaR targets separate (130 vs 120), but the pre-registered 20% tail
 gain is only +2.5, below the +15 gate. The effect is concentrated in the worst
 5–10% (exploratory +20.0 / +15.0). See
 [`experiments/0028-risk-contract`](../experiments/0028-risk-contract/summary.md).
+
+### 0029 — failure-dense regime (60/40/20)
+
+Mean selects 120 on train; CVaR selects 110. On test, the mean policy earns
+144.00 mean / 75.00 CVaR; the CVaR policy earns 136.50 / 77.50. The direction
+holds, but the 20% tail gain is again only +2.5. The formal test block is more
+benign than train (mean 131.5 vs 126.15; zero rate 3% vs 5.8%). The contract task
+is not a stable risk benchmark at this scale. See
+[`experiments/0029-risk-contract-dense`](../experiments/0029-risk-contract-dense/summary.md).
 
 ## Known pitfalls
 
@@ -77,6 +88,9 @@ gain is only +2.5, below the +15 gate. The effect is concentrated in the worst
   episode.
 - **Tail fraction sensitivity.** CVaR₂₀ dilutes a clustered extreme tail; the
   result is not robust to alpha.
+- **Seed-block shift.** Contiguous seed ranges differ in mean, variance, and zero
+  rate. Two experiments failed the same 20% tail gate; do not tune another
+  regime against it.
 - Not part of `factory-v0.1`.
 
 ## Negative controls
@@ -88,3 +102,4 @@ gain is only +2.5, below the +15 gate. The effect is concentrated in the worst
 ## Changelog
 
 - 2026-11-21 — card created; P0 contract-selection results added.
+- 2026-11-21 — failure-dense follow-up added; second tail-gate failure.

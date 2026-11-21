@@ -24,6 +24,8 @@ retained for provenance.
   transfers on the held-out combination; MPNN trails `graph_mp` by 0.09.
 - [0028 — Reliability contract](0028-risk-contract/summary.md) — mean and CVaR
   select different targets, but the 20% tail gain fails on clustered test seeds.
+- [0029 — Failure-dense contract](0029-risk-contract-dense/summary.md) — a harsher
+  regime still fails the pre-registered 20% tail gate; the benchmark is unstable.
 
 The frozen benchmark is documented separately in
 [`benchmarks/factory-v0.1/card.md`](../../benchmarks/factory-v0.1/card.md).
