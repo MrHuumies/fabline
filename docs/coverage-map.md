@@ -156,8 +156,11 @@ Scores are qualitative: **diagnostic value**, **reuse of existing code**, and
    loses R²; a 4-frame window recovers about 70% for linear/GBDT. See
    [experiment 0024](experiments/0024-masked-window/summary.md).
 3. **Calibration and risk:** calibration metrics are implemented for stochastic
-   power (Brier, NLL, ECE); risk-sensitive control variants are still future
-   work. See [experiment 0022](experiments/0022-calibration-stochastic-power/summary.md).
+   power (Brier, NLL, ECE). Risk-sensitive control is implemented as a
+   reliability-contract task and replicated on fresh seeds (+17.05 CVaR
+   [13.25, 21.15] for a 4.59 mean premium). See
+   [0022](experiments/0022-calibration-stochastic-power/summary.md) and
+   [0031](experiments/0031-contract-confirm/summary.md).
 
 ### P1 — one small extension
 
@@ -194,13 +197,17 @@ generative layout/recipe tasks.
   fog-robust than flattened MLP (0026); end-to-end MPNN transfers on the
   compositional split but trails `graph_mp` by 0.09 (0027). Flattened views
   collapse on the held-out combination while relational views stay positive.
-- **Risk-sensitive control:** three reliability-contract experiments (0028,
-  0029, 0030). The first two had a sampling defect: block expansion overlapped
-  adjacent blocks, so train/test were not disjoint. Fixing the expansion and
-  using unique interleaved seeds (0030) aligns the distributions (mean 129.96
-  vs 129.94) and gives a clean CVaR gain of +13.55 [10.50, 16.95]. The
-  pre-registered +15 gate is missed by 1.45, but the CI includes it and excludes
-  zero. The task is measurable; the gate needs re-baselining on fresh seeds.
+- **Risk-sensitive control:** complete for P0. The first two
+  reliability-contract experiments (0028, 0029) had a sampling defect: block
+  expansion overlapped adjacent blocks, so train/test were not disjoint. The
+  fixed design (0030) aligned the distributions and measured +13.55 [10.50,
+  16.95]. The fresh-seed confirmation (0031) passed all gates with +17.05
+  [13.25, 21.15] for a 4.59 mean premium. The task is offline selection with a
+  fixed operating policy; it is a P0 benchmark candidate, not part of frozen
+  `factory-v0.1`.
+- **P0 coverage is complete.** Calibration, partial observability,
+  representative architecture baselines, and risk-sensitive control are all
+  implemented and documented. The next decision is P1 scope.
 
 ## What not to add yet
 

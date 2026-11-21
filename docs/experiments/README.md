@@ -29,6 +29,8 @@ retained for provenance.
 - [0030 — Contract evaluation design](0030-contract-eval-design/summary.md) —
   unique interleaved seeds fix the train/test shift; clean CVaR gain +13.55
   [10.50, 16.95].
+- [0031 — Contract confirmation](0031-contract-confirm/summary.md) — fresh-seed
+  replication passes all gates: +17.05 CVaR [13.25, 21.15].
 
 The frozen benchmark is documented separately in
 [`benchmarks/factory-v0.1/card.md`](../../benchmarks/factory-v0.1/card.md).

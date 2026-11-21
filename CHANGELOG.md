@@ -15,6 +15,8 @@ are pinned separately; see [`benchmarks/factory-v0.1/card.md`](benchmarks/factor
   distribution shift dominates).
 - Fix the contract episode sampler (overlapping blocks) and add a unique,
   interleaved evaluation; clean CVaR gain +13.55 [10.50, 16.95].
+- Confirm the contract task on fresh seeds: +17.05 CVaR [13.25, 21.15] for a
+  4.59 mean premium; all gates pass.
 
 ## [0.1.0] — 2026-11-21
 
