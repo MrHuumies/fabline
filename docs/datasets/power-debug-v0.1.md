@@ -61,6 +61,19 @@ The same dataset is used for the power view-arrival experiments:
 The line buffers determine the brownout label; remove them to measure the power
 view.
 
+## Calibration
+
+The power benchmark reports Brier, NLL, and ECE. On the stochastic 60/40/10
+variant:
+
+- vector GBDT: Brier 0.164, NLL 0.517, ECE 0.042;
+- vector MLP: Brier 0.167, NLL 0.517, ECE 0.016;
+- power GBDT: Brier 0.159, NLL 0.486, ECE 0.035;
+- power MLP: Brier 0.161, NLL 0.495, ECE 0.020.
+
+The MLP is better calibrated but close to majority accuracy. Calibration and
+discrimination are separate axes.
+
 ## Caveats
 
 - One fixed gear line, generator layout, and budget; not a general power
@@ -77,3 +90,4 @@ view.
 - 2026-11-21 — dataset card created for the power-grid debug benchmark.
 - 2026-11-21 — power view-arrival results added.
 - 2026-11-21 — stochastic power view-arrival results added.
+- 2026-11-21 — calibration metrics added.

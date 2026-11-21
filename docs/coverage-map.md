@@ -153,8 +153,9 @@ Scores are qualitative: **diagnostic value**, **reuse of existing code**, and
 2. **Partial observability wrappers:** fog, delayed sensors, dropout, and
    observation masks on existing tasks. This exposes memory and belief-state
    weaknesses cheaply.
-3. **Calibration and risk:** add calibration metrics and risk-sensitive variants
-   to the stochastic power task.
+3. **Calibration and risk:** calibration metrics are implemented for stochastic
+   power (Brier, NLL, ECE); risk-sensitive control variants are still future
+   work. See [experiment 0022](experiments/0022-calibration-stochastic-power/summary.md).
 
 ### P1 — one small extension
 
@@ -180,6 +181,13 @@ Choose **one**:
 
 Dynamic recipes, deadlines/markets, adversarial disruptions, weather,
 generative layout/recipe tasks.
+
+### P0 progress
+
+- **Calibration metrics:** done for stochastic power (experiment 0022).
+- **Representative baselines:** next.
+- **Partial observability:** next.
+- **Risk-sensitive control:** not started.
 
 ## What not to add yet
 

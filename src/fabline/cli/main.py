@@ -381,6 +381,9 @@ def cmd_power_benchmark(args: argparse.Namespace) -> int:
         generator_count=args.generators,
         generator_capacity=args.capacity,
         generator_radius=args.radius,
+        load_jitter=args.load_jitter,
+        capacity_jitter=args.capacity_jitter,
+        variation_period=args.variation_period,
     )
     results = run_power_benchmark(
         args.out,
@@ -627,6 +630,9 @@ def build_parser() -> argparse.ArgumentParser:
     power_benchmark.add_argument("--generators", type=int, default=1)
     power_benchmark.add_argument("--capacity", type=int, default=9)
     power_benchmark.add_argument("--radius", type=int, default=8)
+    power_benchmark.add_argument("--load-jitter", type=int, default=0)
+    power_benchmark.add_argument("--capacity-jitter", type=int, default=0)
+    power_benchmark.add_argument("--variation-period", type=int, default=20)
     power_benchmark.set_defaults(func=cmd_power_benchmark)
 
     fault_recovery = subparsers.add_parser(

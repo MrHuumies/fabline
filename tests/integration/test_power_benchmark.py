@@ -37,7 +37,10 @@ def test_power_benchmark_end_to_end(tmp_path) -> None:
         assert view["samples"] > 0
         assert 0.0 <= view["positive_rate"] <= 1.0
         assert "gbdt" in view["metrics"]
+        assert set(view["calibration"]) == {"gbdt", "mlp"}
+        assert "ece" in view["calibration"]["gbdt"]["test"]
     report = (tmp_path / "power_report.md").read_text(encoding="utf-8")
     assert "Power-grid benchmark" in report
+    assert "### Calibration" in report
     payload = json.loads((tmp_path / "power_results.json").read_text())
     assert payload["power"]["enabled"] is True

@@ -12,6 +12,8 @@ retained for provenance.
   views, and brownout prediction.
 - [0016 — Power allocation](0016-power-allocation/summary.md) — priority
   scheduling under a tight generator budget.
+- [0022 — Calibration on stochastic power](0022-calibration-stochastic-power/summary.md)
+  — Brier, NLL, and ECE; calibration is not skill.
 
 The frozen benchmark is documented separately in
 [`benchmarks/factory-v0.1/card.md`](../../benchmarks/factory-v0.1/card.md).

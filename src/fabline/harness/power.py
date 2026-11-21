@@ -10,7 +10,10 @@ from typing import Any
 import numpy as np
 
 from fabline.core.hashing import config_hash
-from fabline.harness.baselines import evaluate_classification_baselines
+from fabline.harness.baselines import (
+    evaluate_calibration_baselines,
+    evaluate_classification_baselines,
+)
 from fabline.harness.data import LoadedDataset, load_dataset
 from fabline.obs.base import build_observation
 from fabline.record.replay import validate_replay
@@ -132,12 +135,20 @@ def run_power_benchmark(
             y_test,
             with_ci=True,
         )
+        calibration = evaluate_calibration_baselines(
+            X_train,
+            y_train,
+            X_test,
+            y_test,
+            with_ci=True,
+        )
         results["views"][name] = {
             "dataset": str(dataset_dir),
             "episodes": len(episodes_data),
             "samples": int(len(loaded.y)),
             "positive_rate": float(np.mean(loaded.y)),
             "metrics": metrics,
+            "calibration": calibration,
         }
 
     (out / "power_results.json").write_text(
@@ -181,6 +192,23 @@ def _write_report(path: Path, results: dict[str, Any]) -> None:
             )
             lines.append(
                 f"| {method} | {accuracy} | {balanced} | {test['macro_f1']:.4f} |"
+            )
+        lines.extend(
+            [
+                "",
+                "### Calibration",
+                "",
+                "| method | Brier | NLL | ECE |",
+                "|---|---:|---:|---:|",
+            ]
+        )
+        for method, result in payload["calibration"].items():
+            test = result["test"]
+            ci = result.get("ci", {})
+            lines.append(
+                f"| {method} | {_cell(test['brier'], ci.get('brier'))} | "
+                f"{_cell(test['nll'], ci.get('nll'))} | "
+                f"{_cell(test['ece'], ci.get('ece'))} |"
             )
         lines.append("")
     lines.extend(

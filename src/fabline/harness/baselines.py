@@ -2,11 +2,13 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from typing import Protocol
 
 import numpy as np
 
 from .metrics import (
+    calibration_metrics,
     classification_metrics,
     multi_output_metrics,
     regression_metrics,
@@ -20,6 +22,14 @@ class Baseline(Protocol):
     def fit(self, X: np.ndarray, y: np.ndarray) -> None: ...
 
     def predict(self, X: np.ndarray) -> np.ndarray: ...
+
+
+class ProbabilisticBaseline(Protocol):
+    name: str
+
+    def fit(self, X: np.ndarray, y: np.ndarray) -> None: ...
+
+    def predict_proba(self, X: np.ndarray) -> np.ndarray: ...
 
 
 class MeanBaseline:
@@ -123,6 +133,9 @@ class GradientBoostingClassifierBaseline:
     def predict(self, X: np.ndarray) -> np.ndarray:
         return np.asarray(self.model.predict(X))
 
+    def predict_proba(self, X: np.ndarray) -> np.ndarray:
+        return np.asarray(self.model.predict_proba(X)[:, 1], dtype=np.float64)
+
 
 class MLPClassifierBaseline:
     name = "mlp"
@@ -141,6 +154,9 @@ class MLPClassifierBaseline:
 
     def predict(self, X: np.ndarray) -> np.ndarray:
         return np.asarray(self.model.predict(X))
+
+    def predict_proba(self, X: np.ndarray) -> np.ndarray:
+        return np.asarray(self.model.predict_proba(X)[:, 1], dtype=np.float64)
 
 
 class CopyBaseline:
@@ -334,6 +350,55 @@ def evaluate_classification_baselines(
                 cis["shift"] = _classification_ci(y_extra, extra_pred)
         if cis:
             result["ci"] = cis
+        results[baseline.name] = result
+    return results
+
+
+def _calibration_metric(
+    name: str,
+    n_bins: int,
+) -> Callable[[np.ndarray, np.ndarray], float]:
+    def score(truth: np.ndarray, probabilities: np.ndarray) -> float:
+        return calibration_metrics(truth, probabilities, n_bins=n_bins)[name]
+
+    return score
+
+
+def evaluate_calibration_baselines(
+    X_train: np.ndarray,
+    y_train: np.ndarray,
+    X_test: np.ndarray,
+    y_test: np.ndarray,
+    *,
+    with_ci: bool = False,
+    n_bins: int = 10,
+) -> dict[str, dict[str, object]]:
+    """Fit probabilistic classifiers and report calibration on the test split."""
+
+    X_train = _flatten_observations(X_train)
+    X_test = _flatten_observations(X_test)
+    candidates: list[ProbabilisticBaseline] = [
+        GradientBoostingClassifierBaseline(),
+        MLPClassifierBaseline(),
+    ]
+    results: dict[str, dict[str, object]] = {}
+    for baseline in candidates:
+        baseline.fit(X_train, y_train)
+        probabilities = baseline.predict_proba(X_test)
+        result: dict[str, object] = {
+            "test": calibration_metrics(y_test, probabilities, n_bins=n_bins)
+        }
+        if with_ci:
+            result["ci"] = {
+                key: list(
+                    bootstrap_metric_ci(
+                        y_test,
+                        probabilities,
+                        _calibration_metric(key, n_bins),
+                    )
+                )
+                for key in ("brier", "nll", "ece")
+            }
         results[baseline.name] = result
     return results
 

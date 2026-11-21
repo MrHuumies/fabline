@@ -5,6 +5,7 @@ are pinned separately; see [`benchmarks/factory-v0.1/card.md`](benchmarks/factor
 
 ## [Unreleased]
 
+- Add calibration metrics (Brier, NLL, ECE) to the stochastic power benchmark.
 - Add the model/benchmark/mechanic coverage map.
 
 ## [0.1.0] — 2026-11-21

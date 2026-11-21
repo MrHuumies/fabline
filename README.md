@@ -46,7 +46,8 @@ make render-install
 - **Faults (opt-in):** wear, downtime, repair, diagnostic sensors, fault
   prediction, and fault recovery.
 - **Power (opt-in):** pre-placed generators, activity-gated demand, brownouts,
-  power views, brownout prediction, and allocation control.
+  power views, brownout prediction, allocation control, and calibration metrics
+  (Brier, NLL, ECE).
 - **Stochastic power:** seeded load/capacity variation for uncertain prediction
   and control.
 
@@ -83,10 +84,9 @@ You can also generate the core sample yourself:
 
 - [`project_intent.md`](project_intent.md) — goals and non-goals.
 - [`docs/testbed.md`](docs/testbed.md) — what the testbed is for.
-- [`docs/research-axes.md`](docs/research-axes.md) — the questions it supports.
-- [`docs/coverage-map.md`](docs/coverage-map.md) — model families, benchmark
-  families, and candidate mechanics.
 - [`docs/world.md`](docs/world.md) — factory mechanics.
+- [`docs/coverage-map.md`](docs/coverage-map.md) — model/benchmark coverage and
+  candidate mechanics.
 - [`docs/interface.md`](docs/interface.md) — state, observation, and action
   contracts.
 - [`docs/architecture.md`](docs/architecture.md) — code layout.

@@ -89,3 +89,59 @@ def multi_output_metrics(
         "mae": mae,
         "cosine": float(np.mean(cosine)),
     }
+
+
+def calibration_metrics(
+    y_true: np.ndarray,
+    probabilities: np.ndarray,
+    *,
+    n_bins: int = 10,
+) -> dict[str, float]:
+    """Binary calibration metrics for predicted probabilities.
+
+    Returns Brier score, negative log-likelihood, expected calibration error
+    (ECE), mean confidence, and threshold accuracy. Probabilities are clipped
+    away from 0 and 1 for the log loss.
+    """
+
+    truth = _flatten(y_true)
+    probs = _flatten(probabilities)
+    if truth.shape != probs.shape:
+        raise ValueError(f"shape mismatch: {truth.shape} vs {probs.shape}")
+    if truth.size == 0:
+        raise ValueError("empty metric input")
+    if not np.all((truth == 0) | (truth == 1)):
+        raise ValueError("calibration metrics require binary labels")
+    if np.any(probs < 0.0) or np.any(probs > 1.0):
+        raise ValueError("probabilities must be in [0, 1]")
+    if n_bins <= 0:
+        raise ValueError("n_bins must be positive")
+
+    clipped = np.clip(probs, 1e-12, 1.0 - 1e-12)
+    brier = float(np.mean((probs - truth) ** 2))
+    nll = float(
+        -np.mean(truth * np.log(clipped) + (1.0 - truth) * np.log(1.0 - clipped))
+    )
+    confidence = np.maximum(probs, 1.0 - probs)
+    predicted = (probs >= 0.5).astype(np.float64)
+    correct = (predicted == truth).astype(np.float64)
+    ece = 0.0
+    for index in range(n_bins):
+        low = index / n_bins
+        high = (index + 1) / n_bins
+        if index == n_bins - 1:
+            mask = (confidence >= low) & (confidence <= high)
+        else:
+            mask = (confidence >= low) & (confidence < high)
+        count = int(np.sum(mask))
+        if count:
+            ece += (count / truth.size) * abs(
+                float(np.mean(correct[mask])) - float(np.mean(confidence[mask]))
+            )
+    return {
+        "brier": brier,
+        "nll": nll,
+        "ece": float(ece),
+        "mean_confidence": float(np.mean(confidence)),
+        "accuracy": float(np.mean(correct)),
+    }
