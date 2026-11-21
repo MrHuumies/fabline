@@ -67,6 +67,28 @@ class RepairLargestPolicy:
         return 0
 
 
+class WaitForLargePolicy:
+    """Wait for the large fault before repairing, to test the timing trade."""
+
+    name = "wait_large"
+
+    def __init__(self, wait_tick: int = 180) -> None:
+        self.wait_tick = wait_tick
+
+    def act(
+        self,
+        observation: np.ndarray,
+        info: dict[str, Any],
+        mask: np.ndarray,
+    ) -> int:
+        if info["tick"] < self.wait_tick:
+            return 0
+        outages = info["slot_outages"]
+        if mask[1] and outages and outages[0] > 0:
+            return 1
+        return 0
+
+
 class RandomWireRepairPolicy:
     name = "random"
 
@@ -95,7 +117,6 @@ class TabularQWireRepairPolicy:
         return (
             min(2, int(info["budget_remaining"])),
             min(3, int(info["failed_count"])),
-            min(9, int(info["tick"]) // 50),
             *(min(3, int(value)) for value in outages),
         )
 
@@ -245,6 +266,7 @@ def run_wire_repair(
         ("noop", NoopPolicy()),
         ("repair_now", RepairNowPolicy()),
         ("repair_largest", RepairLargestPolicy()),
+        ("wait_large", WaitForLargePolicy()),
     ):
         results[name] = _pool(
             [

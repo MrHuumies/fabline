@@ -1,4 +1,9 @@
-"""Wire-repair control on the opt-in wired power topology."""
+"""Wire-repair control on the opt-in wired power topology.
+
+A repair is an atomic action: the crew spends ``repair_ticks`` on the selected
+wire, the wire stays failed until the end, and the reward is returned on the
+repair step. This keeps credit assignment aligned with the action.
+"""
 
 from __future__ import annotations
 
@@ -15,7 +20,7 @@ from fabline.worlds.factory.wire import entity_connected, reachable_cells
 from fabline.worlds.factory.world import FactoryWorld
 
 WIRE_REPAIR_TASK_ID = "factory.power.wire-repair.v1"
-WIRE_REPAIR_TASK_VERSION = "0.1.0"
+WIRE_REPAIR_TASK_VERSION = "0.2.0"
 
 WIRE_REPAIR_FEATURES = (
     "tick_norm",
@@ -37,11 +42,12 @@ class WireRepairConfig:
     episode_ticks: int = 500
     decision_interval: int = 10
     repair_budget: int = 2
+    repair_ticks: int = 60
     repair_cost: float = 1.0
     restoration_reward: float = 10.0
     wasted_penalty: float = 20.0
     success_score: int = 150
-    fault_ticks: tuple[int, ...] = (50, 150, 250)
+    fault_ticks: tuple[int, ...] = (50, 150, 180)
     max_slots: int = 3
     power: PowerConfig = field(
         default_factory=lambda: PowerConfig(
@@ -59,6 +65,8 @@ class WireRepairConfig:
             raise ValueError("episode_ticks and decision_interval must be positive")
         if self.repair_budget < 0:
             raise ValueError("repair_budget must be non-negative")
+        if self.repair_ticks < 0:
+            raise ValueError("repair_ticks must be non-negative")
         if self.repair_cost < 0:
             raise ValueError("repair_cost must be non-negative")
         if self.restoration_reward < 0:
@@ -106,6 +114,7 @@ class WireRepairEnv:
         self.total_reward = 0.0
         self.repairs = 0
         self.wasted_repairs = 0
+        self.restored_consumers = 0
         self.steps = 0
         self.last_action = "noop"
         self.last_reward = 0.0
@@ -191,6 +200,21 @@ class WireRepairEnv:
                 mask[index + 1] = True
         return mask
 
+    def _advance(self, ticks: int) -> None:
+        for _ in range(ticks):
+            if self.world.done:
+                break
+            next_tick = self.world.state.tick + 1
+            while (
+                self._fault_index < len(self.fault_schedule)
+                and self.fault_schedule[self._fault_index][0] == next_tick
+            ):
+                _, wire_id = self.fault_schedule[self._fault_index]
+                self.world.fail_wire(wire_id)
+                self._impact_cache = None
+                self._fault_index += 1
+            self.world.tick()
+
     def step(
         self,
         action: int,
@@ -205,11 +229,12 @@ class WireRepairEnv:
             wire, outage = slots[action - 1]
             if self.repairs >= self.repair.repair_budget:
                 legal = False
-            else:
+            elif self.repair.repair_ticks == 0:
                 self.world.repair_wire(wire.id)
                 self._impact_cache = None
                 self.repairs += 1
                 restored = outage
+                self.restored_consumers += outage
                 if outage == 0:
                     self.wasted_repairs += 1
                 reward = (
@@ -218,17 +243,34 @@ class WireRepairEnv:
                 )
                 if outage == 0:
                     reward -= self.repair.wasted_penalty
-        for _ in range(self.repair.decision_interval):
-            next_tick = self.world.state.tick + 1
-            while (
-                self._fault_index < len(self.fault_schedule)
-                and self.fault_schedule[self._fault_index][0] == next_tick
-            ):
-                _, wire_id = self.fault_schedule[self._fault_index]
-                self.world.fail_wire(wire_id)
-                self._impact_cache = None
-                self._fault_index += 1
-            self.world.tick()
+                self._advance(self.repair.decision_interval)
+            else:
+                # The crew spends repair_ticks on the fault; the wire stays
+                # failed until the end of the action.
+                self._advance(self.repair.repair_ticks)
+                if not self.world.done:
+                    self.world.repair_wire(wire.id)
+                    self._impact_cache = None
+                    self.repairs += 1
+                    restored = outage
+                    self.restored_consumers += outage
+                    if outage == 0:
+                        self.wasted_repairs += 1
+                    remaining = max(
+                        0,
+                        self.repair.episode_ticks - self.world.state.tick,
+                    )
+                    reward = (
+                        outage
+                        * self.repair.restoration_reward
+                        * remaining
+                        / self.repair.episode_ticks
+                        - self.repair.repair_cost
+                    )
+                    if outage == 0:
+                        reward -= self.repair.wasted_penalty
+        else:
+            self._advance(self.repair.decision_interval)
         self.total_reward += reward
         self.steps += 1
         self.last_action = self.ACTION_NAMES[action]
@@ -293,6 +335,7 @@ class WireRepairEnv:
             "slot_outages": outages,
             "repairs": self.repairs,
             "wasted_repairs": self.wasted_repairs,
+            "restored_consumers": self.restored_consumers,
             "total_reward": self.total_reward,
             "last_action": self.last_action,
             "last_reward": self.last_reward,

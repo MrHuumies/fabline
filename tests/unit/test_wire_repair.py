@@ -30,9 +30,10 @@ def _config() -> FactoryConfig:
     )
 
 
-def _env() -> WireRepairEnv:
+def _env(repair_ticks: int = 60) -> WireRepairEnv:
     return WireRepairEnv(
-        _config(), WireRepairConfig(success_score=150)
+        _config(),
+        WireRepairConfig(success_score=150, repair_ticks=repair_ticks),
     )
 
 
@@ -47,7 +48,7 @@ def test_wire_repair_schedule_is_deterministic() -> None:
 
 
 def test_repair_policies_rank_impact_and_waste_loops() -> None:
-    env = _env()
+    env = _env(repair_ticks=0)
     noop = evaluate_policy(env, NoopPolicy(), episodes=2, seed=0)
     now = evaluate_policy(env, RepairNowPolicy(), episodes=2, seed=0)
     largest = evaluate_policy(env, RepairLargestPolicy(), episodes=2, seed=0)
@@ -95,3 +96,15 @@ def test_repair_observation_is_finite() -> None:
     observation, _ = env.reset(0)
     env.step(0)
     assert np.isfinite(observation).all()
+
+
+def test_timed_repair_delays_restoration() -> None:
+    instant = evaluate_policy(
+        _env(repair_ticks=0), RepairLargestPolicy(), episodes=2, seed=0
+    )
+    timed = evaluate_policy(
+        _env(repair_ticks=60), RepairLargestPolicy(), episodes=2, seed=0
+    )
+    assert timed.mean_score < instant.mean_score
+    assert timed.success_rate == 1.0
+    assert timed.mean_wasted == 0.0

@@ -520,6 +520,7 @@ def cmd_wire_repair(args: argparse.Namespace) -> int:
         episode_ticks=500,
         decision_interval=10,
         repair_budget=args.repair_budget,
+        repair_ticks=args.repair_ticks,
         repair_cost=args.repair_cost,
         success_score=args.success_score,
         power=PowerConfig(
@@ -545,6 +546,7 @@ def cmd_wire_repair(args: argparse.Namespace) -> int:
         results,
         config={
             "repair_budget": args.repair_budget,
+            "repair_ticks": args.repair_ticks,
             "repair_cost": args.repair_cost,
             "restoration_reward": repair.restoration_reward,
             "wasted_penalty": repair.wasted_penalty,
@@ -739,6 +741,7 @@ def build_parser() -> argparse.ArgumentParser:
     wire_repair.add_argument("--seeds", type=str, default="0,1,2")
     wire_repair.add_argument("--train-seed-start", type=int, default=1000)
     wire_repair.add_argument("--repair-budget", type=int, default=2)
+    wire_repair.add_argument("--repair-ticks", type=int, default=60)
     wire_repair.add_argument("--repair-cost", type=float, default=1.0)
     wire_repair.add_argument("--success-score", type=int, default=150)
     wire_repair.add_argument("--capacity", type=int, default=12)

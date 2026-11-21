@@ -213,8 +213,10 @@ generative layout/recipe tasks.
   implemented and documented.
 - **P1 wired power:** phase 1A and 1B complete. Cascade-size `graph_mp` R²
   0.431 vs vector 0.264 (0032). Budgeted wire repair: outage-ranked policy 260
-  vs noop 79; tabular Q 212 with zero wasted repairs and 0.68 success (0033).
-  Wire capacity, repair time/travel, and multi-generator redundancy are
+  vs noop 79; tabular Q 212 with zero wasted repairs (0033). With 60-tick
+  repairs, Q matches outage-ranked repair 223.2 and succeeds on every seed, but
+  the repair-order gate fails (+2.4 vs +10); repair time matters, order is not
+  robust (0034). Crew travel, wire capacity, and multi-generator redundancy are
   follow-ups.
 
 ## What not to add yet

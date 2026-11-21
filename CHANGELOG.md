@@ -10,6 +10,8 @@ are pinned separately; see [`benchmarks/factory-v0.1/card.md`](benchmarks/factor
 - Add the wired cascade dataset and task cards.
 - Add budgeted wire repair control: outage-ranked repair 260 vs noop 79;
   tabular Q 212 with zero wasted repairs (0033).
+- Add timed wire repair: Q matches outage-ranked repair at 223.2; repair time
+  matters, repair order is not robust (0034).
 
 ## [0.1.1] — 2026-11-21
 

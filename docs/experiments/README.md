@@ -35,6 +35,8 @@ retained for provenance.
   vector 0.264 on wired-power cascade size.
 - [0033 — Wire repair](0033-wire-repair/summary.md) — outage-ranked repair 260
   vs noop 79; Q 212 with zero wasted repairs.
+- [0034 — Timed wire repair](0034-wire-repair-timed/summary.md) — Q matches
+  outage-ranked repair 223.2; the repair-order gate fails.
 
 The frozen benchmark is documented separately in
 [`benchmarks/factory-v0.1/card.md`](../../benchmarks/factory-v0.1/card.md).
