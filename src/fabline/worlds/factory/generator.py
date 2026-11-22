@@ -29,6 +29,8 @@ class Scenario:
     break_line: bool = False
     ore_patches: int | None = None
     rock_density: float | None = None
+    randomize_line: bool = False
+    twin_line: bool = False
 
 
 SCENARIOS: dict[str, Scenario] = {
@@ -42,6 +44,12 @@ SCENARIOS: dict[str, Scenario] = {
         include_assembler=True,
         ore_patches=1,
         rock_density=0.15,
+    ),
+    "random_gear": Scenario(
+        "random_gear",
+        include_assembler=True,
+        randomize_line=True,
+        twin_line=True,
     ),
 }
 
@@ -107,39 +115,58 @@ def generate_state(
     def set_tile(x: int, y: int, tile: TileType) -> None:
         tiles[y * width + x] = tile
 
-    line_y = rng.randrange(3, max(4, height - 3))
-    line: list[EntityType | None] = (
-        _line_types(rng, scenario) if config.starter_line else []
-    )
+    line_count = 2 if scenario is not None and scenario.twin_line else 1
+    line_specs: list[tuple[list[EntityType | None], int, int]] = []
+    available_rows = list(range(3, max(4, height - 3)))
+    for _ in range(line_count):
+        rows = [
+            row
+            for row in available_rows
+            if all(abs(row - existing) >= 2 for _, existing, _ in line_specs)
+        ]
+        if not rows:
+            raise RuntimeError("map is too short for two production lines")
+        line_y = rows[rng.randrange(len(rows))]
+        line: list[EntityType | None] = (
+            _line_types(rng, scenario) if config.starter_line else []
+        )
+        line_x0 = 1
+        if line and scenario is not None and scenario.randomize_line:
+            max_x0 = width - len(line) - 1
+            if max_x0 < 1:
+                raise RuntimeError("map is too narrow for a randomized line")
+            line_x0 = rng.randrange(1, max_x0 + 1)
+        line_specs.append((line, line_y, line_x0))
+        if line:
+            for i in range(len(line)):
+                reserved.add((line_x0 + i, line_y))
 
-    # Reserve the line row so rocks and ore patches do not intrude.
-    if line:
-        for i in range(len(line)):
-            reserved.add((1 + i, line_y))
-
-    # Place the line first.
+    # Place the lines first.
     entity_specs: list[tuple[EntityType, int, int, Direction]] = []
-    if line:
-        for i, entity_type in enumerate(line):
-            x = 1 + i
-            if entity_type is None:
-                continue
-            if entity_type is EntityType.MINER:
-                set_tile(x, line_y, TileType.ORE)
-            elif entity_type is EntityType.DEPOT:
-                set_tile(x, line_y, TileType.DEPOT)
-            entity_specs.append((entity_type, x, line_y, Direction.EAST))
+    if line_specs:
+        for line, line_y, line_x0 in line_specs:
+            for i, entity_type in enumerate(line):
+                x = line_x0 + i
+                if entity_type is None:
+                    continue
+                if entity_type is EntityType.MINER:
+                    set_tile(x, line_y, TileType.ORE)
+                elif entity_type is EntityType.DEPOT:
+                    set_tile(x, line_y, TileType.DEPOT)
+                entity_specs.append((entity_type, x, line_y, Direction.EAST))
     else:
         depot_x, depot_y = width - 2, height // 2
         set_tile(depot_x, depot_y, TileType.DEPOT)
         reserved.add((depot_x, depot_y))
         entity_specs.append((EntityType.DEPOT, depot_x, depot_y, Direction.EAST))
 
-    # Ore patches away from the line.
+    line_rows = [line_y for _, line_y, _ in line_specs]
+
+    # Ore patches away from the lines.
     for _ in range(ore_patches):
         cx = rng.randrange(2, width - 2)
         cy = rng.randrange(2, height - 2)
-        if line and abs(cy - line_y) <= 1:
+        if any(abs(cy - line_y) <= 1 for line_y in line_rows):
             continue
         for dy in range(-config.ore_patch_radius, config.ore_patch_radius + 1):
             for dx in range(-config.ore_patch_radius, config.ore_patch_radius + 1):
@@ -164,7 +191,7 @@ def generate_state(
 
     # Guarantee at least one ore tile.
     if TileType.ORE not in tiles:
-        x, y = (1, line_y) if line else (2, 2)
+        x, y = (line_specs[0][2], line_specs[0][1]) if line_specs else (2, 2)
         set_tile(x, y, TileType.ORE)
         reserved.add((x, y))
 
@@ -187,12 +214,13 @@ def generate_state(
     power_sources: list[PowerSource] = []
     if power is not None and power.enabled:
         candidates: list[tuple[int, int]] = []
-        if line:
+        for line_y in line_rows:
             for dy in (-2, 2):
                 y = line_y + dy
                 if 1 <= y < height - 1:
                     candidates.extend([(1, y), (width - 2, y)])
-        for y in sorted(range(1, height - 1), key=lambda value: abs(value - line_y)):
+        anchor = line_rows[0] if line_rows else height // 2
+        for y in sorted(range(1, height - 1), key=lambda value: abs(value - anchor)):
             for x in range(1, width - 1):
                 candidates.append((x, y))
         seen: set[tuple[int, int]] = set()

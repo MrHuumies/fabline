@@ -46,6 +46,8 @@ Current tasks:
   run gives nearest 255.5, greedy 245, Q 225.5, and oracle 260.
 - [Crew recall and replanning](crew-replan.md) — one crew is recalled; the
   survivor recovers the abandoned bridge.
+- [Twin-line crew assignment](crew-layouts.md) — two lines, random crew base;
+  oracle 441 vs greedy 419, nearest 361.
 - [Power allocation](power-allocation.md) — three-action priority scheduling
   under a tight generator budget.
 - [Fault + power interaction](fault-power.md) — four-action repair and priority

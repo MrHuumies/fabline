@@ -21,7 +21,14 @@ def _config() -> FactoryConfig:
 
 
 def test_scenarios_are_deterministic() -> None:
-    config = _config()
+    config = FactoryConfig(
+        width=32,
+        height=16,
+        ticks_per_episode=300,
+        rock_density=0.02,
+        ore_patches=2,
+        starter_line=True,
+    )
     for scenario in SCENARIOS.values():
         first = generate_state(config, seed=7, scenario=scenario)
         second = generate_state(config, seed=7, scenario=scenario)

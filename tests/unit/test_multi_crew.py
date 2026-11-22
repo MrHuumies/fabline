@@ -86,3 +86,32 @@ def test_crew_robustness_structure() -> None:
         "mean_score"
     ]
     assert results["paired"]["oracle_minus_parallel_nearest"]["mean"] >= 0
+
+
+def test_random_crew_b_is_deterministic_and_separated() -> None:
+    config = FactoryConfig(
+        width=32,
+        height=16,
+        ticks_per_episode=500,
+        decision_interval=10,
+        entity_budget=32,
+        rock_density=0.0,
+        ore_patches=1,
+        starter_line=True,
+        emit_events=True,
+    )
+    multi = MultiCrewConfig(
+        randomize_crew_b=True,
+        crew_b_min_distance=8,
+        scenario="random_gear",
+    )
+    first = MultiCrewEnv(config, multi)
+    first.reset(6000)
+    second = MultiCrewEnv(config, multi)
+    second.reset(6000)
+    assert first.crew_b == second.crew_b
+    assert (
+        abs(first.crew_b[0] - first.crew_a[0])
+        + abs(first.crew_b[1] - first.crew_a[1])
+        >= 8
+    )

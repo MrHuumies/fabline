@@ -19,6 +19,8 @@ are pinned separately; see [`benchmarks/factory-v0.1/card.md`](benchmarks/factor
 - Add crew recall and replanning: the survivor's recovery dispatch is worth
   +154 over no-replan (254 vs 100); nearest 254, greedy 259, tabular Q 144.0
   fails the 0.85 gate (0045).
+- Add twin-line randomized crew layouts: oracle 441, greedy 419, nearest 361,
+  tabular Q 217; the layout adds a real assignment gap but Q fails H4 (0046).
 
 ## [0.1.2] — 2026-11-22
 

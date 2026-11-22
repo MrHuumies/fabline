@@ -78,6 +78,9 @@ crew-robustness:
 crew-replan:
 	$(PY) -m fabline crew-replan --out results/crew-replan --seeds 5000,5001,5002,5003,5004,5005,5006,5007,5008,5009 --q-seeds 0,1,2,3,4 --train-episodes 1000 --train-seed-start 45000
 
+crew-layouts:
+	$(PY) -m fabline crew-layouts --out results/crew-layouts --seeds 6000,6001,6002,6003,6004,6005,6006,6007,6008,6009 --train-episodes 500 --train-seed-start 55000
+
 power-allocation-stochastic:
 	$(PY) -m fabline power-allocation --out results/power-allocation/stochastic --episodes 5 --train-episodes 100 --load-jitter 30 --capacity-jitter 20 --variation-period 20
 

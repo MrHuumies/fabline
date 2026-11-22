@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 from fabline.worlds.factory.config import FactoryConfig
-from fabline.worlds.factory.generator import generate_state
+from fabline.worlds.factory.generator import SCENARIOS, generate_state
+from fabline.worlds.factory.power import PowerConfig
 from fabline.worlds.factory.state import EntityType, TileType
 
 
@@ -29,3 +30,23 @@ def test_generator_has_no_overlap_and_in_bounds() -> None:
     for entity_id, entity in state.entities.items():
         assert state.in_bounds(entity.x, entity.y)
         assert state.occupancy[(entity.x, entity.y)] == entity_id
+
+
+def test_random_gear_places_two_lines_and_wires() -> None:
+    config = FactoryConfig(width=32, height=16, ore_patches=1)
+    power = PowerConfig(
+        enabled=True,
+        topology="wired",
+        generator_count=1,
+        generator_capacity=24,
+        generator_radius=8,
+        wire_redundancy=2,
+    )
+    state = generate_state(
+        config, seed=6000, scenario=SCENARIOS["random_gear"], power=power
+    )
+    types = [entity.type for entity in state.entities.values()]
+    assert types.count(EntityType.MINER) == 2
+    assert types.count(EntityType.DEPOT) == 2
+    assert len(state.power_wires) > 0
+    assert len(state.power_sources) == 1

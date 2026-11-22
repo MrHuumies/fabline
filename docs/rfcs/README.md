@@ -15,3 +15,4 @@ One RFC per new mechanic or major world change. Use
 - [0010 — Crew travel and repair scheduling](0010-crew-travel.md)
 - [0011 — Multi-crew repair coordination](0011-multi-crew.md)
 - [0012 — Crew recall and replanning](0012-crew-replan.md)
+- [0013 — Twin-line randomized crew layouts](0013-twin-line-layouts.md)

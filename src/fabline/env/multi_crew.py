@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import random
 from dataclasses import dataclass, field
 from typing import Any
 
@@ -10,7 +11,7 @@ import numpy as np
 from fabline.worlds.factory.config import FactoryConfig
 from fabline.worlds.factory.generator import SCENARIOS
 from fabline.worlds.factory.power import PowerConfig
-from fabline.worlds.factory.state import Entity, EntityType, PowerWire
+from fabline.worlds.factory.state import Entity, EntityType, PowerWire, TileType
 from fabline.worlds.factory.wire import entity_connected, reachable_cells
 from fabline.worlds.factory.world import FactoryWorld
 
@@ -51,6 +52,9 @@ class MultiCrewConfig:
     large_failure_tick: int = 130
     repair_ticks: int = 40
     travel_ticks_per_cell: int = 2
+    randomize_crew_b: bool = False
+    crew_b_min_distance: int = 6
+    scenario: str = "gear"
     success_score: int = 150
     power: PowerConfig = field(
         default_factory=lambda: PowerConfig(
@@ -74,6 +78,10 @@ class MultiCrewConfig:
             < self.large_failure_tick
         ):
             raise ValueError("failure ticks must increase")
+        if self.crew_b_min_distance < 0:
+            raise ValueError("crew_b_min_distance must be non-negative")
+        if self.scenario not in SCENARIOS:
+            raise ValueError(f"unknown scenario: {self.scenario}")
         if not self.power.enabled or self.power.topology != "wired":
             raise ValueError("crew coordination requires wired power")
 
@@ -103,6 +111,25 @@ class MultiCrewEnv:
             raise ValueError("multi.episode_ticks must equal config.ticks_per_episode")
         self.world = FactoryWorld(config, power=self.multi.power)
         self.reset(0)
+
+    def _random_crew_b(self, seed: int) -> tuple[int, int]:
+        rng = random.Random(seed * 104729 + 7)
+        state = self.world.state
+        occupied = {
+            (entity.x, entity.y) for entity in state.entities.values()
+        }
+        candidates = [
+            (x, y)
+            for y in range(1, state.height - 1)
+            for x in range(1, state.width - 1)
+            if (x, y) not in occupied
+            and state.tiles[y * state.width + x] is TileType.EMPTY
+            and abs(x - self.crew_a[0]) + abs(y - self.crew_a[1])
+            >= self.multi.crew_b_min_distance
+        ]
+        if not candidates:
+            raise RuntimeError("no eligible random crew B base")
+        return rng.choice(candidates)
 
     def _consumers(self) -> list[Entity]:
         return [
@@ -163,7 +190,7 @@ class MultiCrewEnv:
         )
 
     def reset(self, seed: int = 0) -> tuple[np.ndarray, dict[str, Any]]:
-        self.world.reset(seed, SCENARIOS["gear"])
+        self.world.reset(seed, SCENARIOS[self.multi.scenario])
         self.repairs = 0
         self.prevented = 0
         self.aborted = 0
@@ -185,6 +212,8 @@ class MultiCrewEnv:
             self.world.state.width - 2,
             self.world.state.height - 2,
         )
+        if self.multi.randomize_crew_b:
+            self.crew_b = self._random_crew_b(seed)
         outages = {
             wire.id: self._outage(wire)
             for wire in self.world.state.power_wires

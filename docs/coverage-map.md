@@ -202,8 +202,10 @@ visibility pilot was negative: on the current layout visibility is binary
 (radius ≤10 hides the bridges; ≥14 is effectively omniscient), so it is not
 promoted (0043). Crew recall/replanning (0045) is positive but shallow: the
 survivor's second dispatch is worth +154 over no-replan, but nearest is within
-6 points of oracle and tabular Q fails H4. Larger/random layouts or a factored
-recovery Q are the next P2 questions.
+6 points of oracle and tabular Q fails H4. Twin-line randomized layouts (0046)
+break the ceiling: oracle 441, greedy 419, nearest 361; the layout adds a real
+assignment gap (+22 oracle over best scripted). Q fails H4. The next questions
+are recall/replanning on twin-line layouts and a layout-aware Q.
 
 The alternative remains:
 
