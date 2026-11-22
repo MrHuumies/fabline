@@ -9,6 +9,7 @@ from pathlib import Path
 
 from fabline import __version__
 from fabline.env.control import ControlConfig
+from fabline.env.crew_replan import CrewReplanConfig
 from fabline.env.crew_schedule import CrewScheduleConfig
 from fabline.env.fault_power import FaultPowerConfig
 from fabline.env.fault_recovery import FaultRecoveryConfig
@@ -18,6 +19,10 @@ from fabline.env.preventive_fault import PreventiveFaultConfig
 from fabline.env.preventive_threshold import ThresholdConfig
 from fabline.env.preventive_wire import PreventiveWireConfig
 from fabline.env.wire_repair import WireRepairConfig
+from fabline.harness.crew_replan import (
+    run_crew_replan,
+    write_crew_replan_report,
+)
 from fabline.harness.crew_schedule import (
     run_crew_schedule,
     write_crew_report,
@@ -697,6 +702,63 @@ def cmd_crew_robustness(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_crew_replan(args: argparse.Namespace) -> int:
+    config = FactoryConfig(
+        width=16,
+        height=8,
+        ticks_per_episode=500,
+        decision_interval=10,
+        entity_budget=32,
+        rock_density=0.0,
+        ore_patches=1,
+        starter_line=True,
+        emit_events=True,
+    )
+    replan = CrewReplanConfig(
+        episode_ticks=500,
+        decision_interval=10,
+        loop_failure_tick=args.loop_failure,
+        small_failure_tick=args.small_failure,
+        large_failure_tick=args.large_failure,
+        recall_tick=args.recall_tick,
+        success_score=args.success_score,
+    )
+    seeds = tuple(int(value) for value in args.seeds.split(","))
+    q_seeds = tuple(int(value) for value in args.q_seeds.split(","))
+    results = run_crew_replan(
+        config,
+        replan,
+        train_episodes=args.train_episodes,
+        seeds=seeds,
+        q_seeds=q_seeds,
+        train_seed_start=args.train_seed_start,
+    )
+    report = write_crew_replan_report(
+        args.out,
+        results,
+        config={
+            "warning_tick": replan.warning_tick,
+            "loop_failure_tick": replan.loop_failure_tick,
+            "small_failure_tick": replan.small_failure_tick,
+            "large_failure_tick": replan.large_failure_tick,
+            "recall_tick": replan.recall_tick,
+            "success_score": replan.success_score,
+            "seeds": list(seeds),
+            "q_seeds": list(q_seeds),
+            "train_episodes": args.train_episodes,
+            "train_seed_start": args.train_seed_start,
+        },
+    )
+    print(
+        json.dumps(
+            {"report": str(report), "results": results},
+            indent=2,
+            sort_keys=True,
+        )
+    )
+    return 0
+
+
 def cmd_crew_schedule(args: argparse.Namespace) -> int:
     config = FactoryConfig(
         width=16,
@@ -1100,6 +1162,24 @@ def build_parser() -> argparse.ArgumentParser:
     crew_robustness.add_argument("--large-failure", type=int, default=130)
     crew_robustness.add_argument("--success-score", type=int, default=150)
     crew_robustness.set_defaults(func=cmd_crew_robustness)
+
+    crew_replan = subparsers.add_parser(
+        "crew-replan",
+        help="run the crew recall and replanning benchmark",
+    )
+    crew_replan.add_argument("--out", type=str, default="results/crew-replan")
+    crew_replan.add_argument(
+        "--seeds", type=str, default="5000,5001,5002,5003,5004"
+    )
+    crew_replan.add_argument("--q-seeds", type=str, default="0,1,2,3,4")
+    crew_replan.add_argument("--train-episodes", type=int, default=1000)
+    crew_replan.add_argument("--train-seed-start", type=int, default=45000)
+    crew_replan.add_argument("--loop-failure", type=int, default=90)
+    crew_replan.add_argument("--small-failure", type=int, default=110)
+    crew_replan.add_argument("--large-failure", type=int, default=130)
+    crew_replan.add_argument("--recall-tick", type=int, default=100)
+    crew_replan.add_argument("--success-score", type=int, default=150)
+    crew_replan.set_defaults(func=cmd_crew_replan)
 
     crew_schedule = subparsers.add_parser(
         "crew-schedule",

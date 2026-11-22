@@ -92,9 +92,13 @@ class MultiCrewEnv:
         self,
         config: FactoryConfig,
         multi: MultiCrewConfig | None = None,
+        roles: tuple[str, ...] = ROLES,
     ) -> None:
+        if len(roles) != CHOICES - 1:
+            raise ValueError("crew tasks need three target roles")
         self.config = config
         self.multi = multi or MultiCrewConfig()
+        self.roles = roles
         if self.multi.episode_ticks != self.config.ticks_per_episode:
             raise ValueError("multi.episode_ticks must equal config.ticks_per_episode")
         self.world = FactoryWorld(config, power=self.multi.power)
@@ -185,6 +189,17 @@ class MultiCrewEnv:
             wire.id: self._outage(wire)
             for wire in self.world.state.power_wires
         }
+        (
+            self.role_wires,
+            self.role_outages,
+            self.failure_ticks,
+        ) = self._select_roles(outages)
+        return self._observation(), self._info()
+
+    def _select_roles(
+        self,
+        outages: dict[int, int],
+    ) -> tuple[dict[str, int], dict[str, int], dict[str, int]]:
         positive = sorted(
             (
                 (size, wire_id)
@@ -198,22 +213,23 @@ class MultiCrewEnv:
         )
         if len(positive) < 2 or not loops:
             raise RuntimeError("multi-crew task needs a loop and two bridges")
-        self.role_wires = {
-            "loop": loops[0],
-            "small": positive[0][1],
-            "large": positive[-1][1],
-        }
-        self.role_outages = {
-            "loop": 0,
-            "small": positive[0][0],
-            "large": positive[-1][0],
-        }
-        self.failure_ticks = {
-            "loop": self.multi.loop_failure_tick,
-            "small": self.multi.small_failure_tick,
-            "large": self.multi.large_failure_tick,
-        }
-        return self._observation(), self._info()
+        return (
+            {
+                "loop": loops[0],
+                "small": positive[0][1],
+                "large": positive[-1][1],
+            },
+            {
+                "loop": 0,
+                "small": positive[0][0],
+                "large": positive[-1][0],
+            },
+            {
+                "loop": self.multi.loop_failure_tick,
+                "small": self.multi.small_failure_tick,
+                "large": self.multi.large_failure_tick,
+            },
+        )
 
     def action_mask(self) -> np.ndarray:
         mask = np.zeros(self.n_actions, dtype=bool)
@@ -233,7 +249,7 @@ class MultiCrewEnv:
                 break
             next_tick = self.world.state.tick + 1
             if not self.warned and next_tick == self.multi.warning_tick:
-                for role in ROLES:
+                for role in self.roles:
                     self.world.degrade_wire(
                         self.role_wires[role],
                         self.failure_ticks[role],
@@ -248,7 +264,7 @@ class MultiCrewEnv:
     ) -> dict[str, Any] | None:
         if choice == 0:
             return None
-        role = ROLES[choice - 1]
+        role = self.roles[choice - 1]
         wire = self._wire(self.role_wires[role])
         return {
             "role": role,
@@ -343,7 +359,7 @@ class MultiCrewEnv:
             self.crew_b[0] / max(1, state.width - 1),
             self.crew_b[1] / max(1, state.height - 1),
         ]
-        for role in ROLES:
+        for role in self.roles:
             wire = self._wire(self.role_wires[role])
             state_value = 1.0 if wire.failed else 0.5 if wire.degraded else 0.0
             deadline = (
@@ -367,7 +383,7 @@ class MultiCrewEnv:
 
     def _info(self) -> dict[str, Any]:
         roles = {}
-        for role in ROLES:
+        for role in self.roles:
             wire = self._wire(self.role_wires[role])
             roles[role] = {
                 "wire_id": wire.id,

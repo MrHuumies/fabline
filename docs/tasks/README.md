@@ -44,6 +44,8 @@ Current tasks:
 - [Two-crew coordination](multi-crew.md) — parallel assignment of two crews to
   loop/small/large wires; two crews solve the deadline. The 40-seed robustness
   run gives nearest 255.5, greedy 245, Q 225.5, and oracle 260.
+- [Crew recall and replanning](crew-replan.md) — one crew is recalled; the
+  survivor recovers the abandoned bridge.
 - [Power allocation](power-allocation.md) — three-action priority scheduling
   under a tight generator budget.
 - [Fault + power interaction](fault-power.md) — four-action repair and priority

@@ -86,7 +86,7 @@ RL beyond the centralized two-crew assignment, and generative models.
 | Robustness / OOD | partial | scenario splits; stochastic power |
 | Uncertainty / calibration | partial | calibration metrics for stochastic power; maintenance forecasts uncalibrated |
 | Efficiency | partial | cost experiments; not in the public benchmark |
-| Multi-agent | partial | centralized two-crew assignment (debug); no per-agent policies, communication, or failure |
+| Multi-agent | partial | centralized two-crew assignment and recall/replanning (debug); no per-agent policies or communication |
 | Generative | absent | no layout/recipe generation task |
 
 ## Model-family map
@@ -103,7 +103,7 @@ RL beyond the centralized two-crew assignment, and generative models.
 | World model | action-conditioned rollout | not benchmarked | compounding error, stochasticity, constraints | planning benchmark |
 | Model-free RL | sequential credit assignment | small tabular/scripted tasks | sparse rewards, partial observability, multi-objective | deadlines, multi-agent |
 | Offline RL / BC | offline policy learning | scripted demos + BC | distribution shift, extrapolation, recovery | offline shift tasks |
-| Multi-agent RL | coordination/communication | centralized two-crew assignment (debug) | shared resources, partial views, agent failure | multi-agent workers |
+| Multi-agent RL | coordination/communication | centralized two-crew assignment and recall/replanning (debug) | shared resources, partial views, repeated failure | multi-agent workers |
 | Causal models | interventions and counterfactuals | bottleneck labels | delayed effects, confounding, multiple mechanisms | intervention tasks |
 | Generative models | distribution matching | none | validity, diversity, constraint satisfaction | layout/recipe generation |
 
@@ -200,8 +200,10 @@ pooled Q 225.5, oracle 260. The five-seed 0042 block was mildly optimistic, and
 nearest is near-ceiling; Q is the non-saturated baseline. A partial per-crew
 visibility pilot was negative: on the current layout visibility is binary
 (radius ≤10 hides the bridges; ≥14 is effectively omniscient), so it is not
-promoted (0043). Crew failure/replanning or larger/random layouts are the next
-P2 questions.
+promoted (0043). Crew recall/replanning (0045) is positive but shallow: the
+survivor's second dispatch is worth +154 over no-replan, but nearest is within
+6 points of oracle and tabular Q fails H4. Larger/random layouts or a factored
+recovery Q are the next P2 questions.
 
 The alternative remains:
 
@@ -280,8 +282,9 @@ generative layout/recipe tasks.
 - Does per-entity crew scheduling with travel produce a travel-aware gain, or is
   impact-only already sufficient?
 - Can multi-agent work on the current 16×8 layout? The centralized two-crew
-  assignment works (0042/0044), but partial per-crew visibility is binary on
-  this layout (0043); crew failure and larger layouts remain open.
+  assignment works (0042/0044) and one crew recall is recoverable (0045), but
+  partial per-crew visibility is binary on this layout (0043); repeated failure,
+  a learned recovery policy, and larger layouts remain open.
 - Which efficiency metrics belong in the public benchmark?
 - Should maintenance/repair forecasts get calibration metrics, or is power
   calibration enough?

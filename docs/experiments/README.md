@@ -59,6 +59,8 @@ retained for provenance.
 - [0044 — Crew seed robustness](0044-crew-robustness/summary.md) — 40 seeds:
   nearest 255.5, greedy 245, Q 225.5, oracle 260; the gain is robust but the
   five-seed block was mildly optimistic.
+- [0045 — Crew recall and replanning](0045-crew-replan/summary.md) — recovery
+  +154 over no-replan; nearest 254, greedy 259, Q 144.0 fails H4.
 
 The frozen benchmark is documented separately in
 [`benchmarks/factory-v0.1/card.md`](../../benchmarks/factory-v0.1/card.md).

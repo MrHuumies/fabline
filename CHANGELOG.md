@@ -16,6 +16,9 @@ are pinned separately; see [`benchmarks/factory-v0.1/card.md`](benchmarks/factor
 - Add a 40-seed robustness run for two-crew coordination: nearest 255.5,
   greedy 245, pooled Q 225.5, oracle 260; the coordination gain is robust, but
   the five-seed 0042 block was mildly optimistic (0044).
+- Add crew recall and replanning: the survivor's recovery dispatch is worth
+  +154 over no-replan (254 vs 100); nearest 254, greedy 259, tabular Q 144.0
+  fails the 0.85 gate (0045).
 
 ## [0.1.2] — 2026-11-22
 
