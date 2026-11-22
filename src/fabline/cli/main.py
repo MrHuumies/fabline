@@ -12,6 +12,7 @@ from fabline.env.control import ControlConfig
 from fabline.env.fault_power import FaultPowerConfig
 from fabline.env.fault_recovery import FaultRecoveryConfig
 from fabline.env.power_allocation import PowerAllocationConfig
+from fabline.env.preventive_wire import PreventiveWireConfig
 from fabline.env.wire_repair import WireRepairConfig
 from fabline.harness.data import load_dataset
 from fabline.harness.fault_power import (
@@ -32,6 +33,10 @@ from fabline.harness.power import run_power_benchmark
 from fabline.harness.power_allocation import (
     run_power_allocation,
     write_power_allocation_report,
+)
+from fabline.harness.preventive_wire import (
+    run_preventive_wire,
+    write_preventive_wire_report,
 )
 from fabline.harness.runner import run_throughput_benchmark
 from fabline.harness.shared_suite import SharedSuiteConfig, run_shared_suite
@@ -568,6 +573,60 @@ def cmd_wire_repair(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_wire_maintenance(args: argparse.Namespace) -> int:
+    config = FactoryConfig(
+        width=16,
+        height=8,
+        ticks_per_episode=500,
+        decision_interval=10,
+        entity_budget=32,
+        rock_density=0.0,
+        ore_patches=1,
+        starter_line=True,
+        emit_events=True,
+    )
+    preventive = PreventiveWireConfig(
+        episode_ticks=500,
+        decision_interval=10,
+        warning_tick=args.warning_tick,
+        failure_tick=args.failure_tick,
+        repair_ticks=args.repair_ticks,
+        repair_budget=args.repair_budget,
+        success_score=args.success_score,
+    )
+    seeds = tuple(int(value) for value in args.seeds.split(","))
+    results = run_preventive_wire(
+        config,
+        preventive,
+        episodes=args.episodes,
+        train_episodes=args.train_episodes,
+        seeds=seeds,
+        train_seed_start=args.train_seed_start,
+    )
+    report = write_preventive_wire_report(
+        args.out,
+        results,
+        config={
+            "warning_tick": args.warning_tick,
+            "failure_tick": args.failure_tick,
+            "repair_ticks": args.repair_ticks,
+            "repair_budget": args.repair_budget,
+            "success_score": args.success_score,
+            "seeds": list(seeds),
+            "train_episodes": args.train_episodes,
+            "train_seed_start": args.train_seed_start,
+        },
+    )
+    print(
+        json.dumps(
+            {"report": str(report), "results": results},
+            indent=2,
+            sort_keys=True,
+        )
+    )
+    return 0
+
+
 def cmd_replay(args: argparse.Namespace) -> int:
     config = load_config(args.config)
     replay = json.loads(Path(args.replay).read_text(encoding="utf-8"))
@@ -746,6 +805,24 @@ def build_parser() -> argparse.ArgumentParser:
     wire_repair.add_argument("--success-score", type=int, default=150)
     wire_repair.add_argument("--capacity", type=int, default=12)
     wire_repair.set_defaults(func=cmd_wire_repair)
+
+    wire_maintenance = subparsers.add_parser(
+        "wire-maintenance",
+        help="run the preventive wire-maintenance benchmark",
+    )
+    wire_maintenance.add_argument(
+        "--out", type=str, default="results/wire-maintenance"
+    )
+    wire_maintenance.add_argument("--episodes", type=int, default=5)
+    wire_maintenance.add_argument("--train-episodes", type=int, default=200)
+    wire_maintenance.add_argument("--seeds", type=str, default="0,1,2")
+    wire_maintenance.add_argument("--train-seed-start", type=int, default=6000)
+    wire_maintenance.add_argument("--warning-tick", type=int, default=60)
+    wire_maintenance.add_argument("--failure-tick", type=int, default=220)
+    wire_maintenance.add_argument("--repair-ticks", type=int, default=140)
+    wire_maintenance.add_argument("--repair-budget", type=int, default=1)
+    wire_maintenance.add_argument("--success-score", type=int, default=150)
+    wire_maintenance.set_defaults(func=cmd_wire_maintenance)
 
     replay = subparsers.add_parser("replay", help="validate a replay file")
     replay.add_argument("--replay", type=str, required=True)

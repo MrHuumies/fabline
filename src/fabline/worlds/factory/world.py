@@ -146,6 +146,8 @@ class FactoryWorld:
         if wire.failed:
             return False
         wire.failed = True
+        wire.degraded = False
+        wire.failure_tick = 0
         self._emit(
             "power_wire_fault",
             {
@@ -154,6 +156,28 @@ class FactoryWorld:
                 "ay": wire.ay,
                 "bx": wire.bx,
                 "by": wire.by,
+            },
+        )
+        return True
+
+    def degrade_wire(self, wire_id: int, failure_tick: int) -> bool:
+        """Mark a wire degraded with a scheduled failure tick."""
+
+        wire = next(
+            (item for item in self.state.power_wires if item.id == wire_id),
+            None,
+        )
+        if wire is None:
+            raise RuntimeError(f"wire {wire_id} does not exist")
+        if wire.failed or failure_tick <= self.state.tick:
+            return False
+        wire.degraded = True
+        wire.failure_tick = failure_tick
+        self._emit(
+            "power_wire_degraded",
+            {
+                "wire_id": wire.id,
+                "failure_tick": failure_tick,
             },
         )
         return True
@@ -167,9 +191,11 @@ class FactoryWorld:
         )
         if wire is None:
             raise RuntimeError(f"wire {wire_id} does not exist")
-        if not wire.failed:
+        if not wire.failed and not wire.degraded:
             return False
         wire.failed = False
+        wire.degraded = False
+        wire.failure_tick = 0
         self._emit(
             "power_wire_repair",
             {
@@ -194,11 +220,24 @@ class FactoryWorld:
             return
         self.fail_wire(self.power.wire_fault_id)
 
+    def _apply_wire_degradation(self) -> None:
+        """Fail any degraded wire whose scheduled failure tick arrived."""
+
+        for wire in self.state.power_wires:
+            if (
+                wire.degraded
+                and not wire.failed
+                and wire.failure_tick
+                and self.state.tick >= wire.failure_tick
+            ):
+                self.fail_wire(wire.id)
+
     def _power(self) -> None:
         """Allocate generator capacity and update powered/brownout state."""
 
         if not self.power.enabled:
             return
+        self._apply_wire_degradation()
         self._apply_wire_fault()
         entities = sorted(self.state.entities.values(), key=lambda item: item.id)
         previous = {entity.id: entity.powered for entity in entities}

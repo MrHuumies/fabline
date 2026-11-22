@@ -37,6 +37,8 @@ retained for provenance.
   vs noop 79; Q 212 with zero wasted repairs.
 - [0034 — Timed wire repair](0034-wire-repair-timed/summary.md) — Q matches
   outage-ranked repair 223.2; the repair-order gate fails.
+- [0035 — Preventive wire maintenance](0035-wire-maintenance/summary.md) —
+  early repair 260 vs reactive 185.6; Q learns prevention.
 
 The frozen benchmark is documented separately in
 [`benchmarks/factory-v0.1/card.md`](../../benchmarks/factory-v0.1/card.md).

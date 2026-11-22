@@ -77,6 +77,8 @@ class PowerWire:
     bx: int
     by: int
     failed: bool = False
+    degraded: bool = False
+    failure_tick: int = 0
 
     def cells(self) -> tuple[tuple[int, int], tuple[int, int]]:
         return (self.ax, self.ay), (self.bx, self.by)
@@ -220,6 +222,8 @@ class WorldState:
                     "bx": wire.bx,
                     "by": wire.by,
                     "failed": wire.failed,
+                    "degraded": wire.degraded,
+                    "failure_tick": wire.failure_tick,
                 }
                 for wire in sorted(self.power_wires, key=lambda item: item.id)
             ]

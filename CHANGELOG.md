@@ -12,6 +12,8 @@ are pinned separately; see [`benchmarks/factory-v0.1/card.md`](benchmarks/factor
   tabular Q 212 with zero wasted repairs (0033).
 - Add timed wire repair: Q matches outage-ranked repair at 223.2; repair time
   matters, repair order is not robust (0034).
+- Add preventive wire maintenance: early repair 260 vs reactive 185.6; Q learns
+  prevention from a degradation warning (0035).
 
 ## [0.1.1] — 2026-11-21
 

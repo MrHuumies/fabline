@@ -216,7 +216,9 @@ generative layout/recipe tasks.
   vs noop 79; tabular Q 212 with zero wasted repairs (0033). With 60-tick
   repairs, Q matches outage-ranked repair 223.2 and succeeds on every seed, but
   the repair-order gate fails (+2.4 vs +10); repair time matters, order is not
-  robust (0034). Crew travel, wire capacity, and multi-generator redundancy are
+  robust (0034). Preventive maintenance makes a warning actionable: early repair
+  260 vs reactive 185.6 vs noop 113.6; Q learns prevention on every seed (0035).
+  Noisy warnings, multi-wire scheduling, and machine-wear prevention are
   follow-ups.
 
 ## What not to add yet

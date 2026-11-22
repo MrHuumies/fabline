@@ -33,6 +33,8 @@ Current tasks:
   marked wire fault on a graph with loops and bridges.
 - [Wire repair](power-wire-repair.md) — prioritize budgeted wire repairs by
   restoration impact and skip zero-impact loops.
+- [Preventive wire maintenance](power-wire-maintenance.md) — start repair from a
+  degradation warning before the wire fails; late jobs abort.
 - [Power allocation](power-allocation.md) — three-action priority scheduling
   under a tight generator budget.
 - [Fault + power interaction](fault-power.md) — four-action repair and priority
