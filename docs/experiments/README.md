@@ -43,6 +43,8 @@ retained for provenance.
   score noise barely changes the preventive decision; not promoted.
 - [0037 — Preventive machine maintenance](0037-preventive-fault/summary.md) —
   threshold 250 vs noop 200; Q is unstable and H2 fails.
+- [0038 — Maintenance-threshold selection](0038-preventive-threshold/summary.md)
+  — threshold bandit 250 vs per-step Q 178.
 
 The frozen benchmark is documented separately in
 [`benchmarks/factory-v0.1/card.md`](../../benchmarks/factory-v0.1/card.md).

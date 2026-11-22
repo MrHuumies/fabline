@@ -222,7 +222,9 @@ generative layout/recipe tasks.
   follow-ups. A risk-score noise pilot found only a small prediction effect and
   is not promoted (0036). Preventive machine maintenance (0037) is a split
   result: threshold maintenance 250 vs noop 200, but Q collapses to
-  always-maintain on three of five seeds and H2 fails.
+  always-maintain on three of five seeds and H2 fails. A threshold meta-action
+  (0038) fixes the representation: UCB/epsilon select 0.7/0.8 and score 250,
+  +72 over per-step Q.
 
 ## What not to add yet
 

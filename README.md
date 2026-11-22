@@ -52,7 +52,8 @@ make render-install
   and control.
 - **Wired power (opt-in):** wire-edge graph with loops, bridge and loop faults,
   a cascade-size prediction task, budgeted wire repair with repair time, preventive wire maintenance from a degradation
-  warning, and preventive machine maintenance before wear faults.
+  warning, preventive machine maintenance before wear faults, and maintenance-threshold
+  selection.
 - **Partial observability:** feature dropout, grid fog, delayed observations,
   and a masked feature-window throughput task.
 - **Architecture baselines:** sequence models, grid CNN, and end-to-end MPNN

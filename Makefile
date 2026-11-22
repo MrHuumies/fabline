@@ -63,6 +63,9 @@ wire-maintenance:
 preventive-fault:
 	$(PY) -m fabline preventive-fault --out results/preventive-fault --episodes 5 --train-episodes 500 --seeds 400,401,402,403,404 --train-seed-start 7000
 
+preventive-threshold:
+	$(PY) -m fabline preventive-threshold --out results/preventive-threshold --train-episodes 50 --seeds 700,701,702,703,704 --train-seed-start 9000
+
 power-allocation-stochastic:
 	$(PY) -m fabline power-allocation --out results/power-allocation/stochastic --episodes 5 --train-episodes 100 --load-jitter 30 --capacity-jitter 20 --variation-period 20
 

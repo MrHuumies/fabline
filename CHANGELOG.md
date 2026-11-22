@@ -16,6 +16,8 @@ are pinned separately; see [`benchmarks/factory-v0.1/card.md`](benchmarks/factor
   prevention from a degradation warning (0035).
 - Add preventive machine maintenance: threshold 250 vs noop 200; Q is unstable
   and H2 fails (0037).
+- Add maintenance-threshold selection: UCB/epsilon score 250, +72 over
+  per-step Q (0038).
 
 ## [0.1.1] — 2026-11-21
 

@@ -13,6 +13,7 @@ from fabline.env.fault_power import FaultPowerConfig
 from fabline.env.fault_recovery import FaultRecoveryConfig
 from fabline.env.power_allocation import PowerAllocationConfig
 from fabline.env.preventive_fault import PreventiveFaultConfig
+from fabline.env.preventive_threshold import ThresholdConfig
 from fabline.env.preventive_wire import PreventiveWireConfig
 from fabline.env.wire_repair import WireRepairConfig
 from fabline.harness.data import load_dataset
@@ -38,6 +39,10 @@ from fabline.harness.power_allocation import (
 from fabline.harness.preventive_fault import (
     run_preventive_fault,
     write_preventive_fault_report,
+)
+from fabline.harness.preventive_threshold import (
+    run_threshold_selection,
+    write_threshold_report,
 )
 from fabline.harness.preventive_wire import (
     run_preventive_wire,
@@ -578,6 +583,32 @@ def cmd_wire_repair(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_preventive_threshold(args: argparse.Namespace) -> int:
+    config = FactoryConfig(
+        width=16,
+        height=8,
+        ticks_per_episode=500,
+        decision_interval=10,
+        entity_budget=32,
+        rock_density=0.0,
+        ore_patches=1,
+        starter_line=True,
+        emit_events=True,
+    )
+    threshold = ThresholdConfig(success_score=args.success_score)
+    seeds = tuple(int(value) for value in args.seeds.split(","))
+    payload = run_threshold_selection(
+        config,
+        threshold,
+        episodes=args.train_episodes,
+        seeds=seeds,
+        train_seed_start=args.train_seed_start,
+    )
+    report = write_threshold_report(args.out, payload)
+    print(json.dumps({"report": str(report), "results": payload}, indent=2, sort_keys=True))
+    return 0
+
+
 def cmd_preventive_fault(args: argparse.Namespace) -> int:
     config = FactoryConfig(
         width=16,
@@ -867,6 +898,23 @@ def build_parser() -> argparse.ArgumentParser:
     wire_repair.add_argument("--success-score", type=int, default=150)
     wire_repair.add_argument("--capacity", type=int, default=12)
     wire_repair.set_defaults(func=cmd_wire_repair)
+
+    preventive_threshold = subparsers.add_parser(
+        "preventive-threshold",
+        help="run the maintenance-threshold selection benchmark",
+    )
+    preventive_threshold.add_argument(
+        "--out", type=str, default="results/preventive-threshold"
+    )
+    preventive_threshold.add_argument("--train-episodes", type=int, default=50)
+    preventive_threshold.add_argument(
+        "--seeds", type=str, default="700,701,702,703,704"
+    )
+    preventive_threshold.add_argument(
+        "--train-seed-start", type=int, default=9000
+    )
+    preventive_threshold.add_argument("--success-score", type=int, default=240)
+    preventive_threshold.set_defaults(func=cmd_preventive_threshold)
 
     preventive_fault = subparsers.add_parser(
         "preventive-fault",

@@ -37,6 +37,8 @@ Current tasks:
   degradation warning before the wire fails; late jobs abort.
 - [Preventive machine maintenance](fault-preventive.md) — maintain a worn machine
   before the fault threshold; Q is unstable at the delayed trade.
+- [Maintenance-threshold selection](fault-preventive-threshold.md) — choose the
+  wear threshold once per episode; threshold bandit beats per-step Q.
 - [Power allocation](power-allocation.md) — three-action priority scheduling
   under a tight generator budget.
 - [Fault + power interaction](fault-power.md) — four-action repair and priority
