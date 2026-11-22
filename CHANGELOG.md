@@ -26,6 +26,8 @@ are pinned separately; see [`benchmarks/factory-v0.1/card.md`](benchmarks/factor
   Q fails; not promoted (0047).
 - Add a compact layout-aware Q: 422 vs old Q 233 and oracle 442; mean gate
   passes, success 0.50 misses 0.60 (0048).
+- Document a negative margin-aware Q pilot: slack bins fragment the table and
+  drop to 340-384; not promoted (0049).
 
 ## [0.1.2] — 2026-11-22
 

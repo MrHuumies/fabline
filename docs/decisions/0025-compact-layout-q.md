@@ -36,6 +36,7 @@ The learned baseline, not the mechanic, is the blocker.
 ## Follow-ups
 
 - [ ] Try a compact-state ensemble or value averaging.
-- [ ] Add coarse margin/slack features to reduce aliasing.
+- [x] Add coarse margin/slack features to reduce aliasing. Negative pilot 0049:
+  729 states fragment the table; do not promote.
 - [ ] Split A-deadline and B-recall limits before applying the state to 0047.
 - [ ] Keep `factory-v0.1` frozen.

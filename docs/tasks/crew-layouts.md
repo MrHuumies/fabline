@@ -91,7 +91,9 @@ Seeds 8000–8009; three compact-Q policies × 2000 layouts and three old polici
 
 Compact Q is 95.5% of oracle and +188.7 over old Q, but misses the 0.60 success
 gate. One Q seed matches oracle exactly; the other two score 424/0.50 and
-400/0.40. The representation is a large win but not a reliable H4 closure. See
+400/0.40. The representation is a large win but not a reliable H4 closure. A margin-aware
+state was a negative pilot (0049): slack bins fragment the table and drop to
+340–384. See
 [`experiments/0048-crew-layout-q`](../experiments/0048-crew-layout-q/summary.md).
 
 ## Known pitfalls

@@ -67,6 +67,8 @@ retained for provenance.
   — recovery +240, but oracle-greedy +9 misses H3; Q fails; not promoted.
 - [0048 — Compact layout-aware Q](0048-crew-layout-q/summary.md) — 422 vs old
   Q 233 and oracle 442; mean gate passes, success 0.50 misses 0.60.
+- [0049 — Margin-aware Q pilot](0049-margin-q-pilot/summary.md) — pilot
+  negative; slack bins fragment the table; not promoted.
 
 The frozen benchmark is documented separately in
 [`benchmarks/factory-v0.1/card.md`](../../benchmarks/factory-v0.1/card.md).
