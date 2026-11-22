@@ -5,19 +5,29 @@ are pinned separately; see [`benchmarks/factory-v0.1/card.md`](benchmarks/factor
 
 ## [Unreleased]
 
-- Add opt-in wired power: wire-edge graph with loops, bridge/loop faults, and a
-  cascade-size task. `graph_mp` R² 0.431 vs vector 0.264 (0032).
-- Add the wired cascade dataset and task cards.
-- Add budgeted wire repair control: outage-ranked repair 260 vs noop 79;
-  tabular Q 212 with zero wasted repairs (0033).
-- Add timed wire repair: Q matches outage-ranked repair at 223.2; repair time
-  matters, repair order is not robust (0034).
-- Add preventive wire maintenance: early repair 260 vs reactive 185.6; Q learns
-  prevention from a degradation warning (0035).
-- Add preventive machine maintenance: threshold 250 vs noop 200; Q is unstable
-  and H2 fails (0037).
-- Add maintenance-threshold selection: UCB/epsilon score 250, +72 over
-  per-step Q (0038).
+## [0.1.2] — 2026-11-22
+
+P1 wired power and preventive maintenance. The frozen `factory-v0.1` benchmark is
+unchanged.
+
+### Wired power
+
+- opt-in wire-edge topology with loops, bridge/loop faults, and cascade-size
+  prediction (0032);
+- budgeted wire repair (0033) and timed repair (0034);
+- preventive wire maintenance from a degradation warning (0035).
+
+### Preventive maintenance
+
+- machine-wear maintenance before the fault threshold (0037);
+- maintenance-threshold selection (0038);
+- pilot negatives for risk-score noise (0036) and contextual thresholds (0039).
+
+### Tooling and docs
+
+- new CLI commands: `wire-repair`, `wire-maintenance`, `preventive-fault`, and
+  `preventive-threshold`;
+- RFCs 0007–0009, ADRs 0017–0019, task and dataset cards.
 
 ## [0.1.1] — 2026-11-21
 
