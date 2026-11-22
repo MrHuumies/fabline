@@ -45,6 +45,8 @@ retained for provenance.
   threshold 250 vs noop 200; Q is unstable and H2 fails.
 - [0038 — Maintenance-threshold selection](0038-preventive-threshold/summary.md)
   — threshold bandit 250 vs per-step Q 178.
+- [0039 — Contextual threshold pilot](0039-context-threshold-pilot/summary.md) —
+  pilot negative; only +5 over the best fixed arm.
 
 The frozen benchmark is documented separately in
 [`benchmarks/factory-v0.1/card.md`](../../benchmarks/factory-v0.1/card.md).
