@@ -220,7 +220,9 @@ generative layout/recipe tasks.
   260 vs reactive 185.6 vs noop 113.6; Q learns prevention on every seed (0035).
   Noisy warnings, multi-wire scheduling, and machine-wear prevention are
   follow-ups. A risk-score noise pilot found only a small prediction effect and
-  is not promoted (0036).
+  is not promoted (0036). Preventive machine maintenance (0037) is a split
+  result: threshold maintenance 250 vs noop 200, but Q collapses to
+  always-maintain on three of five seeds and H2 fails.
 
 ## What not to add yet
 

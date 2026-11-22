@@ -41,6 +41,8 @@ retained for provenance.
   early repair 260 vs reactive 185.6; Q learns prevention.
 - [0036 — Risk-score pilot](0036-risk-score-pilot/summary.md) — pilot negative;
   score noise barely changes the preventive decision; not promoted.
+- [0037 — Preventive machine maintenance](0037-preventive-fault/summary.md) —
+  threshold 250 vs noop 200; Q is unstable and H2 fails.
 
 The frozen benchmark is documented separately in
 [`benchmarks/factory-v0.1/card.md`](../../benchmarks/factory-v0.1/card.md).

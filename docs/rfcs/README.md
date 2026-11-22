@@ -11,3 +11,4 @@ One RFC per new mechanic or major world change. Use
 - [0006 — Stochastic power variation](0006-stochastic-power.md)
 - [0007 — Wired power topology and cascades](0007-wired-power.md)
 - [0008 — Preventive wire maintenance](0008-preventive-wire.md)
+- [0009 — Preventive machine maintenance](0009-preventive-maintenance.md)

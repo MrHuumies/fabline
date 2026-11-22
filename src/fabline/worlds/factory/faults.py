@@ -17,6 +17,7 @@ class FaultConfig:
     miner_wear_per_ore: int = 0
     fault_threshold: int = 20
     repair_ticks: int = 30
+    maintenance_ticks: int = 10
 
     def __post_init__(self) -> None:
         if self.wear_per_craft < 0 or self.miner_wear_per_ore < 0:
@@ -25,6 +26,8 @@ class FaultConfig:
             raise ValueError("fault_threshold must be positive")
         if self.repair_ticks <= 0:
             raise ValueError("repair_ticks must be positive")
+        if self.maintenance_ticks <= 0:
+            raise ValueError("maintenance_ticks must be positive")
 
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> FaultConfig:

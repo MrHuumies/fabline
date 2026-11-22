@@ -14,6 +14,8 @@ are pinned separately; see [`benchmarks/factory-v0.1/card.md`](benchmarks/factor
   matters, repair order is not robust (0034).
 - Add preventive wire maintenance: early repair 260 vs reactive 185.6; Q learns
   prevention from a degradation warning (0035).
+- Add preventive machine maintenance: threshold 250 vs noop 200; Q is unstable
+  and H2 fails (0037).
 
 ## [0.1.1] — 2026-11-21
 

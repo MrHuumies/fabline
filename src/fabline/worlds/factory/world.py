@@ -331,8 +331,36 @@ class FactoryWorld:
             or self.power.scaled_demand(entity, self._load_factor()) == 0
         )
 
+    def maintain_entity(self, entity: Entity) -> bool:
+        """Take a non-faulted machine offline for preventive maintenance."""
+
+        if entity.faulted or entity.maintenance_remaining > 0:
+            return False
+        entity.maintenance_remaining = self.faults.maintenance_ticks
+        self._emit(
+            "maintenance_started",
+            {"entity_id": entity.id, "type": entity.type.name},
+        )
+        return True
+
+    def _maintenance(self) -> None:
+        for entity in sorted(
+            self.state.entities.values(), key=lambda item: item.id
+        ):
+            if entity.maintenance_remaining <= 0:
+                continue
+            entity.maintenance_remaining -= 1
+            if entity.maintenance_remaining == 0:
+                entity.wear = 0
+                self._emit(
+                    "maintenance_completed",
+                    {"entity_id": entity.id, "type": entity.type.name},
+                )
+
     def _machines(self) -> None:
         for entity in sorted(self.state.entities.values(), key=lambda item: item.id):
+            if entity.maintenance_remaining > 0:
+                continue
             if entity.type is EntityType.MINER:
                 if self._fault_tick(entity):
                     continue
@@ -539,6 +567,7 @@ class FactoryWorld:
             )
 
     def _finish_tick(self) -> None:
+        self._maintenance()
         self.state.history.append(
             (
                 self.state.tick,

@@ -99,6 +99,7 @@ class Entity:
     wear: int = 0
     faulted: bool = False
     repair_progress: int = 0
+    maintenance_remaining: int = 0
     temperature: int = 0
     vibration: int = 0
     acoustic: int = 0
@@ -129,6 +130,7 @@ class Entity:
             self.wear
             or self.faulted
             or self.repair_progress
+            or self.maintenance_remaining
             or self.temperature
             or self.vibration
             or self.acoustic
@@ -138,6 +140,7 @@ class Entity:
             result["wear"] = self.wear
             result["faulted"] = self.faulted
             result["repair_progress"] = self.repair_progress
+            result["maintenance_remaining"] = self.maintenance_remaining
             result["temperature"] = self.temperature
             result["vibration"] = self.vibration
             result["acoustic"] = self.acoustic

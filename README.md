@@ -51,8 +51,8 @@ make render-install
 - **Stochastic power:** seeded load/capacity variation for uncertain prediction
   and control.
 - **Wired power (opt-in):** wire-edge graph with loops, bridge and loop faults,
-  a cascade-size prediction task, budgeted wire repair with repair time, and
-  preventive maintenance from a degradation warning.
+  a cascade-size prediction task, budgeted wire repair with repair time, preventive wire maintenance from a degradation
+  warning, and preventive machine maintenance before wear faults.
 - **Partial observability:** feature dropout, grid fog, delayed observations,
   and a masked feature-window throughput task.
 - **Architecture baselines:** sequence models, grid CNN, and end-to-end MPNN

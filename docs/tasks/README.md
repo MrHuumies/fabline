@@ -35,6 +35,8 @@ Current tasks:
   restoration impact and skip zero-impact loops.
 - [Preventive wire maintenance](power-wire-maintenance.md) — start repair from a
   degradation warning before the wire fails; late jobs abort.
+- [Preventive machine maintenance](fault-preventive.md) — maintain a worn machine
+  before the fault threshold; Q is unstable at the delayed trade.
 - [Power allocation](power-allocation.md) — three-action priority scheduling
   under a tight generator budget.
 - [Fault + power interaction](fault-power.md) — four-action repair and priority

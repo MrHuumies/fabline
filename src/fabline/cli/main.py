@@ -12,6 +12,7 @@ from fabline.env.control import ControlConfig
 from fabline.env.fault_power import FaultPowerConfig
 from fabline.env.fault_recovery import FaultRecoveryConfig
 from fabline.env.power_allocation import PowerAllocationConfig
+from fabline.env.preventive_fault import PreventiveFaultConfig
 from fabline.env.preventive_wire import PreventiveWireConfig
 from fabline.env.wire_repair import WireRepairConfig
 from fabline.harness.data import load_dataset
@@ -33,6 +34,10 @@ from fabline.harness.power import run_power_benchmark
 from fabline.harness.power_allocation import (
     run_power_allocation,
     write_power_allocation_report,
+)
+from fabline.harness.preventive_fault import (
+    run_preventive_fault,
+    write_preventive_fault_report,
 )
 from fabline.harness.preventive_wire import (
     run_preventive_wire,
@@ -573,6 +578,63 @@ def cmd_wire_repair(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_preventive_fault(args: argparse.Namespace) -> int:
+    config = FactoryConfig(
+        width=16,
+        height=8,
+        ticks_per_episode=500,
+        decision_interval=10,
+        entity_budget=32,
+        rock_density=0.0,
+        ore_patches=1,
+        starter_line=True,
+        emit_events=True,
+    )
+    faults = FaultConfig(
+        enabled=True,
+        wear_per_craft=1,
+        fault_threshold=args.fault_threshold,
+        repair_ticks=args.repair_ticks,
+        maintenance_ticks=args.maintenance_ticks,
+    )
+    preventive = PreventiveFaultConfig(
+        episode_ticks=500,
+        decision_interval=10,
+        success_score=args.success_score,
+        faults=faults,
+    )
+    seeds = tuple(int(value) for value in args.seeds.split(","))
+    results = run_preventive_fault(
+        config,
+        preventive,
+        episodes=args.episodes,
+        train_episodes=args.train_episodes,
+        seeds=seeds,
+        train_seed_start=args.train_seed_start,
+    )
+    report = write_preventive_fault_report(
+        args.out,
+        results,
+        config={
+            "fault_threshold": args.fault_threshold,
+            "repair_ticks": args.repair_ticks,
+            "maintenance_ticks": args.maintenance_ticks,
+            "success_score": args.success_score,
+            "seeds": list(seeds),
+            "train_episodes": args.train_episodes,
+            "train_seed_start": args.train_seed_start,
+        },
+    )
+    print(
+        json.dumps(
+            {"report": str(report), "results": results},
+            indent=2,
+            sort_keys=True,
+        )
+    )
+    return 0
+
+
 def cmd_wire_maintenance(args: argparse.Namespace) -> int:
     config = FactoryConfig(
         width=16,
@@ -805,6 +867,23 @@ def build_parser() -> argparse.ArgumentParser:
     wire_repair.add_argument("--success-score", type=int, default=150)
     wire_repair.add_argument("--capacity", type=int, default=12)
     wire_repair.set_defaults(func=cmd_wire_repair)
+
+    preventive_fault = subparsers.add_parser(
+        "preventive-fault",
+        help="run the preventive machine-maintenance benchmark",
+    )
+    preventive_fault.add_argument(
+        "--out", type=str, default="results/preventive-fault"
+    )
+    preventive_fault.add_argument("--episodes", type=int, default=5)
+    preventive_fault.add_argument("--train-episodes", type=int, default=500)
+    preventive_fault.add_argument("--seeds", type=str, default="0,1,2")
+    preventive_fault.add_argument("--train-seed-start", type=int, default=7000)
+    preventive_fault.add_argument("--fault-threshold", type=int, default=20)
+    preventive_fault.add_argument("--repair-ticks", type=int, default=60)
+    preventive_fault.add_argument("--maintenance-ticks", type=int, default=10)
+    preventive_fault.add_argument("--success-score", type=int, default=240)
+    preventive_fault.set_defaults(func=cmd_preventive_fault)
 
     wire_maintenance = subparsers.add_parser(
         "wire-maintenance",
