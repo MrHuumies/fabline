@@ -2,7 +2,7 @@
 
 - **Task ID:** `factory.power.crew-schedule.v1`
 - **Version:** 0.1.0
-- **Status:** P1 debug task; implementation pending; not in `factory-v0.1`
+- **Status:** P1 debug task; formal run complete; not in `factory-v0.1`
 - **World:** factory-0.1.0 with opt-in wired power
 - **Owner:** FABLINE
 - **Date:** 2026-11-22
@@ -22,7 +22,7 @@ spatial. A far large bridge and a near small bridge create a real trade.
 - **Crew:** one position, starts at the depot.
 - **Travel:** 2 ticks per Manhattan cell to the nearest wire endpoint.
 - **Service:** 40 ticks.
-- **Warnings:** tick 40; failures at 220/280/340.
+- **Warnings:** tick 40; failures at 90/120/150.
 - **Budget:** 2 jobs for 3 wires.
 - **Reward:** time-weighted prevented/restored outage.
 - **Outcome:** production score; success threshold set in the pilot.
@@ -42,6 +42,7 @@ spatial. A far large bridge and a near small bridge create a real trade.
 | noop | never service |
 | impact_only | largest positive outage |
 | nearest | nearest positive outage |
+| earliest_deadline | earliest failure tick among positive wires |
 | travel_aware | outage per service tick |
 | oracle | best two-wire order |
 | random | uniform legal action |
@@ -59,6 +60,23 @@ See [`experiments/0040-crew-schedule`](../experiments/0040-crew-schedule/preregi
 | H4 Q quality | Q ≥ 0.85 × best; success ≥ 0.80 |
 | H5 budget | report travel/abort/service counts |
 
+## Results (0040)
+
+Seeds 800–804, 5 episodes each; success ≥ 150.
+
+| policy | score | prevented | travel | success |
+|---|---:|---:|---:|---:|
+| noop | 56.8 | 0.0 | 0.0 | 0.00 |
+| impact_only | 62.4 | 1.0 | 16.7 | 0.00 |
+| nearest | 223.2 | 1.8 | 14.0 | 0.80 |
+| earliest_deadline | **260.0** | 2.0 | 14.4 | **1.00** |
+| oracle | **260.0** | 2.0 | 14.0 | **1.00** |
+| tabular Q | 156.4 | 1.24 | 16.4 | 0.52 |
+
+H1–H3 and H5 pass; **H4 fails** because Q does not learn the deadline/order
+policy. The travel gain is +197.6, so P1 is not retired. See
+[`experiments/0040-crew-schedule`](../experiments/0040-crew-schedule/summary.md).
+
 ## Known pitfalls
 
 - **Atomic jobs.** Travel and service are one action; continuous movement is a
@@ -73,3 +91,4 @@ See [`experiments/0040-crew-schedule`](../experiments/0040-crew-schedule/preregi
 ## Changelog
 
 - 2026-11-22 — card created; mechanic and gates preregistered.
+- 2026-11-22 — formal run: EDF 260 vs impact 62; Q 156, H4 fails.

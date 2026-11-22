@@ -9,6 +9,7 @@ from pathlib import Path
 
 from fabline import __version__
 from fabline.env.control import ControlConfig
+from fabline.env.crew_schedule import CrewScheduleConfig
 from fabline.env.fault_power import FaultPowerConfig
 from fabline.env.fault_recovery import FaultRecoveryConfig
 from fabline.env.power_allocation import PowerAllocationConfig
@@ -16,6 +17,10 @@ from fabline.env.preventive_fault import PreventiveFaultConfig
 from fabline.env.preventive_threshold import ThresholdConfig
 from fabline.env.preventive_wire import PreventiveWireConfig
 from fabline.env.wire_repair import WireRepairConfig
+from fabline.harness.crew_schedule import (
+    run_crew_schedule,
+    write_crew_report,
+)
 from fabline.harness.data import load_dataset
 from fabline.harness.fault_power import (
     run_fault_power,
@@ -583,6 +588,56 @@ def cmd_wire_repair(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_crew_schedule(args: argparse.Namespace) -> int:
+    config = FactoryConfig(
+        width=16,
+        height=8,
+        ticks_per_episode=500,
+        decision_interval=10,
+        entity_budget=32,
+        rock_density=0.0,
+        ore_patches=1,
+        starter_line=True,
+        emit_events=True,
+    )
+    crew = CrewScheduleConfig(
+        episode_ticks=500,
+        decision_interval=10,
+        loop_failure_tick=args.loop_failure,
+        small_failure_tick=args.small_failure,
+        large_failure_tick=args.large_failure,
+        repair_budget=args.repair_budget,
+        success_score=args.success_score,
+    )
+    seeds = tuple(int(value) for value in args.seeds.split(","))
+    results = run_crew_schedule(
+        config,
+        crew,
+        episodes=args.episodes,
+        train_episodes=args.train_episodes,
+        seeds=seeds,
+        train_seed_start=args.train_seed_start,
+    )
+    report = write_crew_report(
+        args.out,
+        results,
+        config={
+            "warning_tick": crew.warning_tick,
+            "loop_failure_tick": crew.loop_failure_tick,
+            "small_failure_tick": crew.small_failure_tick,
+            "large_failure_tick": crew.large_failure_tick,
+            "repair_budget": crew.repair_budget,
+            "repair_ticks": crew.repair_ticks,
+            "success_score": crew.success_score,
+            "seeds": list(seeds),
+            "train_episodes": args.train_episodes,
+            "train_seed_start": args.train_seed_start,
+        },
+    )
+    print(json.dumps({"report": str(report), "results": results}, indent=2, sort_keys=True))
+    return 0
+
+
 def cmd_preventive_threshold(args: argparse.Namespace) -> int:
     config = FactoryConfig(
         width=16,
@@ -898,6 +953,22 @@ def build_parser() -> argparse.ArgumentParser:
     wire_repair.add_argument("--success-score", type=int, default=150)
     wire_repair.add_argument("--capacity", type=int, default=12)
     wire_repair.set_defaults(func=cmd_wire_repair)
+
+    crew_schedule = subparsers.add_parser(
+        "crew-schedule",
+        help="run the crew repair scheduling benchmark",
+    )
+    crew_schedule.add_argument("--out", type=str, default="results/crew-schedule")
+    crew_schedule.add_argument("--episodes", type=int, default=5)
+    crew_schedule.add_argument("--train-episodes", type=int, default=500)
+    crew_schedule.add_argument("--seeds", type=str, default="800,801,802,803,804")
+    crew_schedule.add_argument("--train-seed-start", type=int, default=12000)
+    crew_schedule.add_argument("--loop-failure", type=int, default=90)
+    crew_schedule.add_argument("--small-failure", type=int, default=120)
+    crew_schedule.add_argument("--large-failure", type=int, default=150)
+    crew_schedule.add_argument("--repair-budget", type=int, default=2)
+    crew_schedule.add_argument("--success-score", type=int, default=150)
+    crew_schedule.set_defaults(func=cmd_crew_schedule)
 
     preventive_threshold = subparsers.add_parser(
         "preventive-threshold",

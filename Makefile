@@ -66,6 +66,9 @@ preventive-fault:
 preventive-threshold:
 	$(PY) -m fabline preventive-threshold --out results/preventive-threshold --train-episodes 50 --seeds 700,701,702,703,704 --train-seed-start 9000
 
+crew-schedule:
+	$(PY) -m fabline crew-schedule --out results/crew-schedule --episodes 5 --train-episodes 500 --seeds 800,801,802,803,804 --train-seed-start 15000
+
 power-allocation-stochastic:
 	$(PY) -m fabline power-allocation --out results/power-allocation/stochastic --episodes 5 --train-episodes 100 --load-jitter 30 --capacity-jitter 20 --variation-period 20
 

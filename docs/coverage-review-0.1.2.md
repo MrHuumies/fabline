@@ -159,3 +159,13 @@ Update the [coverage map](coverage-map.md) and the private roadmap when this
 review's recommendations are accepted or rejected. Keep the public
 `v0.1.2` release frozen; new mechanics go on `main` and wait for the next
 release.
+
+
+## Postscript — experiment 0040
+
+The recommended crew slice ran. Earliest-deadline-first scores **260** vs
+impact-only **62.4**; nearest scores 223.2; the oracle is 260. The travel kill
+rule does **not** trigger. Tabular Q scores 156.4 and fails H4, so the remaining
+blocker is the learned baseline, not the spatial mechanic. Do not add another
+scripted layer before fixing Q with deadline/role features or a semi-MDP service
+option.

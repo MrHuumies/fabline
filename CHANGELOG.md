@@ -6,6 +6,8 @@ are pinned separately; see [`benchmarks/factory-v0.1/card.md`](benchmarks/factor
 ## [Unreleased]
 
 - Add the 0.1.2 coverage review and next-slice recommendation.
+- Add crew repair scheduling with travel: earliest-deadline-first 260 vs
+  impact-only 62.4; Q fails (156.4).
 
 ## [0.1.2] — 2026-11-22
 

@@ -181,8 +181,9 @@ maintenance-threshold selection (0038). The risk-score noise (0036) and
 contextual-threshold (0039) pilots were negative and are not promoted.
 
 The remaining P1 question is **spatial scheduling with one crew and travel
-time**. It is preregistered as experiment 0040 (RFC 0010, ADR 0020). If it does
-not produce a meaningful travel-aware gain, stop P1 and move to P2.
+time**. It ran as experiment 0040 (RFC 0010, ADR 0020): earliest-deadline-first 260 vs
+impact-only 62.4, nearest 223.2, oracle 260. The travel gain clears the kill
+rule; tabular Q fails (156.4), so the learned baseline is the remaining blocker.
 
 The alternative remains:
 

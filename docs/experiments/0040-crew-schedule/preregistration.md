@@ -1,6 +1,6 @@
 # Experiment 0040 — Crew scheduling with travel time
 
-- **Status:** preregistered; implementation pending
+- **Status:** complete (H4 fails; see [`summary.md`](summary.md))
 - **Date:** 2026-11-22
 - **Type:** P1 phase 1D spatial-scheduling experiment
 - **Mechanic:** one repair crew, travel + service time (RFC 0010, ADR 0020)
@@ -21,7 +21,7 @@ a two-job budget.
 
 - Gear line, wired power, one generator, capacity 12.
 - Target roles: zero-impact loop, small bridge, large bridge.
-- Warnings at tick 40; failures at 220 (loop), 280 (small), 340 (large).
+- Warnings at tick 40; failures at 90 (loop), 120 (small), 150 (large).
 - Service time: 2 × Manhattan travel from the crew to the nearest endpoint,
   plus 40 repair ticks.
 - Crew starts at the depot.
@@ -38,6 +38,7 @@ a two-job budget.
 | noop | never service |
 | impact_only | service the largest positive outage |
 | nearest | service the nearest positive outage |
+| earliest_deadline | service the positive wire with the earliest failure tick |
 | travel_aware | maximize outage per service tick |
 | oracle | best two-wire order by simulation |
 | random | uniform legal action |
@@ -54,7 +55,7 @@ a two-job budget.
 
 | Gate | Threshold |
 |---|---|
-| H1 travel gain | best travel-aware scripted ≥ impact_only + 5 |
+| H1 travel gain | best spatial scripted (EDF or nearest) ≥ impact_only + 5 |
 | H2 oracle gain | oracle ≥ impact_only + 10 |
 | H3 order sensitivity | travel-aware order/subset differs from impact-only on ≥3/5 seeds |
 | H4 Q quality | Q ≥ 0.85 × best scripted; success ≥ 0.80 |
@@ -73,14 +74,12 @@ review recommends.
 
 ## Predictions
 
-- Impact-only often chooses the far large bridge; nearest chooses the near small
-  bridge.
-- Travel-aware and oracle should win by 5–15 points if the spatial trade is
-  real.
-- Some seeds will have the large bridge near, making impact-only optimal; the
-  order-sensitivity gate counts those.
-- Q may need a small spatial state; if it fails, the scripted result still
-  decides the kill rule.
+- Impact-only often chooses the far large bridge and misses the small deadline.
+- Nearest improves on impact-only but can still choose the wrong order.
+- Earliest-deadline-first should match the oracle: small bridge at 120, then
+  large at 150.
+- Q may need a larger spatial/deadline state; if it fails, the scripted result
+  still decides the kill rule.
 
 ## Artifacts
 
