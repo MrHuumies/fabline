@@ -169,7 +169,9 @@ class FactoryWorld:
         )
         if wire is None:
             raise RuntimeError(f"wire {wire_id} does not exist")
-        if wire.failed or failure_tick <= self.state.tick:
+        if wire.failed or (
+            failure_tick != 0 and failure_tick <= self.state.tick
+        ):
             return False
         wire.degraded = True
         wire.failure_tick = failure_tick

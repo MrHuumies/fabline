@@ -219,7 +219,8 @@ generative layout/recipe tasks.
   robust (0034). Preventive maintenance makes a warning actionable: early repair
   260 vs reactive 185.6 vs noop 113.6; Q learns prevention on every seed (0035).
   Noisy warnings, multi-wire scheduling, and machine-wear prevention are
-  follow-ups.
+  follow-ups. A risk-score noise pilot found only a small prediction effect and
+  is not promoted (0036).
 
 ## What not to add yet
 

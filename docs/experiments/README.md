@@ -39,6 +39,8 @@ retained for provenance.
   outage-ranked repair 223.2; the repair-order gate fails.
 - [0035 — Preventive wire maintenance](0035-wire-maintenance/summary.md) —
   early repair 260 vs reactive 185.6; Q learns prevention.
+- [0036 — Risk-score pilot](0036-risk-score-pilot/summary.md) — pilot negative;
+  score noise barely changes the preventive decision; not promoted.
 
 The frozen benchmark is documented separately in
 [`benchmarks/factory-v0.1/card.md`](../../benchmarks/factory-v0.1/card.md).
