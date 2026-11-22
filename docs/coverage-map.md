@@ -193,13 +193,15 @@ The alternative remains:
 
 ### P2 — one new mechanic
 
-Choose **one**:
+**Started: multi-agent coordination.** A two-crew parallel repair assignment
+(0042) passes: two crews score 260 vs single-crew 60; Q 260. The formal seeds
+make the assignment easy, so this is a positive but shallow slice. The next P2
+questions are partial per-crew views, communication limits, and crew failure.
 
-- **Multi-agent workers/vehicles:** shared resources, partial views,
-  communication limits, and agent failure. This is the biggest orthogonal
-  addition.
-- **Routing/trains/long-distance logistics:** long-horizon planning and
-  nonlocal dependencies.
+The alternative remains:
+
+- **Larger/random layouts:** scale and layout-shift splits.
+- **Routing/trains/long-distance logistics:** long-horizon planning.
 
 ### P3 — optional
 

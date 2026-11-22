@@ -12,6 +12,7 @@ from fabline.env.control import ControlConfig
 from fabline.env.crew_schedule import CrewScheduleConfig
 from fabline.env.fault_power import FaultPowerConfig
 from fabline.env.fault_recovery import FaultRecoveryConfig
+from fabline.env.multi_crew import MultiCrewConfig
 from fabline.env.power_allocation import PowerAllocationConfig
 from fabline.env.preventive_fault import PreventiveFaultConfig
 from fabline.env.preventive_threshold import ThresholdConfig
@@ -35,6 +36,10 @@ from fabline.harness.human_demos import (
     make_scripted_demos,
     train_human_bc,
     write_human_bc_report,
+)
+from fabline.harness.multi_crew import (
+    run_multi_crew,
+    write_multi_crew_report,
 )
 from fabline.harness.power import run_power_benchmark
 from fabline.harness.power_allocation import (
@@ -588,6 +593,53 @@ def cmd_wire_repair(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_multi_crew(args: argparse.Namespace) -> int:
+    config = FactoryConfig(
+        width=16,
+        height=8,
+        ticks_per_episode=500,
+        decision_interval=10,
+        entity_budget=32,
+        rock_density=0.0,
+        ore_patches=1,
+        starter_line=True,
+        emit_events=True,
+    )
+    multi = MultiCrewConfig(
+        episode_ticks=500,
+        decision_interval=10,
+        loop_failure_tick=args.loop_failure,
+        small_failure_tick=args.small_failure,
+        large_failure_tick=args.large_failure,
+        success_score=args.success_score,
+    )
+    seeds = tuple(int(value) for value in args.seeds.split(","))
+    results = run_multi_crew(
+        config,
+        multi,
+        episodes=args.episodes,
+        train_episodes=args.train_episodes,
+        seeds=seeds,
+        train_seed_start=args.train_seed_start,
+    )
+    report = write_multi_crew_report(
+        args.out,
+        results,
+        config={
+            "warning_tick": multi.warning_tick,
+            "loop_failure_tick": multi.loop_failure_tick,
+            "small_failure_tick": multi.small_failure_tick,
+            "large_failure_tick": multi.large_failure_tick,
+            "success_score": multi.success_score,
+            "seeds": list(seeds),
+            "train_episodes": args.train_episodes,
+            "train_seed_start": args.train_seed_start,
+        },
+    )
+    print(json.dumps({"report": str(report), "results": results}, indent=2, sort_keys=True))
+    return 0
+
+
 def cmd_crew_schedule(args: argparse.Namespace) -> int:
     config = FactoryConfig(
         width=16,
@@ -953,6 +1005,23 @@ def build_parser() -> argparse.ArgumentParser:
     wire_repair.add_argument("--success-score", type=int, default=150)
     wire_repair.add_argument("--capacity", type=int, default=12)
     wire_repair.set_defaults(func=cmd_wire_repair)
+
+    multi_crew = subparsers.add_parser(
+        "multi-crew",
+        help="run the two-crew repair coordination benchmark",
+    )
+    multi_crew.add_argument("--out", type=str, default="results/multi-crew")
+    multi_crew.add_argument("--episodes", type=int, default=5)
+    multi_crew.add_argument("--train-episodes", type=int, default=500)
+    multi_crew.add_argument(
+        "--seeds", type=str, default="1000,1001,1002,1003,1004"
+    )
+    multi_crew.add_argument("--train-seed-start", type=int, default=30000)
+    multi_crew.add_argument("--loop-failure", type=int, default=90)
+    multi_crew.add_argument("--small-failure", type=int, default=110)
+    multi_crew.add_argument("--large-failure", type=int, default=130)
+    multi_crew.add_argument("--success-score", type=int, default=150)
+    multi_crew.set_defaults(func=cmd_multi_crew)
 
     crew_schedule = subparsers.add_parser(
         "crew-schedule",

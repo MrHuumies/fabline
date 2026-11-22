@@ -51,6 +51,8 @@ retained for provenance.
   repair 260 vs impact-only 62; the original Q fails (156).
 - [0041 — Deadline-aware Q](0041-crew-q/summary.md) — 253.2, 1.00 success,
   +117 over the old Q.
+- [0042 — Two-crew coordination](0042-multi-crew/summary.md) — two crews 260
+  vs single-crew 60; the formal assignment is easy.
 
 The frozen benchmark is documented separately in
 [`benchmarks/factory-v0.1/card.md`](../../benchmarks/factory-v0.1/card.md).

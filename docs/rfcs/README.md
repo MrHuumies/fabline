@@ -13,3 +13,4 @@ One RFC per new mechanic or major world change. Use
 - [0008 — Preventive wire maintenance](0008-preventive-wire.md)
 - [0009 — Preventive machine maintenance](0009-preventive-maintenance.md)
 - [0010 — Crew travel and repair scheduling](0010-crew-travel.md)
+- [0011 — Multi-crew repair coordination](0011-multi-crew.md)
