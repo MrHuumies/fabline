@@ -48,7 +48,9 @@ retained for provenance.
 - [0039 — Contextual threshold pilot](0039-context-threshold-pilot/summary.md) —
   pilot negative; only +5 over the best fixed arm.
 - [0040 — Crew scheduling](0040-crew-schedule/summary.md) — deadline-aware
-  repair 260 vs impact-only 62; Q fails (156).
+  repair 260 vs impact-only 62; the original Q fails (156).
+- [0041 — Deadline-aware Q](0041-crew-q/summary.md) — 253.2, 1.00 success,
+  +117 over the old Q.
 
 The frozen benchmark is documented separately in
 [`benchmarks/factory-v0.1/card.md`](../../benchmarks/factory-v0.1/card.md).

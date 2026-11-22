@@ -183,7 +183,8 @@ contextual-threshold (0039) pilots were negative and are not promoted.
 The remaining P1 question is **spatial scheduling with one crew and travel
 time**. It ran as experiment 0040 (RFC 0010, ADR 0020): earliest-deadline-first 260 vs
 impact-only 62.4, nearest 223.2, oracle 260. The travel gain clears the kill
-rule; tabular Q fails (156.4), so the learned baseline is the remaining blocker.
+rule. Deadline-aware Q (0041) then reaches 253.2 with 1.00 success, 97.4% of EDF
+and +117 over the old Q. P1 now has a learned spatial-scheduling result.
 
 The alternative remains:
 

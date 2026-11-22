@@ -166,6 +166,7 @@ release.
 The recommended crew slice ran. Earliest-deadline-first scores **260** vs
 impact-only **62.4**; nearest scores 223.2; the oracle is 260. The travel kill
 rule does **not** trigger. Tabular Q scores 156.4 and fails H4, so the remaining
-blocker is the learned baseline, not the spatial mechanic. Do not add another
-scripted layer before fixing Q with deadline/role features or a semi-MDP service
-option.
+blocker was the learned baseline, not the spatial mechanic. Experiment 0041
+fixes it with a deadline/role state and episodic updates: deadline Q scores
+253.2 with success 1.00, +117 over the old Q and 97.4% of EDF. P1 now has a
+learned spatial-scheduling result.

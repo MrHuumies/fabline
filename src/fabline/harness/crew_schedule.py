@@ -232,6 +232,84 @@ class TabularQPolicy:
                 values[action] += alpha * (target - values[action])
 
 
+class DeadlineQPolicy(TabularQPolicy):
+    """Episodic Q with role distances and deadline buckets."""
+
+    name = "deadline_q"
+
+    def _key(self, info: dict[str, Any]) -> tuple[int, ...]:
+        def state(role: str) -> int:
+            wire = info["roles"][role]
+            if wire["failed"]:
+                return 2
+            return 1 if wire["degraded"] else 0
+
+        def deadline_bucket(role: str) -> int:
+            wire = info["roles"][role]
+            remaining = max(0, int(wire["deadline"]) - int(info["tick"]))
+            return min(5, remaining // 20) if wire["degraded"] else 0
+
+        return (
+            min(2, int(info["budget_remaining"])),
+            min(4, int(info["tick"]) // 50),
+            state("loop"),
+            state("small"),
+            state("large"),
+            min(3, int(info["roles"]["small"]["distance"]) // 5),
+            min(3, int(info["roles"]["large"]["distance"]) // 5),
+            deadline_bucket("small"),
+            deadline_bucket("large"),
+        )
+
+    def train(
+        self,
+        env: CrewScheduleEnv,
+        episodes: int = 500,
+        seed: int = 0,
+        train_seed_start: int = 20000,
+        alpha: float = 0.2,
+        gamma: float = 1.0,
+    ) -> None:
+        rng = random.Random(seed)
+        for episode in range(episodes):
+            try:
+                observation, info = env.reset(
+                    seed=train_seed_start + episode
+                )
+            except RuntimeError:
+                continue
+            done = False
+            epsilon = 1.0 - 0.95 * episode / max(1, episodes - 1)
+            while not done:
+                mask = env.action_mask()
+                key = self._key(info)
+                if rng.random() < epsilon:
+                    legal = np.flatnonzero(mask)
+                    action = int(rng.choice(legal.tolist()))
+                else:
+                    action = self.act(observation, info, mask)
+                observation, reward, terminated, truncated, info = env.step(
+                    action
+                )
+                done = terminated or truncated
+                if done:
+                    target = reward
+                else:
+                    next_key = self._key(info)
+                    next_mask = env.action_mask()
+                    target = reward + gamma * float(
+                        np.max(
+                            np.where(
+                                next_mask,
+                                self._values(next_key),
+                                -np.inf,
+                            )
+                        )
+                    )
+                values = self._values(key)
+                values[action] += alpha * (target - values[action])
+
+
 @dataclass
 class CrewMetrics:
     mean_score: float
@@ -405,6 +483,19 @@ def run_crew_schedule(
             evaluate_policy(env, q_policy, episodes=episodes, seed=seed)
         )
     results["tabular_q"] = _pool(q_metrics)
+    deadline_metrics = []
+    for seed in seeds:
+        policy = DeadlineQPolicy()
+        policy.train(
+            env,
+            episodes=train_episodes,
+            seed=seed,
+            train_seed_start=train_seed_start + seed * 1500,
+        )
+        deadline_metrics.append(
+            evaluate_policy(env, policy, episodes=episodes, seed=seed)
+        )
+    results["deadline_q"] = _pool(deadline_metrics)
     return results
 
 

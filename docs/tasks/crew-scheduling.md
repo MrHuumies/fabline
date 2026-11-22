@@ -73,9 +73,16 @@ Seeds 800–804, 5 episodes each; success ≥ 150.
 | oracle | **260.0** | 2.0 | 14.0 | **1.00** |
 | tabular Q | 156.4 | 1.24 | 16.4 | 0.52 |
 
-H1–H3 and H5 pass; **H4 fails** because Q does not learn the deadline/order
-policy. The travel gain is +197.6, so P1 is not retired. See
+H1–H3 and H5 pass; **H4 fails** because the original Q does not learn the
+deadline/order policy. The travel gain is +197.6, so P1 is not retired. See
 [`experiments/0040-crew-schedule`](../experiments/0040-crew-schedule/summary.md).
+
+### 0041 — deadline-aware Q
+
+Fresh seeds 900–904: deadline-aware Q scores **253.2** with success 1.00 vs
+136.0 for the old Q and 260.0 for EDF. All gates pass; the learned baseline is
+97.4% of EDF. See
+[`experiments/0041-crew-q`](../experiments/0041-crew-q/summary.md).
 
 ## Known pitfalls
 
@@ -92,3 +99,4 @@ policy. The travel gain is +197.6, so P1 is not retired. See
 
 - 2026-11-22 — card created; mechanic and gates preregistered.
 - 2026-11-22 — formal run: EDF 260 vs impact 62; Q 156, H4 fails.
+- 2026-11-22 — deadline-aware Q reaches 253.2, success 1.00; H4 fixed.
