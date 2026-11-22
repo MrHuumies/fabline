@@ -71,6 +71,8 @@ retained for provenance.
   negative; slack bins fragment the table; not promoted.
 - [0050 — Compact Q ensemble](0050-crew-layout-ensemble/summary.md) — 430 vs
   oracle 448; success 0.50 misses 0.60; one aliased seed remains.
+- [0051 — Visibility pilot](0051-visibility-pilot/summary.md) — pilot
+  negative; radius still binary, delayed reports add nothing; not promoted.
 
 The frozen benchmark is documented separately in
 [`benchmarks/factory-v0.1/card.md`](../../benchmarks/factory-v0.1/card.md).

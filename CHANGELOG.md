@@ -30,6 +30,8 @@ are pinned separately; see [`benchmarks/factory-v0.1/card.md`](benchmarks/factor
   drop to 340-384; not promoted (0049).
 - Add a compact-Q ensemble: 430 vs oracle 448; success 0.50 misses 0.60; one
   aliased seed remains (0050).
+- Document a negative visibility/communication pilot: radius is still binary on
+  the twin-line layout and delayed reports add nothing; not promoted (0051).
 
 ## [0.1.2] — 2026-11-22
 

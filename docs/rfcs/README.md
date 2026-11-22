@@ -17,3 +17,4 @@ One RFC per new mechanic or major world change. Use
 - [0012 — Crew recall and replanning](0012-crew-replan.md)
 - [0013 — Twin-line randomized crew layouts](0013-twin-line-layouts.md)
 - [0014 — Recall/replanning on twin-line layouts](0014-crew-replan-layouts.md)
+- [0015 — Private crew views and communication](0015-crew-visibility.md)
