@@ -39,6 +39,8 @@ Current tasks:
   before the fault threshold; Q is unstable at the delayed trade.
 - [Maintenance-threshold selection](fault-preventive-threshold.md) — choose the
   wear threshold once per episode; threshold bandit beats per-step Q.
+- [Crew repair scheduling](crew-scheduling.md) — one crew, travel + repair time,
+  and a choice among loop/small/large wires; preregistered.
 - [Power allocation](power-allocation.md) — three-action priority scheduling
   under a tight generator budget.
 - [Fault + power interaction](fault-power.md) — four-action repair and priority

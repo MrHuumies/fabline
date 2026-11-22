@@ -47,6 +47,8 @@ retained for provenance.
   — threshold bandit 250 vs per-step Q 178.
 - [0039 — Contextual threshold pilot](0039-context-threshold-pilot/summary.md) —
   pilot negative; only +5 over the best fixed arm.
+- [0040 — Crew scheduling](0040-crew-schedule/preregistration.md) —
+  preregistered; one crew, travel time, and loop/small/large wires.
 
 The frozen benchmark is documented separately in
 [`benchmarks/factory-v0.1/card.md`](../../benchmarks/factory-v0.1/card.md).
