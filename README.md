@@ -76,6 +76,8 @@ The frozen benchmark is [`factory-v0.1`](benchmarks/factory-v0.1/card.md):
 
 The expected summary is in
 [`benchmarks/factory-v0.1/expected/summary.json`](benchmarks/factory-v0.1/expected/summary.json).
+The current coverage review is in
+[`docs/coverage-review-0.1.2.md`](docs/coverage-review-0.1.2.md).
 Small library-version differences are acceptable; headline ordering should be
 stable.
 

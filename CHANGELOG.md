@@ -5,6 +5,8 @@ are pinned separately; see [`benchmarks/factory-v0.1/card.md`](benchmarks/factor
 
 ## [Unreleased]
 
+- Add the 0.1.2 coverage review and next-slice recommendation.
+
 ## [0.1.2] — 2026-11-22
 
 P1 wired power and preventive maintenance. The frozen `factory-v0.1` benchmark is
