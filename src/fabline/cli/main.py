@@ -19,6 +19,10 @@ from fabline.env.preventive_fault import PreventiveFaultConfig
 from fabline.env.preventive_threshold import ThresholdConfig
 from fabline.env.preventive_wire import PreventiveWireConfig
 from fabline.env.wire_repair import WireRepairConfig
+from fabline.harness.crew_layout_ensemble import (
+    run_crew_layout_ensemble,
+    write_crew_layout_ensemble_report,
+)
 from fabline.harness.crew_layout_q import (
     run_crew_layout_q,
     write_crew_layout_q_report,
@@ -648,6 +652,71 @@ def cmd_multi_crew(args: argparse.Namespace) -> int:
         },
     )
     print(json.dumps({"report": str(report), "results": results}, indent=2, sort_keys=True))
+    return 0
+
+
+def cmd_crew_layout_ensemble(args: argparse.Namespace) -> int:
+    config = FactoryConfig(
+        width=32,
+        height=16,
+        ticks_per_episode=500,
+        decision_interval=10,
+        entity_budget=32,
+        rock_density=0.0,
+        ore_patches=1,
+        starter_line=True,
+        emit_events=True,
+    )
+    multi = MultiCrewConfig(
+        episode_ticks=500,
+        decision_interval=10,
+        loop_failure_tick=90,
+        small_failure_tick=110,
+        large_failure_tick=130,
+        randomize_crew_b=True,
+        crew_b_min_distance=8,
+        scenario="random_gear",
+        success_score=400,
+        power=PowerConfig(
+            enabled=True,
+            topology="wired",
+            generator_count=1,
+            generator_capacity=24,
+            generator_radius=8,
+            wire_redundancy=2,
+        ),
+    )
+    seeds = tuple(int(value) for value in args.seeds.split(","))
+    q_seeds = tuple(int(value) for value in args.q_seeds.split(","))
+    results = run_crew_layout_ensemble(
+        config,
+        multi,
+        seeds=seeds,
+        q_seeds=q_seeds,
+        episodes=args.episodes,
+        train_seed_start=args.train_seed_start,
+    )
+    report = write_crew_layout_ensemble_report(
+        args.out,
+        results,
+        config={
+            "width": config.width,
+            "height": config.height,
+            "scenario": multi.scenario,
+            "seeds": list(seeds),
+            "q_seeds": list(q_seeds),
+            "episodes": args.episodes,
+            "train_seed_start": args.train_seed_start,
+            "success_score": multi.success_score,
+        },
+    )
+    print(
+        json.dumps(
+            {"report": str(report), "results": results},
+            indent=2,
+            sort_keys=True,
+        )
+    )
     return 0
 
 
@@ -1356,6 +1425,25 @@ def build_parser() -> argparse.ArgumentParser:
     multi_crew.add_argument("--large-failure", type=int, default=130)
     multi_crew.add_argument("--success-score", type=int, default=150)
     multi_crew.set_defaults(func=cmd_multi_crew)
+
+    crew_layout_ensemble = subparsers.add_parser(
+        "crew-layout-ensemble",
+        help="run the compact-Q ensemble on twin-line layouts",
+    )
+    crew_layout_ensemble.add_argument(
+        "--out", type=str, default="results/crew-layout-ensemble"
+    )
+    crew_layout_ensemble.add_argument(
+        "--seeds",
+        type=str,
+        default="9000,9001,9002,9003,9004,9005,9006,9007,9008,9009",
+    )
+    crew_layout_ensemble.add_argument("--q-seeds", type=str, default="0,1,2")
+    crew_layout_ensemble.add_argument("--episodes", type=int, default=2000)
+    crew_layout_ensemble.add_argument(
+        "--train-seed-start", type=int, default=80000
+    )
+    crew_layout_ensemble.set_defaults(func=cmd_crew_layout_ensemble)
 
     crew_layout_q = subparsers.add_parser(
         "crew-layout-q",

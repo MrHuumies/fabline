@@ -28,6 +28,8 @@ are pinned separately; see [`benchmarks/factory-v0.1/card.md`](benchmarks/factor
   passes, success 0.50 misses 0.60 (0048).
 - Document a negative margin-aware Q pilot: slack bins fragment the table and
   drop to 340-384; not promoted (0049).
+- Add a compact-Q ensemble: 430 vs oracle 448; success 0.50 misses 0.60; one
+  aliased seed remains (0050).
 
 ## [0.1.2] — 2026-11-22
 

@@ -35,7 +35,8 @@ The learned baseline, not the mechanic, is the blocker.
 
 ## Follow-ups
 
-- [ ] Try a compact-state ensemble or value averaging.
+- [x] Try a compact-state ensemble or value averaging. Experiment 0050: ensemble
+  430 vs oracle 448, success 0.50; variance is reduced, one aliased seed remains.
 - [x] Add coarse margin/slack features to reduce aliasing. Negative pilot 0049:
   729 states fragment the table; do not promote.
 - [ ] Split A-deadline and B-recall limits before applying the state to 0047.

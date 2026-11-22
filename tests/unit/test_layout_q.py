@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import numpy as np
+
 from fabline.env.multi_crew import MultiCrewConfig, MultiCrewEnv
-from fabline.harness.layout_q import CompactQPolicy
+from fabline.harness.layout_q import CompactQPolicy, EnsembleQPolicy
 from fabline.harness.multi_crew import evaluate_policy
 from fabline.worlds.factory.config import FactoryConfig
 from fabline.worlds.factory.power import PowerConfig
@@ -57,3 +59,21 @@ def test_compact_q_short_training_runs() -> None:
     metrics = evaluate_policy(env, policy, episodes=1, seed=8000)
     assert metrics.mean_score >= 0
     assert metrics.success_rate in (0.0, 1.0)
+
+
+def test_ensemble_mean_and_vote() -> None:
+    env = _env()
+    policy_a = CompactQPolicy()
+    policy_b = CompactQPolicy()
+    observation, info = env.reset(8000)
+    while info["tick"] < 40:
+        observation, _, _, _, info = env.step(0)
+    key = policy_a._key(info)
+    policy_a.q[key] = np.zeros(16)
+    policy_b.q[key] = np.zeros(16)
+    policy_a.q[key][11] = 1.0
+    policy_b.q[key][11] = 1.0
+    mean = EnsembleQPolicy([policy_a, policy_b], mode="mean")
+    vote = EnsembleQPolicy([policy_a, policy_b], mode="vote")
+    assert mean.act(observation, info, env.action_mask()) == 11
+    assert vote.act(observation, info, env.action_mask()) == 11

@@ -93,8 +93,12 @@ Compact Q is 95.5% of oracle and +188.7 over old Q, but misses the 0.60 success
 gate. One Q seed matches oracle exactly; the other two score 424/0.50 and
 400/0.40. The representation is a large win but not a reliable H4 closure. A margin-aware
 state was a negative pilot (0049): slack bins fragment the table and drop to
-340–384. See
-[`experiments/0048-crew-layout-q`](../experiments/0048-crew-layout-q/summary.md).
+340–384. A compact-Q ensemble (0050) removes Q-seed variance: single mean
+415.7/0.47, ensemble 430.0/0.50, oracle 448.0/0.60. It still misses the 0.60
+success gate; seed 9002 is 340 for every compact policy and the oracle 520. See
+[`experiments/0048-crew-layout-q`](../experiments/0048-crew-layout-q/summary.md)
+and
+[`experiments/0050-crew-layout-ensemble`](../experiments/0050-crew-layout-ensemble/summary.md).
 
 ## Known pitfalls
 
@@ -114,3 +118,5 @@ state was a negative pilot (0049): slack bins fragment the table and drop to
   fails H4.
 - 2026-11-22 — compact layout-aware Q: 422 vs old Q 233, oracle 442; mean
   gate passes, success 0.50 misses 0.60.
+- 2026-11-23 — compact-Q ensemble: 430 vs oracle 448; success 0.50 misses
+  0.60; one aliased seed remains.

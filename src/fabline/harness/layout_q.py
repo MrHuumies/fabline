@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import random
+from collections import Counter
 from typing import Any, Protocol
 
 import numpy as np
@@ -136,3 +137,52 @@ class CompactQPolicy:
                     )
                 values = self._values(key)
                 values[action] += alpha * (target - values[action])
+
+
+class EnsembleQPolicy:
+    """Combine several compact-Q policies by mean value or majority vote."""
+
+    name = "ensemble_q"
+
+    def __init__(
+        self,
+        policies: list[CompactQPolicy],
+        *,
+        mode: str = "mean",
+    ) -> None:
+        if not policies:
+            raise ValueError("an ensemble needs at least one policy")
+        if mode not in {"mean", "vote"}:
+            raise ValueError("ensemble mode must be 'mean' or 'vote'")
+        self.policies = policies
+        self.mode = mode
+
+    def act(
+        self,
+        observation: np.ndarray,
+        info: dict[str, Any],
+        mask: np.ndarray,
+    ) -> int:
+        if self.mode == "vote":
+            actions = [
+                policy.act(observation, info, mask)
+                for policy in self.policies
+            ]
+            counts = Counter(actions)
+            best = max(counts.values())
+            for action in actions:
+                if counts[action] == best:
+                    return action
+            return actions[0]
+        values = np.mean(
+            [
+                np.where(
+                    mask,
+                    policy._values(policy._key(info)),
+                    -np.inf,
+                )
+                for policy in self.policies
+            ],
+            axis=0,
+        )
+        return int(np.argmax(values))
