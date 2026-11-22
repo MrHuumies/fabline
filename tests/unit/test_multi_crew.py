@@ -11,23 +11,28 @@ from fabline.harness.multi_crew import (
     _FixedActionPolicy,
     _oracle_action,
     evaluate_policy,
+    run_crew_robustness,
 )
 from fabline.worlds.factory.config import FactoryConfig
 
 
+def _config() -> FactoryConfig:
+    return FactoryConfig(
+        width=16,
+        height=8,
+        ticks_per_episode=500,
+        decision_interval=10,
+        entity_budget=32,
+        rock_density=0.0,
+        ore_patches=1,
+        starter_line=True,
+        emit_events=True,
+    )
+
+
 def _env() -> MultiCrewEnv:
     return MultiCrewEnv(
-        FactoryConfig(
-            width=16,
-            height=8,
-            ticks_per_episode=500,
-            decision_interval=10,
-            entity_budget=32,
-            rock_density=0.0,
-            ore_patches=1,
-            starter_line=True,
-            emit_events=True,
-        ),
+        _config(),
         MultiCrewConfig(success_score=150),
     )
 
@@ -56,3 +61,28 @@ def test_two_crew_oracle_beats_single_crew() -> None:
     assert oracle.mean_score == 260
     assert oracle.mean_score > single.mean_score
     assert oracle.mean_score >= nearest.mean_score
+
+
+def test_crew_robustness_structure() -> None:
+    results = run_crew_robustness(
+        _config(),
+        MultiCrewConfig(success_score=150),
+        seeds=(3000, 3001),
+        q_seeds=(),
+    )
+    policies = results["policies"]
+    assert set(policies) == {
+        "noop",
+        "single_edf",
+        "random",
+        "parallel_nearest",
+        "parallel_greedy",
+        "oracle",
+        "tabular_q",
+    }
+    assert len(policies["oracle"]["per_seed"]) == 2
+    assert len(policies["parallel_nearest"]["per_seed"]) == 2
+    assert policies["oracle"]["mean_score"] > policies["single_edf"][
+        "mean_score"
+    ]
+    assert results["paired"]["oracle_minus_parallel_nearest"]["mean"] >= 0

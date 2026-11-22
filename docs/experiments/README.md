@@ -52,9 +52,13 @@ retained for provenance.
 - [0041 — Deadline-aware Q](0041-crew-q/summary.md) — 253.2, 1.00 success,
   +117 over the old Q.
 - [0042 — Two-crew coordination](0042-multi-crew/summary.md) — two crews 260
-  vs single-crew 60; the formal assignment is easy.
+  vs single-crew 60; the formal assignment is easy. See 0044 for the 40-seed
+  robustness check.
 - [0043 — Partial-view pilot](0043-partial-view-pilot/summary.md) — pilot
   negative; visibility is binary on the current layout.
+- [0044 — Crew seed robustness](0044-crew-robustness/summary.md) — 40 seeds:
+  nearest 255.5, greedy 245, Q 225.5, oracle 260; the gain is robust but the
+  five-seed block was mildly optimistic.
 
 The frozen benchmark is documented separately in
 [`benchmarks/factory-v0.1/card.md`](../../benchmarks/factory-v0.1/card.md).

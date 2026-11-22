@@ -67,7 +67,7 @@ This document is a map, not a commitment to implement every row.
 **Representative families added in P0/P1:** CNN, end-to-end GNN/MPNN,
 Transformer, GRU/RNN, calibration, CVaR/risk selection, and bandits. Still
 missing: world model, deep RL, offline RL beyond behavior cloning, multi-agent
-RL, and generative models.
+RL beyond the centralized two-crew assignment, and generative models.
 
 ### Current benchmark families
 
@@ -86,7 +86,7 @@ RL, and generative models.
 | Robustness / OOD | partial | scenario splits; stochastic power |
 | Uncertainty / calibration | partial | calibration metrics for stochastic power; maintenance forecasts uncalibrated |
 | Efficiency | partial | cost experiments; not in the public benchmark |
-| Multi-agent | absent | no shared-agent tasks |
+| Multi-agent | partial | centralized two-crew assignment (debug); no per-agent policies, communication, or failure |
 | Generative | absent | no layout/recipe generation task |
 
 ## Model-family map
@@ -103,7 +103,7 @@ RL, and generative models.
 | World model | action-conditioned rollout | not benchmarked | compounding error, stochasticity, constraints | planning benchmark |
 | Model-free RL | sequential credit assignment | small tabular/scripted tasks | sparse rewards, partial observability, multi-objective | deadlines, multi-agent |
 | Offline RL / BC | offline policy learning | scripted demos + BC | distribution shift, extrapolation, recovery | offline shift tasks |
-| Multi-agent RL | coordination/communication | none | shared resources, partial views, agent failure | multi-agent workers |
+| Multi-agent RL | coordination/communication | centralized two-crew assignment (debug) | shared resources, partial views, agent failure | multi-agent workers |
 | Causal models | interventions and counterfactuals | bottleneck labels | delayed effects, confounding, multiple mechanisms | intervention tasks |
 | Generative models | distribution matching | none | validity, diversity, constraint satisfaction | layout/recipe generation |
 
@@ -194,8 +194,10 @@ The alternative remains:
 ### P2 — one new mechanic
 
 **Started: multi-agent coordination.** A two-crew parallel repair assignment
-(0042) passes: two crews score 260 vs single-crew 60; Q 260. The formal seeds
-make the assignment easy, so this is a positive but shallow slice. A partial per-crew
+(0042) passes: two crews score 260 vs single-crew 60; Q 260. A 40-seed
+robustness run (0044) keeps the coordination gain: nearest 255.5, greedy 245,
+pooled Q 225.5, oracle 260. The five-seed 0042 block was mildly optimistic, and
+nearest is near-ceiling; Q is the non-saturated baseline. A partial per-crew
 visibility pilot was negative: on the current layout visibility is binary
 (radius ≤10 hides the bridges; ≥14 is effectively omniscient), so it is not
 promoted (0043). Crew failure/replanning or larger/random layouts are the next
@@ -277,8 +279,9 @@ generative layout/recipe tasks.
 
 - Does per-entity crew scheduling with travel produce a travel-aware gain, or is
   impact-only already sufficient?
-- Can multi-agent work on the current 16×8 layout, or does it need a larger
-  world?
+- Can multi-agent work on the current 16×8 layout? The centralized two-crew
+  assignment works (0042/0044), but partial per-crew visibility is binary on
+  this layout (0043); crew failure and larger layouts remain open.
 - Which efficiency metrics belong in the public benchmark?
 - Should maintenance/repair forecasts get calibration metrics, or is power
   calibration enough?

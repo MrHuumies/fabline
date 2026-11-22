@@ -86,13 +86,21 @@ Oracle pairs: action 11 (`small` for A, `large` for B) on every formal seed.
 - Deterministic layouts; one episode per seed.
 - Not part of frozen `factory-v0.1`.
 
+## Follow-up — experiment 0044
+
+A 40-seed robustness run (seeds 3000–3039) keeps the coordination gain but shows
+that this five-seed block was mildly optimistic: nearest **255.5**, greedy
+**245.0**, pooled Q **225.5**, oracle **260.0**, single-crew **60.0**. The oracle
+pair is still small for crew A and large for crew B on every seed. See
+[`../0044-crew-robustness/summary.md`](../0044-crew-robustness/summary.md).
+
 ## Next
 
-1. **Partial per-crew views and communication limits** — the actual multi-agent
-   gap.
-2. **Crew failure or unavailable crew** — test replanning.
-3. **Larger/random layouts** — the other P2 branch.
-4. Keep `factory-v0.1` frozen.
+1. **Crew failure or unavailable crew** — test replanning; the centralized gain
+   is robust.
+2. **Larger/random layouts** — make nearest fail more often and give partial
+   views a graded structure.
+3. Keep `factory-v0.1` frozen.
 
 ## Artifacts
 

@@ -406,6 +406,417 @@ class _FixedActionPolicy:
         return self.action if mask[self.action] else 0
 
 
+def _summarize_seed_scores(
+    name: str,
+    scores: dict[int, float],
+    prevented: dict[int, float],
+    aborted: dict[int, float],
+    travel: dict[int, float],
+    success: dict[int, bool],
+    success_score: int = 150,
+) -> dict[str, Any]:
+    values = [scores[seed] for seed in sorted(scores)]
+    success_values = [1.0 if success[seed] else 0.0 for seed in sorted(scores)]
+    return {
+        "name": name,
+        "mean_score": float(np.mean(values)),
+        "score_ci": list(bootstrap_mean_ci(values)),
+        "min_score": float(np.min(values)),
+        "max_score": float(np.max(values)),
+        "mean_prevented": float(np.mean(list(prevented.values()))),
+        "mean_aborted": float(np.mean(list(aborted.values()))),
+        "mean_travel": float(np.mean(list(travel.values()))),
+        "success_rate": float(np.mean(success_values)),
+        "seeds_below_success": sum(
+            1 for value in values if value < success_score
+        ),
+        "per_seed": {
+            str(seed): {
+                "score": scores[seed],
+                "prevented": prevented[seed],
+                "aborted": aborted[seed],
+                "travel": travel[seed],
+                "success": success[seed],
+            }
+            for seed in sorted(scores)
+        },
+    }
+
+
+def _evaluate_seed(
+    env: MultiCrewEnv,
+    policy: MultiCrewPolicy,
+    seed: int,
+) -> MultiCrewMetrics:
+    return evaluate_policy(env, policy, episodes=1, seed=seed)
+
+
+def _policy_seed_data(
+    env: MultiCrewEnv,
+    policy: MultiCrewPolicy,
+    seeds: tuple[int, ...],
+) -> tuple[
+    dict[int, float],
+    dict[int, float],
+    dict[int, float],
+    dict[int, float],
+    dict[int, bool],
+]:
+    scores: dict[int, float] = {}
+    prevented: dict[int, float] = {}
+    aborted: dict[int, float] = {}
+    travel: dict[int, float] = {}
+    success: dict[int, bool] = {}
+    for seed in seeds:
+        metrics = _evaluate_seed(env, policy, seed)
+        scores[seed] = metrics.mean_score
+        prevented[seed] = metrics.mean_prevented
+        aborted[seed] = metrics.mean_aborted
+        travel[seed] = metrics.mean_travel
+        success[seed] = metrics.success_rate >= 1.0
+    return scores, prevented, aborted, travel, success
+
+
+def _paired_difference(
+    first: dict[int, float],
+    second: dict[int, float],
+) -> dict[str, Any]:
+    seeds = sorted(first)
+    diffs = [first[seed] - second[seed] for seed in seeds]
+    return {
+        "mean": float(np.mean(diffs)),
+        "ci": list(bootstrap_mean_ci(diffs)),
+        "per_seed": {
+            str(seed): first[seed] - second[seed] for seed in seeds
+        },
+    }
+
+
+def run_crew_robustness(
+    config: FactoryConfig,
+    multi: MultiCrewConfig | None = None,
+    *,
+    seeds: tuple[int, ...] = (3000,),
+    q_seeds: tuple[int, ...] = (0, 1, 2, 3, 4),
+    train_episodes: int = 500,
+    train_seed_start: int = 40000,
+) -> dict[str, Any]:
+    """Evaluate the two-crew task over a fixed seed block.
+
+    Unlike ``run_multi_crew``, Q policies are trained on disjoint layout blocks
+    and evaluated zero-shot on every evaluation seed.
+    """
+
+    if not seeds:
+        raise ValueError("at least one evaluation seed is required")
+    resolved_multi = multi or MultiCrewConfig()
+    success_score = resolved_multi.success_score
+    env = MultiCrewEnv(config, resolved_multi)
+    policies: dict[str, dict[str, Any]] = {}
+
+    scripted: tuple[tuple[str, MultiCrewPolicy], ...] = (
+        ("noop", NoopPolicy()),
+        ("single_edf", SingleEDFPolicy()),
+        ("parallel_nearest", ParallelNearestPolicy()),
+        ("parallel_greedy", ParallelGreedyPolicy()),
+    )
+    for name, policy in scripted:
+        scores, prevented, aborted, travel, success = _policy_seed_data(
+            env, policy, seeds
+        )
+        policies[name] = _summarize_seed_scores(
+            name,
+            scores,
+            prevented,
+            aborted,
+            travel,
+            success,
+            success_score,
+        )
+
+    random_scores: dict[int, float] = {}
+    random_prevented: dict[int, float] = {}
+    random_aborted: dict[int, float] = {}
+    random_travel: dict[int, float] = {}
+    random_success: dict[int, bool] = {}
+    for seed in seeds:
+        metrics = _evaluate_seed(env, RandomPolicy(seed=seed), seed)
+        random_scores[seed] = metrics.mean_score
+        random_prevented[seed] = metrics.mean_prevented
+        random_aborted[seed] = metrics.mean_aborted
+        random_travel[seed] = metrics.mean_travel
+        random_success[seed] = metrics.success_rate >= 1.0
+    policies["random"] = _summarize_seed_scores(
+        "random",
+        random_scores,
+        random_prevented,
+        random_aborted,
+        random_travel,
+        random_success,
+        success_score,
+    )
+
+    oracle_scores: dict[int, float] = {}
+    oracle_prevented: dict[int, float] = {}
+    oracle_aborted: dict[int, float] = {}
+    oracle_travel: dict[int, float] = {}
+    oracle_success: dict[int, bool] = {}
+    oracle_actions: dict[str, int] = {}
+    for seed in seeds:
+        action = _oracle_action(env, seed)
+        oracle_actions[str(seed)] = action
+        metrics = _evaluate_seed(env, _FixedActionPolicy(action), seed)
+        oracle_scores[seed] = metrics.mean_score
+        oracle_prevented[seed] = metrics.mean_prevented
+        oracle_aborted[seed] = metrics.mean_aborted
+        oracle_travel[seed] = metrics.mean_travel
+        oracle_success[seed] = metrics.success_rate >= 1.0
+    policies["oracle"] = _summarize_seed_scores(
+        "oracle",
+        oracle_scores,
+        oracle_prevented,
+        oracle_aborted,
+        oracle_travel,
+        oracle_success,
+        success_score,
+    )
+    policies["oracle"]["actions"] = oracle_actions
+
+    q_summaries: dict[str, dict[str, Any]] = {}
+    q_per_seed_scores: dict[int, list[float]] = {
+        seed: [] for seed in seeds
+    }
+    q_pooled_scores: list[float] = []
+    q_pooled_success: list[float] = []
+    q_pooled_prevented: list[float] = []
+    q_pooled_aborted: list[float] = []
+    q_pooled_travel: list[float] = []
+    for q_seed in q_seeds:
+        policy = TabularQPolicy()
+        policy.train(
+            env,
+            episodes=train_episodes,
+            seed=q_seed,
+            train_seed_start=train_seed_start + q_seed * 1000,
+        )
+        scores, prevented, aborted, travel, success = _policy_seed_data(
+            env, policy, seeds
+        )
+        q_summaries[str(q_seed)] = _summarize_seed_scores(
+            f"tabular_q_{q_seed}",
+            scores,
+            prevented,
+            aborted,
+            travel,
+            success,
+            success_score,
+        )
+        for seed in seeds:
+            q_per_seed_scores[seed].append(scores[seed])
+            q_pooled_scores.append(scores[seed])
+            q_pooled_success.append(1.0 if success[seed] else 0.0)
+            q_pooled_prevented.append(prevented[seed])
+            q_pooled_aborted.append(aborted[seed])
+            q_pooled_travel.append(travel[seed])
+
+    q_mean_per_seed = (
+        {
+            str(seed): float(np.mean(values))
+            for seed, values in q_per_seed_scores.items()
+        }
+        if q_seeds
+        else {}
+    )
+    if q_pooled_scores:
+        policies["tabular_q"] = {
+            "name": "tabular_q",
+            "mean_score": float(np.mean(q_pooled_scores)),
+            "score_ci": list(bootstrap_mean_ci(q_pooled_scores)),
+            "min_score": float(np.min(q_pooled_scores)),
+            "max_score": float(np.max(q_pooled_scores)),
+            "mean_prevented": float(np.mean(q_pooled_prevented)),
+            "mean_aborted": float(np.mean(q_pooled_aborted)),
+            "mean_travel": float(np.mean(q_pooled_travel)),
+            "success_rate": float(np.mean(q_pooled_success)),
+            "seeds_below_success": sum(
+                1 for value in q_mean_per_seed.values()
+                if value < success_score
+            ),
+            "runs_below_success": sum(
+                1 for value in q_pooled_scores if value < success_score
+            ),
+            "mean_per_seed": q_mean_per_seed,
+            "per_policy": q_summaries,
+        }
+    else:
+        policies["tabular_q"] = {
+            "name": "tabular_q",
+            "mean_score": float("nan"),
+            "score_ci": [float("nan"), float("nan")],
+            "min_score": float("nan"),
+            "max_score": float("nan"),
+            "success_rate": float("nan"),
+            "seeds_below_success": 0,
+            "mean_per_seed": q_mean_per_seed,
+            "per_policy": {},
+        }
+
+    return {
+        "config": {
+            "seeds": list(seeds),
+            "q_seeds": list(q_seeds),
+            "train_episodes": train_episodes,
+            "train_seed_start": train_seed_start,
+            "success_score": (multi or MultiCrewConfig()).success_score,
+        },
+        "policies": policies,
+        "paired": {
+            "parallel_nearest_minus_single_edf": _paired_difference(
+                {
+                    seed: policies["parallel_nearest"]["per_seed"][str(seed)][
+                        "score"
+                    ]
+                    for seed in seeds
+                },
+                {
+                    seed: policies["single_edf"]["per_seed"][str(seed)]["score"]
+                    for seed in seeds
+                },
+            ),
+            "oracle_minus_parallel_nearest": _paired_difference(
+                {
+                    seed: policies["oracle"]["per_seed"][str(seed)]["score"]
+                    for seed in seeds
+                },
+                {
+                    seed: policies["parallel_nearest"]["per_seed"][str(seed)][
+                        "score"
+                    ]
+                    for seed in seeds
+                },
+            ),
+        },
+    }
+
+
+def write_crew_robustness_report(
+    out: str | Path,
+    results: dict[str, Any],
+    *,
+    config: dict[str, Any],
+) -> Path:
+    out = Path(out)
+    out.mkdir(parents=True, exist_ok=True)
+    (out / "crew_robustness_results.json").write_text(
+        json.dumps(
+            {"config": config, "results": results},
+            indent=2,
+            sort_keys=True,
+            default=str,
+        )
+        + "\n",
+        encoding="utf-8",
+    )
+    policies = results["policies"]
+    lines = [
+        "# Two-crew coordination — seed robustness",
+        "",
+        f"Evaluation seeds {config['seeds'][0]}–{config['seeds'][-1]} "
+        f"({len(config['seeds'])} seeds); one episode each.",
+        f"Warning {config['warning_tick']}; failures "
+        f"{config['loop_failure_tick']}/{config['small_failure_tick']}/"
+        f"{config['large_failure_tick']}; success ≥ "
+        f"{config['success_score']}.",
+        "",
+        "| policy | mean score | 95% CI | min | max | success | "
+        "prevented | travel | below success |",
+        "|---|---:|---:|---:|---:|---:|---:|---:|---:|",
+    ]
+    for name in (
+        "noop",
+        "single_edf",
+        "random",
+        "parallel_nearest",
+        "parallel_greedy",
+        "tabular_q",
+        "oracle",
+    ):
+        result = policies[name]
+        lines.append(
+            f"| {name} | {result['mean_score']:.2f} "
+            f"[{result['score_ci'][0]:.2f}, {result['score_ci'][1]:.2f}] | "
+            f"{result['min_score']:.0f} | {result['max_score']:.0f} | "
+            f"{result['success_rate']:.2f} | "
+            f"{result.get('mean_prevented', float('nan')):.2f} | "
+            f"{result.get('mean_travel', float('nan')):.1f} | "
+            f"{result['seeds_below_success']} |"
+        )
+    lines.extend(
+        [
+            "",
+            "## Paired differences",
+            "",
+            "| comparison | mean | 95% CI |",
+            "|---|---:|---:|",
+        ]
+    )
+    for name, result in results["paired"].items():
+        lines.append(
+            f"| {name} | {result['mean']:.2f} "
+            f"[{result['ci'][0]:.2f}, {result['ci'][1]:.2f}] |"
+        )
+    lines.extend(
+        [
+            "",
+            "## Q per training seed",
+            "",
+            "| Q seed | mean score | success | below success |",
+            "|---|---:|---:|---:|",
+        ]
+    )
+    for q_seed, result in policies["tabular_q"]["per_policy"].items():
+        lines.append(
+            f"| {q_seed} | {result['mean_score']:.2f} | "
+            f"{result['success_rate']:.2f} | "
+            f"{result['seeds_below_success']} |"
+        )
+    lines.extend(
+        [
+            "",
+            "## Per-seed scores",
+            "",
+            "| seed | single | nearest | greedy | Q mean | oracle |",
+            "|---:|---:|---:|---:|---:|---:|",
+        ]
+    )
+    for seed in config["seeds"]:
+        key = str(seed)
+        q_mean = policies["tabular_q"]["mean_per_seed"].get(key)
+        q_text = f"{q_mean:.1f}" if q_mean is not None else "—"
+        lines.append(
+            f"| {seed} | "
+            f"{policies['single_edf']['per_seed'][key]['score']:.0f} | "
+            f"{policies['parallel_nearest']['per_seed'][key]['score']:.0f} | "
+            f"{policies['parallel_greedy']['per_seed'][key]['score']:.0f} | "
+            f"{q_text} | "
+            f"{policies['oracle']['per_seed'][key]['score']:.0f} |"
+        )
+    lines.extend(
+        [
+            "",
+            "Oracle pair actions: "
+            + ", ".join(
+                f"{seed}:{action}"
+                for seed, action in policies["oracle"]["actions"].items()
+            ),
+        ]
+    )
+    (out / "crew_robustness_report.md").write_text(
+        "\n".join(lines), encoding="utf-8"
+    )
+    return out / "crew_robustness_report.md"
+
+
 def write_multi_crew_report(
     out: str | Path,
     results: dict[str, dict[str, Any]],

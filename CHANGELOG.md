@@ -13,6 +13,9 @@ are pinned separately; see [`benchmarks/factory-v0.1/card.md`](benchmarks/factor
   the formal assignment is easy (0042).
 - Document a negative partial-view pilot: visibility is binary on the current
   layout (0043).
+- Add a 40-seed robustness run for two-crew coordination: nearest 255.5,
+  greedy 245, pooled Q 225.5, oracle 260; the coordination gain is robust, but
+  the five-seed 0042 block was mildly optimistic (0044).
 
 ## [0.1.2] — 2026-11-22
 

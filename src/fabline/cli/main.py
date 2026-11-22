@@ -38,7 +38,9 @@ from fabline.harness.human_demos import (
     write_human_bc_report,
 )
 from fabline.harness.multi_crew import (
+    run_crew_robustness,
     run_multi_crew,
+    write_crew_robustness_report,
     write_multi_crew_report,
 )
 from fabline.harness.power import run_power_benchmark
@@ -640,6 +642,61 @@ def cmd_multi_crew(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_crew_robustness(args: argparse.Namespace) -> int:
+    config = FactoryConfig(
+        width=16,
+        height=8,
+        ticks_per_episode=500,
+        decision_interval=10,
+        entity_budget=32,
+        rock_density=0.0,
+        ore_patches=1,
+        starter_line=True,
+        emit_events=True,
+    )
+    multi = MultiCrewConfig(
+        episode_ticks=500,
+        decision_interval=10,
+        loop_failure_tick=args.loop_failure,
+        small_failure_tick=args.small_failure,
+        large_failure_tick=args.large_failure,
+        success_score=args.success_score,
+    )
+    seeds = tuple(int(value) for value in args.seeds.split(","))
+    q_seeds = tuple(int(value) for value in args.q_seeds.split(","))
+    results = run_crew_robustness(
+        config,
+        multi,
+        seeds=seeds,
+        q_seeds=q_seeds,
+        train_episodes=args.train_episodes,
+        train_seed_start=args.train_seed_start,
+    )
+    report = write_crew_robustness_report(
+        args.out,
+        results,
+        config={
+            "warning_tick": multi.warning_tick,
+            "loop_failure_tick": multi.loop_failure_tick,
+            "small_failure_tick": multi.small_failure_tick,
+            "large_failure_tick": multi.large_failure_tick,
+            "success_score": multi.success_score,
+            "seeds": list(seeds),
+            "q_seeds": list(q_seeds),
+            "train_episodes": args.train_episodes,
+            "train_seed_start": args.train_seed_start,
+        },
+    )
+    print(
+        json.dumps(
+            {"report": str(report), "results": results},
+            indent=2,
+            sort_keys=True,
+        )
+    )
+    return 0
+
+
 def cmd_crew_schedule(args: argparse.Namespace) -> int:
     config = FactoryConfig(
         width=16,
@@ -1022,6 +1079,27 @@ def build_parser() -> argparse.ArgumentParser:
     multi_crew.add_argument("--large-failure", type=int, default=130)
     multi_crew.add_argument("--success-score", type=int, default=150)
     multi_crew.set_defaults(func=cmd_multi_crew)
+
+    crew_robustness = subparsers.add_parser(
+        "crew-robustness",
+        help="run the two-crew task over a larger seed block",
+    )
+    crew_robustness.add_argument(
+        "--out", type=str, default="results/crew-robustness"
+    )
+    crew_robustness.add_argument(
+        "--seeds",
+        type=str,
+        default=",".join(str(seed) for seed in range(3000, 3040)),
+    )
+    crew_robustness.add_argument("--q-seeds", type=str, default="0,1,2,3,4")
+    crew_robustness.add_argument("--train-episodes", type=int, default=500)
+    crew_robustness.add_argument("--train-seed-start", type=int, default=40000)
+    crew_robustness.add_argument("--loop-failure", type=int, default=90)
+    crew_robustness.add_argument("--small-failure", type=int, default=110)
+    crew_robustness.add_argument("--large-failure", type=int, default=130)
+    crew_robustness.add_argument("--success-score", type=int, default=150)
+    crew_robustness.set_defaults(func=cmd_crew_robustness)
 
     crew_schedule = subparsers.add_parser(
         "crew-schedule",

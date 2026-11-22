@@ -2,7 +2,8 @@
 
 - **Task ID:** `factory.power.crew-coordination.v1`
 - **Version:** 0.1.0
-- **Status:** P2 debug task; formal run complete; not in `factory-v0.1`
+- **Status:** P2 debug task; formal and robustness runs complete; not in
+  `factory-v0.1`
 - **World:** factory-0.1.0 with opt-in wired power
 - **Owner:** FABLINE
 - **Date:** 2026-11-22
@@ -75,6 +76,24 @@ All gates pass; the coordination gain is +200. The formal seeds are easy for
 every parallel policy; the pilot had nearest/greedy failures on some seeds. See
 [`experiments/0042-multi-crew`](../experiments/0042-multi-crew/summary.md).
 
+## Results (0044, seed robustness)
+
+Seeds 3000–3039; one episode each; five Q policies trained on disjoint blocks.
+
+| policy | mean score | success | below 150 |
+|---|---:|---:|---:|
+| single_edf | 60.0 | 0.000 | 40 |
+| parallel_nearest | 255.5 | 0.975 | 1 |
+| parallel_greedy | 245.0 | 0.925 | 3 |
+| tabular Q (pooled) | 225.5 | 0.835 | 6 |
+| oracle | 260.0 | 1.000 | 0 |
+
+The coordination gain is robust (+195.5 nearest vs single), but the five-seed
+0042 block was mildly optimistic for greedy (260 → 245). The oracle pair is
+small for A, large for B on all 40 seeds. Nearest is near-ceiling; Q is 30
+points behind nearest. See
+[`experiments/0044-crew-robustness`](../experiments/0044-crew-robustness/summary.md).
+
 ## Known pitfalls
 
 - **Centralized assignment only.** No per-crew partial views or communication.
@@ -89,3 +108,6 @@ every parallel policy; the pilot had nearest/greedy failures on some seeds. See
 
 - 2026-11-22 — card created; two-crew mechanic and gates preregistered.
 - 2026-11-22 — formal run: two crews 260 vs single 60; Q 260; all gates pass.
+- 2026-11-22 — 40-seed robustness: nearest 255.5, greedy 245, Q 225.5,
+  oracle 260; the coordination gain is robust, greedy's five-seed 260 was
+  mildly optimistic.
