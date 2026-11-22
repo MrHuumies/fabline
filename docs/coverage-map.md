@@ -195,8 +195,11 @@ The alternative remains:
 
 **Started: multi-agent coordination.** A two-crew parallel repair assignment
 (0042) passes: two crews score 260 vs single-crew 60; Q 260. The formal seeds
-make the assignment easy, so this is a positive but shallow slice. The next P2
-questions are partial per-crew views, communication limits, and crew failure.
+make the assignment easy, so this is a positive but shallow slice. A partial per-crew
+visibility pilot was negative: on the current layout visibility is binary
+(radius ≤10 hides the bridges; ≥14 is effectively omniscient), so it is not
+promoted (0043). Crew failure/replanning or larger/random layouts are the next
+P2 questions.
 
 The alternative remains:
 

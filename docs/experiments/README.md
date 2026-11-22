@@ -53,6 +53,8 @@ retained for provenance.
   +117 over the old Q.
 - [0042 — Two-crew coordination](0042-multi-crew/summary.md) — two crews 260
   vs single-crew 60; the formal assignment is easy.
+- [0043 — Partial-view pilot](0043-partial-view-pilot/summary.md) — pilot
+  negative; visibility is binary on the current layout.
 
 The frozen benchmark is documented separately in
 [`benchmarks/factory-v0.1/card.md`](../../benchmarks/factory-v0.1/card.md).

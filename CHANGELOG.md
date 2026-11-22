@@ -11,6 +11,8 @@ are pinned separately; see [`benchmarks/factory-v0.1/card.md`](benchmarks/factor
 - Add deadline-aware Q: 253.2, 1.00 success, +117 over the old Q (0041).
 - Add two-crew parallel repair coordination: 260 vs single-crew 60; Q 260;
   the formal assignment is easy (0042).
+- Document a negative partial-view pilot: visibility is binary on the current
+  layout (0043).
 
 ## [0.1.2] — 2026-11-22
 
