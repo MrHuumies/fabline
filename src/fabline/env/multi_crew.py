@@ -428,6 +428,8 @@ class MultiCrewEnv:
         return {
             "score": self.world.state.score,
             "tick": self.world.state.tick,
+            "width": self.world.state.width,
+            "height": self.world.state.height,
             "roles": roles,
             "crew_a": self.crew_a,
             "crew_b": self.crew_b,

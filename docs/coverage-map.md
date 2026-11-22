@@ -206,8 +206,11 @@ survivor's second dispatch is worth +154 over no-replan, but nearest is within
 break the ceiling: oracle 441, greedy 419, nearest 361; the layout adds a real
 assignment gap (+22 oracle over best scripted). Combining recall with the
 twin-line layout (0047) preserves the recovery gain (+240) but not the layout
-gap: oracle-greedy is +9 [0, 21], missing the +10 gate. Q fails on both. The
-next questions are a layout-aware Q and harder recovery variants.
+gap: oracle-greedy is +9 [0, 21], missing the +10 gate. Q fails on both. A compact relative-geometry Q (0048) lifts the twin-line
+baseline from 233 to 422 vs oracle 442 (95.5%), but success is 0.50, below the
+0.60 gate; the state is the active ingredient, not yet a reliable closure. The
+next questions are a compact-state ensemble/margin features and harder recovery
+variants.
 
 The alternative remains:
 

@@ -78,6 +78,22 @@ oracle pair varies across seeds; nearest succeeds on 5/10 and greedy on 6/10 at
 the 400 threshold. See
 [`experiments/0046-crew-layouts`](../experiments/0046-crew-layouts/summary.md).
 
+## Learned baseline (0048)
+
+Seeds 8000–8009; three compact-Q policies × 2000 layouts and three old policies
+× 500.
+
+| policy | mean score | success |
+|---|---:|---:|
+| old tabular Q | 233.3 | 0.07 |
+| **compact Q** | **422.0** | **0.50** |
+| oracle | 442.0 | 0.60 |
+
+Compact Q is 95.5% of oracle and +188.7 over old Q, but misses the 0.60 success
+gate. One Q seed matches oracle exactly; the other two score 424/0.50 and
+400/0.40. The representation is a large win but not a reliable H4 closure. See
+[`experiments/0048-crew-layout-q`](../experiments/0048-crew-layout-q/summary.md).
+
 ## Known pitfalls
 
 - **Two lines, one generator.** This is a shared-resource layout, not independent
@@ -94,3 +110,5 @@ the 400 threshold. See
 - 2026-11-22 — card created; twin-line layout and gates preregistered.
 - 2026-11-22 — formal run: oracle 441, greedy 419, nearest 361, Q 217
   fails H4.
+- 2026-11-22 — compact layout-aware Q: 422 vs old Q 233, oracle 442; mean
+  gate passes, success 0.50 misses 0.60.

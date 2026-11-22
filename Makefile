@@ -84,6 +84,9 @@ crew-layouts:
 crew-replan-layouts:
 	$(PY) -m fabline crew-replan-layouts --out results/crew-replan-layouts --seeds 7000,7001,7002,7003,7004,7005,7006,7007,7008,7009 --q-seeds 0,1,2 --train-episodes 500 --train-seed-start 65000
 
+crew-layout-q:
+	$(PY) -m fabline crew-layout-q --out results/crew-layout-q --seeds 8000,8001,8002,8003,8004,8005,8006,8007,8008,8009 --q-seeds 0,1,2 --compact-episodes 2000 --tabular-episodes 500 --train-seed-start 80000
+
 power-allocation-stochastic:
 	$(PY) -m fabline power-allocation --out results/power-allocation/stochastic --episodes 5 --train-episodes 100 --load-jitter 30 --capacity-jitter 20 --variation-period 20
 

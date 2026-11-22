@@ -24,6 +24,8 @@ are pinned separately; see [`benchmarks/factory-v0.1/card.md`](benchmarks/factor
 - Document a negative combination: recall/replanning on twin lines keeps the
   recovery gain (+240) but the oracle-greedy gap is +9, missing the +10 gate;
   Q fails; not promoted (0047).
+- Add a compact layout-aware Q: 422 vs old Q 233 and oracle 442; mean gate
+  passes, success 0.50 misses 0.60 (0048).
 
 ## [0.1.2] — 2026-11-22
 

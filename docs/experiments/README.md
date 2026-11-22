@@ -65,6 +65,8 @@ retained for provenance.
   greedy 419, nearest 361, Q 217; the layout adds a real assignment gap.
 - [0047 — Recall/replanning on twin lines](0047-crew-replan-layouts/summary.md)
   — recovery +240, but oracle-greedy +9 misses H3; Q fails; not promoted.
+- [0048 — Compact layout-aware Q](0048-crew-layout-q/summary.md) — 422 vs old
+  Q 233 and oracle 442; mean gate passes, success 0.50 misses 0.60.
 
 The frozen benchmark is documented separately in
 [`benchmarks/factory-v0.1/card.md`](../../benchmarks/factory-v0.1/card.md).
