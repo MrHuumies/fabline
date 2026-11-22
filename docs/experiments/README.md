@@ -63,6 +63,8 @@ retained for provenance.
   +154 over no-replan; nearest 254, greedy 259, Q 144.0 fails H4.
 - [0046 — Twin-line crew layouts](0046-crew-layouts/summary.md) — oracle 441,
   greedy 419, nearest 361, Q 217; the layout adds a real assignment gap.
+- [0047 — Recall/replanning on twin lines](0047-crew-replan-layouts/summary.md)
+  — recovery +240, but oracle-greedy +9 misses H3; Q fails; not promoted.
 
 The frozen benchmark is documented separately in
 [`benchmarks/factory-v0.1/card.md`](../../benchmarks/factory-v0.1/card.md).

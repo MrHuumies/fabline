@@ -21,6 +21,9 @@ are pinned separately; see [`benchmarks/factory-v0.1/card.md`](benchmarks/factor
   fails the 0.85 gate (0045).
 - Add twin-line randomized crew layouts: oracle 441, greedy 419, nearest 361,
   tabular Q 217; the layout adds a real assignment gap but Q fails H4 (0046).
+- Document a negative combination: recall/replanning on twin lines keeps the
+  recovery gain (+240) but the oracle-greedy gap is +9, missing the +10 gate;
+  Q fails; not promoted (0047).
 
 ## [0.1.2] — 2026-11-22
 

@@ -772,6 +772,80 @@ def cmd_crew_robustness(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_crew_replan_layouts(args: argparse.Namespace) -> int:
+    config = FactoryConfig(
+        width=32,
+        height=16,
+        ticks_per_episode=500,
+        decision_interval=10,
+        entity_budget=32,
+        rock_density=0.0,
+        ore_patches=1,
+        starter_line=True,
+        emit_events=True,
+    )
+    replan = CrewReplanConfig(
+        episode_ticks=500,
+        decision_interval=10,
+        loop_failure_tick=90,
+        small_failure_tick=110,
+        large_failure_tick=130,
+        recall_tick=100,
+        success_score=400,
+        randomize_crew_b=True,
+        crew_b_min_distance=8,
+        scenario="random_gear",
+        power=PowerConfig(
+            enabled=True,
+            topology="wired",
+            generator_count=1,
+            generator_capacity=24,
+            generator_radius=8,
+            wire_redundancy=2,
+        ),
+    )
+    seeds = tuple(int(value) for value in args.seeds.split(","))
+    q_seeds = tuple(int(value) for value in args.q_seeds.split(","))
+    results = run_crew_replan(
+        config,
+        replan,
+        train_episodes=args.train_episodes,
+        seeds=seeds,
+        q_seeds=q_seeds,
+        train_seed_start=args.train_seed_start,
+    )
+    report = write_crew_replan_report(
+        args.out,
+        results,
+        config={
+            "width": config.width,
+            "height": config.height,
+            "scenario": replan.scenario,
+            "randomize_crew_b": replan.randomize_crew_b,
+            "crew_b_min_distance": replan.crew_b_min_distance,
+            "generator_capacity": 24,
+            "warning_tick": replan.warning_tick,
+            "loop_failure_tick": replan.loop_failure_tick,
+            "small_failure_tick": replan.small_failure_tick,
+            "large_failure_tick": replan.large_failure_tick,
+            "recall_tick": replan.recall_tick,
+            "success_score": replan.success_score,
+            "seeds": list(seeds),
+            "q_seeds": list(q_seeds),
+            "train_episodes": args.train_episodes,
+            "train_seed_start": args.train_seed_start,
+        },
+    )
+    print(
+        json.dumps(
+            {"report": str(report), "results": results},
+            indent=2,
+            sort_keys=True,
+        )
+    )
+    return 0
+
+
 def cmd_crew_replan(args: argparse.Namespace) -> int:
     config = FactoryConfig(
         width=16,
@@ -1248,6 +1322,23 @@ def build_parser() -> argparse.ArgumentParser:
     crew_robustness.add_argument("--large-failure", type=int, default=130)
     crew_robustness.add_argument("--success-score", type=int, default=150)
     crew_robustness.set_defaults(func=cmd_crew_robustness)
+
+    crew_replan_layouts = subparsers.add_parser(
+        "crew-replan-layouts",
+        help="run crew recall/replanning on twin-line layouts",
+    )
+    crew_replan_layouts.add_argument(
+        "--out", type=str, default="results/crew-replan-layouts"
+    )
+    crew_replan_layouts.add_argument(
+        "--seeds",
+        type=str,
+        default="7000,7001,7002,7003,7004,7005,7006,7007,7008,7009",
+    )
+    crew_replan_layouts.add_argument("--q-seeds", type=str, default="0,1,2")
+    crew_replan_layouts.add_argument("--train-episodes", type=int, default=500)
+    crew_replan_layouts.add_argument("--train-seed-start", type=int, default=65000)
+    crew_replan_layouts.set_defaults(func=cmd_crew_replan_layouts)
 
     crew_replan = subparsers.add_parser(
         "crew-replan",

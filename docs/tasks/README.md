@@ -48,6 +48,8 @@ Current tasks:
   survivor recovers the abandoned bridge.
 - [Twin-line crew assignment](crew-layouts.md) — two lines, random crew base;
   oracle 441 vs greedy 419, nearest 361.
+- [Recall/replanning on twin lines](crew-replan-layouts.md) — recovery +240,
+  but oracle-greedy +9 misses H3; not promoted.
 - [Power allocation](power-allocation.md) — three-action priority scheduling
   under a tight generator budget.
 - [Fault + power interaction](fault-power.md) — four-action repair and priority

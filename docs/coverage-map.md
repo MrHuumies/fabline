@@ -204,8 +204,10 @@ promoted (0043). Crew recall/replanning (0045) is positive but shallow: the
 survivor's second dispatch is worth +154 over no-replan, but nearest is within
 6 points of oracle and tabular Q fails H4. Twin-line randomized layouts (0046)
 break the ceiling: oracle 441, greedy 419, nearest 361; the layout adds a real
-assignment gap (+22 oracle over best scripted). Q fails H4. The next questions
-are recall/replanning on twin-line layouts and a layout-aware Q.
+assignment gap (+22 oracle over best scripted). Combining recall with the
+twin-line layout (0047) preserves the recovery gain (+240) but not the layout
+gap: oracle-greedy is +9 [0, 21], missing the +10 gate. Q fails on both. The
+next questions are a layout-aware Q and harder recovery variants.
 
 The alternative remains:
 
