@@ -224,6 +224,12 @@ view_mask: {grid: true, vector: true, text: false}
 View dropout, arrival, and failure are represented by the mask. The base model
 must be trained with masks if it is expected to handle missing views.
 
+Implementation: `MultiviewObservation` returns a `MultiviewFrame` and supports
+`observe(state, view_mask=...)`. `flatten` emits a fixed-width float32 vector;
+inactive views are zeroed. The spec is `multiview`/`1.0.0`, with prefixed
+feature names when every view shape is known. Named views can be registered with
+`register_view`.
+
 ## Action adapters
 
 ### `grid_build.v2`
@@ -273,6 +279,31 @@ TaskSpec
 
 A task is a projection over episodes. The same episode can be used by several
 tasks with different observation adapters, labels, and splits.
+
+### `ViewArrivalTask`
+
+A view-arrival task exposes:
+
+```text
+ViewArrivalSpec
+  task_id: str
+  task_version: str
+  base_views: tuple[str, ...]
+  new_view: str
+  retention_views: tuple[str, ...]
+  label: str
+
+ViewArrivalData
+  views: map[str, ndarray]
+  view_mask: map[str, bool]
+  labels: ndarray
+  splits: ndarray
+  episode_ids: ndarray
+```
+
+Splits are grouped by episode id; a row-level random split is rejected. The
+task protocol is `spec` plus `load()`. The training/update runner is a separate
+consumer of this contract.
 
 ## Episode schema
 

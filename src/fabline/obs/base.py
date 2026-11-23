@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Any, Protocol
 
@@ -72,12 +73,20 @@ def build_observation(
     config: FactoryConfig,
     faults: FaultConfig | None = None,
     power: PowerConfig | None = None,
+    views: Mapping[str, ObservationAdapter] | None = None,
+    view_mask: Mapping[str, bool] | None = None,
 ) -> ObservationAdapter:
     """Construct a built-in observation adapter by name.
 
     Fault-aware and power-aware adapters receive the opt-in configs.
     """
 
+    if name == "multiview":
+        from .multiview import MultiviewObservation
+
+        if views is None:
+            raise ValueError("multiview requires a views mapping")
+        return MultiviewObservation(config, views, view_mask)
     if name == "grid":
         from .grid import GridObservation
 

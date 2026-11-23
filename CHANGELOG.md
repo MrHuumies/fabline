@@ -56,6 +56,8 @@ are pinned separately; see [`benchmarks/factory-v0.1/card.md`](benchmarks/factor
   320; all gates pass (0062).
 - Add three-crew recall/recovery: +156 over no-replan, three greedy 516,
   oracle 520; shallow (0063).
+- Add the multiview observation contract and view-arrival task interface:
+  named views, view masks, fixed-width flatten, and episode-grouped splits.
 - Add the P2 coverage review: coordination, visibility, and triage results;
   Q and visibility lines near saturation; third crew/replacement recommended.
 
