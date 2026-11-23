@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import pytest
+
 from fabline.env.multi_crew import (
     MULTI_CREW_FEATURES,
     MultiCrewConfig,
@@ -86,6 +88,36 @@ def test_crew_robustness_structure() -> None:
         "mean_score"
     ]
     assert results["paired"]["oracle_minus_parallel_nearest"]["mean"] >= 0
+
+
+def test_role_repair_ticks_validation() -> None:
+    with pytest.raises(ValueError):
+        MultiCrewConfig(role_repair_ticks=(1, 2))
+    with pytest.raises(ValueError):
+        MultiCrewConfig(role_repair_ticks=(1, 2, -3))
+
+
+def test_role_repair_ticks_change_service_time() -> None:
+    env = MultiCrewEnv(
+        _config(),
+        MultiCrewConfig(
+            success_score=150,
+            role_repair_ticks=(20, 40, 100),
+        ),
+    )
+    _, info = env.reset(0)
+    for role, ticks in zip(
+        ("loop", "small", "large"), (20, 40, 100), strict=True
+    ):
+        wire = info["roles"][role]
+        assert wire["service_a"] == wire["distance_a"] * 2 + ticks
+        assert wire["service_b"] == wire["distance_b"] * 2 + ticks
+
+    default = MultiCrewEnv(_config(), MultiCrewConfig(success_score=150))
+    _, default_info = default.reset(0)
+    for role in ("loop", "small", "large"):
+        wire = default_info["roles"][role]
+        assert wire["service_a"] == wire["distance_a"] * 2 + 40
 
 
 def test_random_crew_b_is_deterministic_and_separated() -> None:

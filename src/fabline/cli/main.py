@@ -748,6 +748,72 @@ def cmd_crew_triage(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_crew_costs(args: argparse.Namespace) -> int:
+    config = FactoryConfig(
+        width=32,
+        height=16,
+        ticks_per_episode=500,
+        decision_interval=10,
+        entity_budget=32,
+        rock_density=0.0,
+        ore_patches=1,
+        starter_line=True,
+        emit_events=True,
+    )
+    replan = CrewReplanConfig(
+        episode_ticks=500,
+        decision_interval=10,
+        loop_failure_tick=90,
+        small_failure_tick=110,
+        large_failure_tick=130,
+        recall_tick=100,
+        job_failure_tick=100,
+        replan_jobs=2,
+        role_mode="three_positive",
+        replan_mode="all_positive",
+        success_score=300,
+        randomize_crew_b=True,
+        crew_b_min_distance=8,
+        role_repair_ticks=(20, 40, 100),
+        scenario="random_gear",
+        power=PowerConfig(
+            enabled=True,
+            topology="wired",
+            generator_count=1,
+            generator_capacity=24,
+            generator_radius=8,
+            wire_redundancy=2,
+        ),
+    )
+    seeds = tuple(int(value) for value in args.seeds.split(","))
+    results = run_crew_multi_orphan(config, replan, seeds=seeds)
+    report = write_crew_multi_orphan_report(
+        args.out,
+        results,
+        config={
+            "width": config.width,
+            "height": config.height,
+            "failure_tick": replan.job_failure_tick,
+            "recall_tick": replan.recall_tick,
+            "replan_jobs": replan.replan_jobs,
+            "role_mode": replan.role_mode,
+            "replan_mode": replan.replan_mode,
+            "role_repair_ticks": list(replan.role_repair_ticks or ()),
+            "success_score": replan.success_score,
+            "seeds": list(seeds),
+        },
+        title="Asymmetric repair-cost triage",
+    )
+    print(
+        json.dumps(
+            {"report": str(report), "results": results},
+            indent=2,
+            sort_keys=True,
+        )
+    )
+    return 0
+
+
 def cmd_crew_multi_orphan(args: argparse.Namespace) -> int:
     config = FactoryConfig(
         width=32,
@@ -1948,6 +2014,18 @@ def build_parser() -> argparse.ArgumentParser:
         "--seeds", type=str, default="12000,12001,12002,12003,12004"
     )
     crew_triage.set_defaults(func=cmd_crew_triage)
+
+    crew_costs = subparsers.add_parser(
+        "crew-costs",
+        help="run three-bridge triage with asymmetric repair costs",
+    )
+    crew_costs.add_argument(
+        "--out", type=str, default="results/crew-costs"
+    )
+    crew_costs.add_argument(
+        "--seeds", type=str, default="25000,25001,25002,25003,25004"
+    )
+    crew_costs.set_defaults(func=cmd_crew_costs)
 
     crew_multi_orphan = subparsers.add_parser(
         "crew-multi-orphan",

@@ -62,6 +62,8 @@ Current tasks:
   64-action initial coverage.
 - [Three-crew recall](crew-three-replan.md) — 64-action initial dispatch, B
   recall, A/C recovery pair.
+- [Asymmetric repair-cost triage](crew-triage-costs.md) — role-specific repair
+  durations on the three-bridge triage; negative formal.
 - [View arrival](view-arrival.md) — generic multiview contract and
   episode-grouped view-arrival task.
 - [Power allocation](power-allocation.md) — three-action priority scheduling

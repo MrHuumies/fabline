@@ -10,6 +10,7 @@ import numpy as np
 from fabline.env.multi_crew import (
     CHOICES,
     MULTI_CREW_FEATURES,
+    ROLES,
     MultiCrewConfig,
     MultiCrewEnv,
 )
@@ -24,6 +25,15 @@ CREW_REPLAN_FEATURES = (
     "crew_b_available",
     "recall_remaining_norm",
     "orphaned_role_norm",
+)
+
+CREW_COST_FEATURES = (
+    *CREW_REPLAN_FEATURES,
+    *(
+        f"{role}_service_{crew}_norm"
+        for role in ROLES
+        for crew in ("a", "b")
+    ),
 )
 
 
@@ -431,26 +441,35 @@ class CrewReplanEnv(MultiCrewEnv):
     def _observation(self) -> np.ndarray:
         base = super()._observation()
         tick = self.world.state.tick
-        extra = np.asarray(
-            [
-                1.0 if self.phase == "replan" else 0.0,
-                1.0 if self.crew_b_available else 0.0,
-                (
-                    max(0, self.recall_tick - tick)
-                    / self.multi.episode_ticks
-                    if self.crew_b_available
-                    else 0.0
-                ),
-                (
-                    (self.roles.index(self.orphaned_role) + 1)
-                    / len(self.roles)
-                    if self.orphaned_role is not None
-                    else 0.0
-                ),
-            ],
-            dtype=np.float32,
+        extra = [
+            1.0 if self.phase == "replan" else 0.0,
+            1.0 if self.crew_b_available else 0.0,
+            (
+                max(0, self.recall_tick - tick)
+                / self.multi.episode_ticks
+                if self.crew_b_available
+                else 0.0
+            ),
+            (
+                (self.roles.index(self.orphaned_role) + 1)
+                / len(self.roles)
+                if self.orphaned_role is not None
+                else 0.0
+            ),
+        ]
+        if self.multi.role_repair_ticks is not None:
+            scale = max(1, self.multi.episode_ticks)
+            for role in self.roles:
+                wire = self._wire(self.role_wires[role])
+                extra.extend(
+                    [
+                        self._service_ticks(wire, self.crew_a, role) / scale,
+                        self._service_ticks(wire, self.crew_b, role) / scale,
+                    ]
+                )
+        return np.concatenate(
+            [base, np.asarray(extra, dtype=np.float32)]
         )
-        return np.concatenate([base, extra])
 
     def _info(self) -> dict[str, Any]:
         info = super()._info()

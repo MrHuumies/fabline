@@ -51,6 +51,7 @@ class MultiCrewConfig:
     small_failure_tick: int = 110
     large_failure_tick: int = 130
     repair_ticks: int = 40
+    role_repair_ticks: tuple[int, int, int] | None = None
     travel_ticks_per_cell: int = 2
     randomize_crew_b: bool = False
     crew_b_min_distance: int = 6
@@ -80,6 +81,11 @@ class MultiCrewConfig:
             raise ValueError("failure ticks must increase")
         if self.crew_b_min_distance < 0:
             raise ValueError("crew_b_min_distance must be non-negative")
+        if self.role_repair_ticks is not None:
+            if len(self.role_repair_ticks) != len(ROLES):
+                raise ValueError("role_repair_ticks must have three entries")
+            if any(value < 0 for value in self.role_repair_ticks):
+                raise ValueError("role repair ticks must be non-negative")
         if self.scenario not in SCENARIOS:
             raise ValueError(f"unknown scenario: {self.scenario}")
         if not self.power.enabled or self.power.topology != "wired":
@@ -182,11 +188,19 @@ class MultiCrewEnv:
         return abs(x - crew[0]) + abs(y - crew[1])
 
     def _service_ticks(
-        self, wire: PowerWire, crew: tuple[int, int]
+        self,
+        wire: PowerWire,
+        crew: tuple[int, int],
+        role: str | None = None,
     ) -> int:
+        repair_ticks = self.multi.repair_ticks
+        if role is not None and self.multi.role_repair_ticks is not None:
+            repair_ticks = self.multi.role_repair_ticks[
+                self.roles.index(role)
+            ]
         return (
             self._distance(wire, crew) * self.multi.travel_ticks_per_cell
-            + self.multi.repair_ticks
+            + repair_ticks
         )
 
     def reset(self, seed: int = 0) -> tuple[np.ndarray, dict[str, Any]]:
@@ -302,7 +316,7 @@ class MultiCrewEnv:
             "preventive": wire.degraded and not wire.failed,
             "outage": self.role_outages[role],
             "distance": self._distance(wire, crew),
-            "duration": self._service_ticks(wire, crew),
+            "duration": self._service_ticks(wire, crew, role),
         }
 
     def step(
@@ -422,8 +436,12 @@ class MultiCrewEnv:
                 "deadline": wire.failure_tick,
                 "distance_a": self._distance(wire, self.crew_a),
                 "distance_b": self._distance(wire, self.crew_b),
-                "service_a": self._service_ticks(wire, self.crew_a),
-                "service_b": self._service_ticks(wire, self.crew_b),
+                "service_a": self._service_ticks(
+                    wire, self.crew_a, role
+                ),
+                "service_b": self._service_ticks(
+                    wire, self.crew_b, role
+                ),
             }
         return {
             "score": self.world.state.score,

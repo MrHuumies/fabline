@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from fabline.env.crew_replan import (
+    CREW_COST_FEATURES,
     CREW_REPLAN_FEATURES,
     CrewReplanConfig,
     CrewReplanEnv,
@@ -70,6 +71,17 @@ def test_phase_transition_and_replan_mask() -> None:
     assert terminated and not truncated
     assert observation.shape == (len(CREW_REPLAN_FEATURES),)
     assert info["score"] == 260
+
+
+def test_role_cost_observation_features() -> None:
+    env = CrewReplanEnv(
+        _config(),
+        CrewReplanConfig(role_repair_ticks=(20, 40, 100)),
+    )
+    observation, info = env.reset(0)
+    assert observation.shape == (len(CREW_COST_FEATURES),)
+    assert len(CREW_COST_FEATURES) == len(CREW_REPLAN_FEATURES) + 6
+    assert info["phase"] == "initial"
 
 
 def test_recall_replan_beats_no_replan_and_single_crew() -> None:

@@ -98,6 +98,8 @@ retained for provenance.
   476, oracle 520, two oracle 320; all gates pass.
 - [0063 — Three-crew recall](0063-crew-three-replan/summary.md) — recovery
   +156; three greedy 516, oracle 520; shallow.
+- [0066 — Asymmetric repair-cost triage](0066-crew-costs/summary.md) — negative;
+  greedy matches oracle on fresh seeds; the pilot's +52 did not replicate.
 
 The frozen benchmark is documented separately in
 [`benchmarks/factory-v0.1/card.md`](../../benchmarks/factory-v0.1/card.md).

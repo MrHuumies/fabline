@@ -25,3 +25,4 @@ One RFC per new mechanic or major world change. Use
 - [0020 — Three-crew initial assignment](0020-crew-three.md)
 - [0021 — Three-crew recall and recovery](0021-crew-three-replan.md)
 - [0022 — Multiview observation and view-arrival contract](0022-multiview.md)
+- [0024 — Asymmetric repair-cost triage](0024-crew-costs.md)

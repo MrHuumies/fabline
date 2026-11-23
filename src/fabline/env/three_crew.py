@@ -230,6 +230,6 @@ class ThreeCrewEnv(MultiCrewEnv):
                 wire, self.crew_c
             )
             info["roles"][role]["service_c"] = self._service_ticks(
-                wire, self.crew_c
+                wire, self.crew_c, role
             )
         return info

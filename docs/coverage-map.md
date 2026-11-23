@@ -201,7 +201,9 @@ promoted. A pair-aware deadline/value pilot (0061) is negative: greedy remains
 best and no pair rule closes the gap. Full three-crew initial assignment (0062)
 is positive: three greedy 476, oracle 520, two oracle 320; all gates pass.
 Three-crew recall/recovery (0063) adds +156 over no-replan (516 vs 360) but is
-shallow: oracle 520, gap +4.
+shallow: oracle 520, gap +4. Asymmetric repair-cost triage (0066) is negative:
+fresh seeds give greedy 386 and oracle 386, a zero gap; the pilot's +52 did not
+replicate, so the cost axis is retired.
 
 **Started: multi-agent coordination.** A two-crew parallel repair assignment
 (0042) passes: two crews score 260 vs single-crew 60; Q 260. A 40-seed
