@@ -20,3 +20,4 @@ One RFC per new mechanic or major world change. Use
 - [0015 — Private crew views and communication](0015-crew-visibility.md)
 - [0016 — Sequential survivor dispatch](0016-sequential-survivor.md)
 - [0017 — Three-bridge survivor triage](0017-crew-triage.md)
+- [0018 — Crew report budget](0018-crew-budget.md)

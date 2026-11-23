@@ -96,6 +96,9 @@ crew-visibility:
 crew-private:
 	$(PY) -m fabline crew-private --out results/crew-private --seeds 13000,13001,13002,13003,13004 --radius 16 --report-age 60
 
+crew-budget:
+	$(PY) -m fabline crew-budget --out results/crew-budget --seeds 16000,16001,16002,16003,16004 --radius 16
+
 crew-multi-orphan:
 	$(PY) -m fabline crew-multi-orphan --out results/crew-multi-orphan --seeds 11000,11001,11002,11003,11004
 

@@ -19,6 +19,10 @@ from fabline.env.preventive_fault import PreventiveFaultConfig
 from fabline.env.preventive_threshold import ThresholdConfig
 from fabline.env.preventive_wire import PreventiveWireConfig
 from fabline.env.wire_repair import WireRepairConfig
+from fabline.harness.crew_budget import (
+    run_crew_budget,
+    write_crew_budget_report,
+)
 from fabline.harness.crew_layout_ensemble import (
     run_crew_layout_ensemble,
     write_crew_layout_ensemble_report,
@@ -778,6 +782,67 @@ def cmd_crew_multi_orphan(args: argparse.Namespace) -> int:
             "replan_jobs": replan.replan_jobs,
             "success_score": replan.success_score,
             "seeds": list(seeds),
+        },
+    )
+    print(
+        json.dumps(
+            {"report": str(report), "results": results},
+            indent=2,
+            sort_keys=True,
+        )
+    )
+    return 0
+
+
+def cmd_crew_budget(args: argparse.Namespace) -> int:
+    config = FactoryConfig(
+        width=48,
+        height=24,
+        ticks_per_episode=500,
+        decision_interval=10,
+        entity_budget=48,
+        rock_density=0.0,
+        ore_patches=1,
+        starter_line=True,
+        emit_events=True,
+    )
+    replan = CrewReplanConfig(
+        episode_ticks=500,
+        decision_interval=10,
+        loop_failure_tick=90,
+        small_failure_tick=110,
+        large_failure_tick=130,
+        recall_tick=100,
+        success_score=600,
+        randomize_crew_b=True,
+        crew_b_min_distance=8,
+        scenario="spread_gear",
+        power=PowerConfig(
+            enabled=True,
+            topology="wired",
+            generator_count=1,
+            generator_capacity=48,
+            generator_radius=8,
+            wire_redundancy=2,
+        ),
+    )
+    seeds = tuple(int(value) for value in args.seeds.split(","))
+    results = run_crew_budget(
+        config,
+        replan,
+        seeds=seeds,
+        radius=args.radius,
+    )
+    report = write_crew_budget_report(
+        args.out,
+        results,
+        config={
+            "width": config.width,
+            "height": config.height,
+            "scenario": replan.scenario,
+            "radius": args.radius,
+            "seeds": list(seeds),
+            "success_score": replan.success_score,
         },
     )
     print(
@@ -1711,6 +1776,19 @@ def build_parser() -> argparse.ArgumentParser:
         "--seeds", type=str, default="11000,11001,11002,11003,11004"
     )
     crew_multi_orphan.set_defaults(func=cmd_crew_multi_orphan)
+
+    crew_budget = subparsers.add_parser(
+        "crew-budget",
+        help="compare shared, budgeted, and private crew reports",
+    )
+    crew_budget.add_argument(
+        "--out", type=str, default="results/crew-budget"
+    )
+    crew_budget.add_argument(
+        "--seeds", type=str, default="16000,16001,16002,16003,16004"
+    )
+    crew_budget.add_argument("--radius", type=int, default=16)
+    crew_budget.set_defaults(func=cmd_crew_budget)
 
     crew_private = subparsers.add_parser(
         "crew-private",

@@ -42,6 +42,8 @@ are pinned separately; see [`benchmarks/factory-v0.1/card.md`](benchmarks/factor
   gates pass (0055).
 - Add private-view comparison: shared local +40 and delayed60 +74 over private
   best; private nearest/aware 296 (0056).
+- Add report-budget comparison: two reports match shared; one costs 42;
+  private costs 32 more (0057).
 
 ## [0.1.2] — 2026-11-22
 

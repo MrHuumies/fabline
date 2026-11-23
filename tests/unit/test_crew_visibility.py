@@ -1,7 +1,11 @@
 from __future__ import annotations
 
 from fabline.env.crew_replan import CrewReplanConfig, CrewReplanEnv
-from fabline.env.crew_visibility import PrivateVisibilityEnv, VisibilityEnv
+from fabline.env.crew_visibility import (
+    BudgetVisibilityEnv,
+    PrivateVisibilityEnv,
+    VisibilityEnv,
+)
 from fabline.harness.crew_private import (
     CrewNearestPolicy,
     PrivatePairPolicy,
@@ -83,3 +87,25 @@ def test_private_views_and_pair_policy() -> None:
     )
     action = policy.act(observation, info, env.action_mask())
     assert env.action_mask()[action]
+
+
+def test_budget_reports_are_capped_and_shared() -> None:
+    env = _env()
+    budget = BudgetVisibilityEnv(
+        env, radius=16, reports_per_crew=1
+    )
+    observation, info = budget.reset(16000)
+    while info["tick"] < 40:
+        observation, _, _, _, info = budget.step(0)
+    assert len(info["reports"]["a"]) <= 1
+    assert len(info["reports"]["b"]) <= 1
+    known = set(info["reports"]["a"]) | set(info["reports"]["b"])
+    mask = budget.action_mask()
+    for action in range(env.n_actions):
+        if not mask[action]:
+            continue
+        first, second = divmod(action, 4)
+        if first > 0:
+            assert env.roles[first - 1] in known
+        if second > 0:
+            assert env.roles[second - 1] in known

@@ -92,6 +92,21 @@ adds +34 over local. Private nearest/aware collapse to 296 with zero success.
 All gates pass. See
 [`experiments/0056-crew-private`](../experiments/0056-crew-private/summary.md).
 
+## Report budget (0057)
+
+Seeds 16000–16004; radius 16.
+
+| condition | best scripted | oracle | success |
+|---|---:|---:|---:|
+| shared | 776 | 776 | 1.00 |
+| 2 reports | 776 | 776 | 1.00 |
+| 1 report | 734 | 734 | 0.80 |
+| private | 702 | — | 0.80 |
+
+Two reports per crew match shared; one report costs 42; private costs another
+32. All gates pass. See
+[`experiments/0057-crew-budget`](../experiments/0057-crew-budget/summary.md).
+
 ## Known pitfalls
 
 - Manhattan radius ignores walls/occlusion.
@@ -105,3 +120,5 @@ All gates pass. See
 - 2026-11-23 — formal run: local cost +98, delayed60 +54, all gates pass.
 - 2026-11-23 — private views: shared local +40 and delayed60 +74 over private;
   private nearest/aware 296; all gates pass.
+- 2026-11-23 — report budget: 2 reports match shared, 1 report −42, private
+  −32 more; all gates pass.

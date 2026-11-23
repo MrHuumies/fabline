@@ -97,13 +97,11 @@ class VisibilityEnv:
         }
         return masked
 
-    def _mask_observation(
+    def _observation_from_roles(
         self,
         observation: np.ndarray,
-        info: dict[str, Any],
+        roles: dict[str, dict[str, Any]],
     ) -> np.ndarray:
-        if self.radius >= 999:
-            return observation
         state = self.env.world.state
         consumers = max(1, len(self.env._consumers()))
         episode = max(1, int(self.env.multi.episode_ticks))
@@ -117,7 +115,7 @@ class VisibilityEnv:
             self.env.crew_b[1] / max(1, state.height - 1),
         ]
         for role in self.env.roles:
-            data = self._role_data(info, role)
+            data = roles[role]
             state_value = (
                 1.0
                 if data["failed"]
@@ -141,6 +139,19 @@ class VisibilityEnv:
         return np.concatenate(
             [np.asarray(values, dtype=np.float32), extra]
         )
+
+    def _mask_observation(
+        self,
+        observation: np.ndarray,
+        info: dict[str, Any],
+    ) -> np.ndarray:
+        if self.radius >= 999:
+            return observation
+        roles = {
+            role: self._role_data(info, role)
+            for role in self.env.roles
+        }
+        return self._observation_from_roles(observation, roles)
 
     def _known(self, role: str, crew: str) -> bool:
         if self._visible(role, crew):
@@ -257,4 +268,124 @@ class PrivateVisibilityEnv(VisibilityEnv):
             terminated,
             truncated,
             self._private_info(info),
+        )
+
+
+class BudgetVisibilityEnv(VisibilityEnv):
+    """Limit each crew to a fixed number of current reports per decision."""
+
+    def __init__(
+        self,
+        env: MultiCrewEnv,
+        *,
+        radius: int,
+        reports_per_crew: int,
+    ) -> None:
+        if reports_per_crew <= 0:
+            raise ValueError("reports_per_crew must be positive")
+        super().__init__(env, radius=radius, report_age=0)
+        self.reports_per_crew = reports_per_crew
+
+    def _reports(self, info: dict[str, Any]) -> dict[str, set[str]]:
+        reports: dict[str, set[str]] = {"a": set(), "b": set()}
+        for crew in ("a", "b"):
+            roles = [
+                role
+                for role in self.env.roles
+                if info["roles"][role]["outage"] > 0
+                and self._visible(role, crew)
+            ]
+            key = "distance_a" if crew == "a" else "distance_b"
+            roles.sort(
+                key=lambda role: (
+                    -info["roles"][role]["outage"],
+                    info["roles"][role][key],
+                )
+            )
+            reports[crew] = set(roles[: self.reports_per_crew])
+        return reports
+
+    def _budget_roles(
+        self,
+        info: dict[str, Any],
+        reports: dict[str, set[str]],
+    ) -> dict[str, dict[str, Any]]:
+        roles: dict[str, dict[str, Any]] = {}
+        for role in self.env.roles:
+            visible_a = role in reports["a"]
+            visible_b = role in reports["b"]
+            if visible_a or visible_b:
+                data = dict(info["roles"][role])
+                data["known"] = True
+            else:
+                data = {
+                    "wire_id": info["roles"][role]["wire_id"],
+                    "outage": 0,
+                    "degraded": False,
+                    "failed": False,
+                    "deadline": 0,
+                    "distance_a": 0,
+                    "distance_b": 0,
+                    "service_a": 0,
+                    "service_b": 0,
+                    "known": False,
+                }
+            data["visible_a"] = visible_a
+            data["visible_b"] = visible_b
+            roles[role] = data
+        return roles
+
+    def _budget_info(
+        self,
+        info: dict[str, Any],
+        reports: dict[str, set[str]],
+    ) -> dict[str, Any]:
+        masked = dict(info)
+        masked["roles"] = self._budget_roles(info, reports)
+        masked["reports"] = {
+            crew: sorted(roles) for crew, roles in reports.items()
+        }
+        return masked
+
+    def action_mask(self) -> np.ndarray:
+        info = self._info_cache
+        reports = self._reports(info)
+        known = reports["a"] | reports["b"]
+        mask = self.env.action_mask().copy()
+        for action in np.flatnonzero(mask):
+            first, second = divmod(int(action), CHOICES)
+            if first > 0 and ROLES[first - 1] not in known:
+                mask[action] = False
+            if second > 0 and ROLES[second - 1] not in known:
+                mask[action] = False
+        return mask
+
+    def reset(self, seed: int = 0) -> tuple[np.ndarray, dict[str, Any]]:
+        observation, info = self.env.reset(seed)
+        self._info_cache = info
+        reports = self._reports(info)
+        return (
+            self._observation_from_roles(
+                observation, self._budget_roles(info, reports)
+            ),
+            self._budget_info(info, reports),
+        )
+
+    def step(
+        self,
+        action: int,
+    ) -> tuple[np.ndarray, float, bool, bool, dict[str, Any]]:
+        observation, reward, terminated, truncated, info = self.env.step(
+            action
+        )
+        self._info_cache = info
+        reports = self._reports(info)
+        return (
+            self._observation_from_roles(
+                observation, self._budget_roles(info, reports)
+            ),
+            reward,
+            terminated,
+            truncated,
+            self._budget_info(info, reports),
         )
