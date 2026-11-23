@@ -23,3 +23,4 @@ One RFC per new mechanic or major world change. Use
 - [0018 — Crew report budget](0018-crew-budget.md)
 - [0019 — Replacement crew handoff](0019-crew-replacement.md)
 - [0020 — Three-crew initial assignment](0020-crew-three.md)
+- [0021 — Three-crew recall and recovery](0021-crew-three-replan.md)

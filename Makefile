@@ -111,6 +111,9 @@ crew-replacement:
 crew-three:
 	$(PY) -m fabline crew-three --out results/crew-three --seeds 22000,22001,22002,22003,22004
 
+crew-three-replan:
+	$(PY) -m fabline crew-three-replan --out results/crew-three-replan --seeds 24000,24001,24002,24003,24004
+
 power-allocation-stochastic:
 	$(PY) -m fabline power-allocation --out results/power-allocation/stochastic --episodes 5 --train-episodes 100 --load-jitter 30 --capacity-jitter 20 --variation-period 20
 

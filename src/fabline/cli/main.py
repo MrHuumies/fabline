@@ -18,6 +18,7 @@ from fabline.env.power_allocation import PowerAllocationConfig
 from fabline.env.preventive_fault import PreventiveFaultConfig
 from fabline.env.preventive_threshold import ThresholdConfig
 from fabline.env.preventive_wire import PreventiveWireConfig
+from fabline.env.three_crew_replan import ThreeCrewReplanConfig
 from fabline.env.wire_repair import WireRepairConfig
 from fabline.harness.crew_budget import (
     run_crew_budget,
@@ -54,6 +55,10 @@ from fabline.harness.crew_schedule import (
 from fabline.harness.crew_three import (
     run_three_crew,
     write_three_crew_report,
+)
+from fabline.harness.crew_three_replan import (
+    run_three_crew_replan,
+    write_three_crew_replan_report,
 )
 from fabline.harness.crew_visibility import (
     run_crew_visibility,
@@ -788,6 +793,62 @@ def cmd_crew_multi_orphan(args: argparse.Namespace) -> int:
             "failure_tick": replan.job_failure_tick,
             "recall_tick": replan.recall_tick,
             "replan_jobs": replan.replan_jobs,
+            "success_score": replan.success_score,
+            "seeds": list(seeds),
+        },
+    )
+    print(
+        json.dumps(
+            {"report": str(report), "results": results},
+            indent=2,
+            sort_keys=True,
+        )
+    )
+    return 0
+
+
+def cmd_crew_three_replan(args: argparse.Namespace) -> int:
+    config = FactoryConfig(
+        width=32,
+        height=16,
+        ticks_per_episode=500,
+        decision_interval=10,
+        entity_budget=32,
+        rock_density=0.0,
+        ore_patches=1,
+        starter_line=True,
+        emit_events=True,
+    )
+    replan = ThreeCrewReplanConfig(
+        episode_ticks=500,
+        decision_interval=10,
+        loop_failure_tick=100,
+        small_failure_tick=130,
+        large_failure_tick=160,
+        recall_tick=100,
+        randomize_crew_b=True,
+        crew_b_min_distance=8,
+        scenario="random_gear",
+        success_score=400,
+        power=PowerConfig(
+            enabled=True,
+            topology="wired",
+            generator_count=1,
+            generator_capacity=24,
+            generator_radius=8,
+            wire_redundancy=2,
+        ),
+    )
+    seeds = tuple(int(value) for value in args.seeds.split(","))
+    results = run_three_crew_replan(config, replan, seeds=seeds)
+    report = write_three_crew_replan_report(
+        args.out,
+        results,
+        config={
+            "width": config.width,
+            "height": config.height,
+            "scenario": replan.scenario,
+            "recall_tick": replan.recall_tick,
             "success_score": replan.success_score,
             "seeds": list(seeds),
         },
@@ -1899,6 +1960,18 @@ def build_parser() -> argparse.ArgumentParser:
         "--seeds", type=str, default="11000,11001,11002,11003,11004"
     )
     crew_multi_orphan.set_defaults(func=cmd_crew_multi_orphan)
+
+    crew_three_replan = subparsers.add_parser(
+        "crew-three-replan",
+        help="run three-crew assignment with recall and A/C recovery",
+    )
+    crew_three_replan.add_argument(
+        "--out", type=str, default="results/crew-three-replan"
+    )
+    crew_three_replan.add_argument(
+        "--seeds", type=str, default="23000,23001,23002,23003,23004"
+    )
+    crew_three_replan.set_defaults(func=cmd_crew_three_replan)
 
     crew_three = subparsers.add_parser(
         "crew-three",

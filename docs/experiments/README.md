@@ -96,6 +96,8 @@ retained for provenance.
   negative; no pair rule beats greedy; not promoted.
 - [0062 — Three-crew assignment](0062-crew-three/summary.md) — three greedy
   476, oracle 520, two oracle 320; all gates pass.
+- [0063 — Three-crew recall](0063-crew-three-replan/summary.md) — recovery
+  +156; three greedy 516, oracle 520; shallow.
 
 The frozen benchmark is documented separately in
 [`benchmarks/factory-v0.1/card.md`](../../benchmarks/factory-v0.1/card.md).
