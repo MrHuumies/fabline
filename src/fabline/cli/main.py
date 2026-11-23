@@ -51,6 +51,10 @@ from fabline.harness.crew_schedule import (
     run_crew_schedule,
     write_crew_report,
 )
+from fabline.harness.crew_three import (
+    run_three_crew,
+    write_three_crew_report,
+)
 from fabline.harness.crew_visibility import (
     run_crew_visibility,
     write_crew_visibility_report,
@@ -785,6 +789,60 @@ def cmd_crew_multi_orphan(args: argparse.Namespace) -> int:
             "recall_tick": replan.recall_tick,
             "replan_jobs": replan.replan_jobs,
             "success_score": replan.success_score,
+            "seeds": list(seeds),
+        },
+    )
+    print(
+        json.dumps(
+            {"report": str(report), "results": results},
+            indent=2,
+            sort_keys=True,
+        )
+    )
+    return 0
+
+
+def cmd_crew_three(args: argparse.Namespace) -> int:
+    config = FactoryConfig(
+        width=32,
+        height=16,
+        ticks_per_episode=500,
+        decision_interval=10,
+        entity_budget=32,
+        rock_density=0.0,
+        ore_patches=1,
+        starter_line=True,
+        emit_events=True,
+    )
+    multi = MultiCrewConfig(
+        episode_ticks=500,
+        decision_interval=10,
+        loop_failure_tick=100,
+        small_failure_tick=130,
+        large_failure_tick=160,
+        randomize_crew_b=True,
+        crew_b_min_distance=8,
+        scenario="random_gear",
+        success_score=400,
+        power=PowerConfig(
+            enabled=True,
+            topology="wired",
+            generator_count=1,
+            generator_capacity=24,
+            generator_radius=8,
+            wire_redundancy=2,
+        ),
+    )
+    seeds = tuple(int(value) for value in args.seeds.split(","))
+    results = run_three_crew(config, multi, seeds=seeds)
+    report = write_three_crew_report(
+        args.out,
+        results,
+        config={
+            "width": config.width,
+            "height": config.height,
+            "scenario": multi.scenario,
+            "success_score": multi.success_score,
             "seeds": list(seeds),
         },
     )
@@ -1841,6 +1899,18 @@ def build_parser() -> argparse.ArgumentParser:
         "--seeds", type=str, default="11000,11001,11002,11003,11004"
     )
     crew_multi_orphan.set_defaults(func=cmd_crew_multi_orphan)
+
+    crew_three = subparsers.add_parser(
+        "crew-three",
+        help="run three-crew assignment on the twin-line layout",
+    )
+    crew_three.add_argument(
+        "--out", type=str, default="results/crew-three"
+    )
+    crew_three.add_argument(
+        "--seeds", type=str, default="21000,21001,21002,21003,21004"
+    )
+    crew_three.set_defaults(func=cmd_crew_three)
 
     crew_replacement = subparsers.add_parser(
         "crew-replacement",

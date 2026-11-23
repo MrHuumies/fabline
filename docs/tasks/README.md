@@ -58,6 +58,8 @@ Current tasks:
   failure at 100, two survivor jobs.
 - [Replacement crew handoff](crew-replacement.md) — C replaces the recalled
   crew; A/C recovery pair.
+- [Three-crew assignment](crew-three.md) — three crews, three bridges,
+  64-action initial coverage.
 - [Power allocation](power-allocation.md) — three-action priority scheduling
   under a tight generator budget.
 - [Fault + power interaction](fault-power.md) — four-action repair and priority

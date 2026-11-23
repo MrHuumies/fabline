@@ -94,6 +94,8 @@ retained for provenance.
   best scripted −38; H2 fails; not promoted.
 - [0061 — Pair-policy pilot](0061-pair-policy-pilot/summary.md) — pilot
   negative; no pair rule beats greedy; not promoted.
+- [0062 — Three-crew assignment](0062-crew-three/summary.md) — three greedy
+  476, oracle 520, two oracle 320; all gates pass.
 
 The frozen benchmark is documented separately in
 [`benchmarks/factory-v0.1/card.md`](../../benchmarks/factory-v0.1/card.md).

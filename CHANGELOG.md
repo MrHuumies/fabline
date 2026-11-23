@@ -52,6 +52,8 @@ are pinned separately; see [`benchmarks/factory-v0.1/card.md`](benchmarks/factor
   promoted (0060).
 - Document a negative pair-aware replacement pilot: no rule beats greedy
   (0061).
+- Add three-crew initial assignment: three greedy 476, oracle 520, two oracle
+  320; all gates pass (0062).
 - Add the P2 coverage review: coordination, visibility, and triage results;
   Q and visibility lines near saturation; third crew/replacement recommended.
 

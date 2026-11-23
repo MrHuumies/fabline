@@ -108,6 +108,9 @@ crew-triage:
 crew-replacement:
 	$(PY) -m fabline crew-replacement --out results/crew-replacement --seeds 19000,19001,19002,19003,19004
 
+crew-three:
+	$(PY) -m fabline crew-three --out results/crew-three --seeds 22000,22001,22002,22003,22004
+
 power-allocation-stochastic:
 	$(PY) -m fabline power-allocation --out results/power-allocation/stochastic --episodes 5 --train-episodes 100 --load-jitter 30 --capacity-jitter 20 --variation-period 20
 
