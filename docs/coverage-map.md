@@ -193,6 +193,10 @@ The alternative remains:
 
 ### P2 — one new mechanic
 
+The [P2 coverage review](coverage-review-p2.md) consolidates 0042–0059. The
+line is saturated in several places; the recommended next slice is a third
+crew/replacement on triage.
+
 **Started: multi-agent coordination.** A two-crew parallel repair assignment
 (0042) passes: two crews score 260 vs single-crew 60; Q 260. A 40-seed
 robustness run (0044) keeps the coordination gain: nearest 255.5, greedy 245,

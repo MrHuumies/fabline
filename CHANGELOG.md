@@ -48,6 +48,8 @@ are pinned separately; see [`benchmarks/factory-v0.1/card.md`](benchmarks/factor
   K=1 loss; bandwidth is binding (0058).
 - Document a negative spread-layout triage pilot: greedy matches oracle (600);
   not promoted (0059).
+- Add the P2 coverage review: coordination, visibility, and triage results;
+  Q and visibility lines near saturation; third crew/replacement recommended.
 
 ## [0.1.2] — 2026-11-22
 
