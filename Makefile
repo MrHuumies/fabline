@@ -90,6 +90,9 @@ crew-layout-q:
 crew-layout-ensemble:
 	$(PY) -m fabline crew-layout-ensemble --out results/crew-layout-ensemble --seeds 9000,9001,9002,9003,9004,9005,9006,9007,9008,9009 --q-seeds 0,1,2 --episodes 2000 --train-seed-start 80000
 
+crew-visibility:
+	$(PY) -m fabline crew-visibility --out results/crew-visibility --seeds 10000,10001,10002,10003,10004 --radius 16 --ages 30,60
+
 power-allocation-stochastic:
 	$(PY) -m fabline power-allocation --out results/power-allocation/stochastic --episodes 5 --train-episodes 100 --load-jitter 30 --capacity-jitter 20 --variation-period 20
 

@@ -32,6 +32,8 @@ are pinned separately; see [`benchmarks/factory-v0.1/card.md`](benchmarks/factor
   aliased seed remains (0050).
 - Document a negative visibility/communication pilot: radius is still binary on
   the twin-line layout and delayed reports add nothing; not promoted (0051).
+- Add distributed-layout visibility/report task: local cost +98, delayed60 +54,
+  all gates pass on the 48×24 spread layout (0052).
 
 ## [0.1.2] — 2026-11-22
 

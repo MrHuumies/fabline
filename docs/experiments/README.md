@@ -72,7 +72,9 @@ retained for provenance.
 - [0050 — Compact Q ensemble](0050-crew-layout-ensemble/summary.md) — 430 vs
   oracle 448; success 0.50 misses 0.60; one aliased seed remains.
 - [0051 — Visibility pilot](0051-visibility-pilot/summary.md) — pilot
-  negative; radius still binary, delayed reports add nothing; not promoted.
+  negative on twin-line; radius still binary, delayed reports add nothing.
+- [0052 — Distributed visibility](0052-crew-visibility/summary.md) — spread
+  layout: local cost +98, delayed60 +54, all gates pass.
 
 The frozen benchmark is documented separately in
 [`benchmarks/factory-v0.1/card.md`](../../benchmarks/factory-v0.1/card.md).

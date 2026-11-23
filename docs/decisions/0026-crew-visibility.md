@@ -1,6 +1,6 @@
 # ADR 0026 — Private crew views and communication
 
-- **Status:** pilot negative; retired for now
+- **Status:** accepted; promoted on the distributed layout (0052)
 - **Date:** 2026-11-23
 - **Related:** RFC 0015, RFC 0012, ADR 0022, RFC 0013, ADR 0023
 
@@ -36,8 +36,9 @@ multi-agent question is coordination when each crew has local information.
   information.
 - The survivor can only recover an orphan it has seen or been told about.
 - Global behavior is unchanged when visibility is disabled.
-- The radius curve is binary/stepwise and delayed reports add nothing on the
-  current twin-line layout; the mechanic is retired for now.
+- The twin-line pilot was negative, but the distributed layout produces a
+  useful local block at radius 16; delayed60 recovers part of the gap. Promoted
+  as `factory.power.crew-visibility.v1`.
 - If the curve is graded, the next slice is private per-crew policies or a
   message budget.
 

@@ -210,8 +210,13 @@ gap: oracle-greedy is +9 [0, 21], missing the +10 gate. Q fails on both. A compa
 baseline from 233 to 422 vs oracle 442 (95.5%), but success is 0.50, below the
 0.60 gate; the state is the active ingredient, not yet a reliable closure. A
 margin-aware follow-up was a negative pilot (0049): slack bins fragment the
-table and drop to 340-384. The next question is a compact-state ensemble, not a
-larger state.
+table and drop to 340-384. A compact-Q ensemble (0050) reaches 430 vs oracle
+448, but success 0.50 still misses 0.60; one aliased seed remains. A
+visibility/communication pilot (0051) is negative on twin-line (radius still
+binary, reports add nothing), but the distributed 48×24 spread layout (0052)
+makes radius-16 local visibility useful: global 778, local 680, delayed60 734;
+local cost +98, communication gain +54, all gates pass. Repeated
+failure/multiple orphans on the twin-line layout is the next mechanic.
 
 The alternative remains:
 

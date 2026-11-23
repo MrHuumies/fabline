@@ -50,3 +50,26 @@ def test_random_gear_places_two_lines_and_wires() -> None:
     assert types.count(EntityType.DEPOT) == 2
     assert len(state.power_wires) > 0
     assert len(state.power_sources) == 1
+
+
+def test_spread_gear_places_three_lines() -> None:
+    config = FactoryConfig(width=48, height=24, ore_patches=1)
+    power = PowerConfig(
+        enabled=True,
+        topology="wired",
+        generator_count=1,
+        generator_capacity=48,
+        generator_radius=8,
+        wire_redundancy=2,
+    )
+    state = generate_state(
+        config, seed=10000, scenario=SCENARIOS["spread_gear"], power=power
+    )
+    types = [entity.type for entity in state.entities.values()]
+    assert types.count(EntityType.MINER) == 3
+    assert types.count(EntityType.DEPOT) == 3
+    assert len(state.power_wires) > 0
+    second = generate_state(
+        config, seed=10000, scenario=SCENARIOS["spread_gear"], power=power
+    )
+    assert state.state_hash() == second.state_hash()

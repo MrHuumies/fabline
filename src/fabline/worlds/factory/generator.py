@@ -31,6 +31,8 @@ class Scenario:
     rock_density: float | None = None
     randomize_line: bool = False
     twin_line: bool = False
+    line_count: int = 1
+    spread_lines: bool = False
 
 
 SCENARIOS: dict[str, Scenario] = {
@@ -50,6 +52,13 @@ SCENARIOS: dict[str, Scenario] = {
         include_assembler=True,
         randomize_line=True,
         twin_line=True,
+    ),
+    "spread_gear": Scenario(
+        "spread_gear",
+        include_assembler=True,
+        randomize_line=True,
+        line_count=3,
+        spread_lines=True,
     ),
 }
 
@@ -115,7 +124,10 @@ def generate_state(
     def set_tile(x: int, y: int, tile: TileType) -> None:
         tiles[y * width + x] = tile
 
-    line_count = 2 if scenario is not None and scenario.twin_line else 1
+    if scenario is not None and scenario.line_count > 1:
+        line_count = scenario.line_count
+    else:
+        line_count = 2 if scenario is not None and scenario.twin_line else 1
     line_specs: list[tuple[list[EntityType | None], int, int]] = []
     available_rows = list(range(3, max(4, height - 3)))
     for _ in range(line_count):
@@ -132,10 +144,21 @@ def generate_state(
         )
         line_x0 = 1
         if line and scenario is not None and scenario.randomize_line:
-            max_x0 = width - len(line) - 1
-            if max_x0 < 1:
-                raise RuntimeError("map is too narrow for a randomized line")
-            line_x0 = rng.randrange(1, max_x0 + 1)
+            if scenario.spread_lines:
+                band = (width - 2) // line_count
+                start = 1 + len(line_specs) * band
+                end = min(width - 1, start + band)
+                max_x0 = end - len(line) - 1
+                if max_x0 < start:
+                    raise RuntimeError(
+                        "map is too narrow for a spread production line"
+                    )
+                line_x0 = rng.randrange(start, max_x0 + 1)
+            else:
+                max_x0 = width - len(line) - 1
+                if max_x0 < 1:
+                    raise RuntimeError("map is too narrow for a randomized line")
+                line_x0 = rng.randrange(1, max_x0 + 1)
         line_specs.append((line, line_y, line_x0))
         if line:
             for i in range(len(line)):

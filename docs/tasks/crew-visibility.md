@@ -2,7 +2,7 @@
 
 - **Task ID:** `factory.power.crew-visibility.v1`
 - **Version:** 0.1.0
-- **Status:** pilot negative; not promoted; not in `factory-v0.1`
+- **Status:** formal run complete; all pilot gates pass; not in `factory-v0.1`
 - **World:** factory-0.1.0 with opt-in wired power and twin-line layout
 - **Owner:** FABLINE
 - **Date:** 2026-11-23
@@ -61,6 +61,21 @@ Q is optional/diagnostic.
 | H4 orphan knowledge | recovery differs when the orphan is known vs unknown |
 | H5 frozen benchmark | unchanged |
 
+## Results (0052)
+
+Seeds 10000–10004; 48×24 spread layout; radius 16.
+
+| condition | nearest | greedy | aware | oracle |
+|---|---:|---:|---:|---:|
+| global | 772 / 1.0 | 778 / 1.0 | 654 / 0.6 | 778 / 1.0 |
+| local r16 | 650 / 0.6 | 656 / 0.6 | 666 / 0.6 | 680 / 0.6 |
+| delayed30 | 650 / 0.6 | 656 / 0.6 | 666 / 0.6 | 680 / 0.6 |
+| delayed60 | 728 / 0.8 | 734 / 0.8 | 666 / 0.6 | 734 / 0.8 |
+
+Local cost is +98 for oracle; delayed60 recovers +54 of it. All five gates
+pass. See
+[`experiments/0052-crew-visibility`](../experiments/0052-crew-visibility/summary.md).
+
 ## Known pitfalls
 
 - Manhattan radius ignores walls/occlusion.
@@ -71,3 +86,4 @@ Q is optional/diagnostic.
 ## Changelog
 
 - 2026-11-23 — card created; pilot contract and gates defined.
+- 2026-11-23 — formal run: local cost +98, delayed60 +54, all gates pass.

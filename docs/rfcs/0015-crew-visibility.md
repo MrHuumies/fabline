@@ -1,6 +1,6 @@
 # Mechanic RFC 0015 — Private crew views and communication
 
-- **Status:** pilot negative; not promoted
+- **Status:** accepted; promoted on the distributed layout (0052)
 - **Author:** FABLINE
 - **Date:** 2026-11-23
 - **Related:** ADR 0026, RFC 0012, ADR 0022, RFC 0013, ADR 0023
@@ -87,7 +87,7 @@ The action mask is filtered by per-crew knowledge.
 
 ## Decision
 
-Pilot negative on the twin-line layout: visibility is still effectively binary
-(8 hides the bridges, 12–16 is flat, 20 is global) and delayed reports add
-nothing. Not promoted. See ADR 0026 and pilot 0051; a distributed/occluded
-layout is the prerequisite for a retry.
+The twin-line pilot was negative (0051), but the distributed `spread_gear`
+layout (48×24, result 16, report age 60) gives a useful local block: global
+oracle 778, local 680, delayed60 734. See ADR 0026 and experiment 0052. Promoted
+as `factory.power.crew-visibility.v1`.

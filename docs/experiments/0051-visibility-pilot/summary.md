@@ -1,6 +1,6 @@
 # Pilot 0051 — Crew visibility and communication
 
-- **Status:** pilot negative; not promoted
+- **Status:** pilot negative on twin-line; superseded by distributed-layout experiment 0052
 - **Date:** 2026-11-23
 - **Type:** exploratory multi-agent information pilot
 - **Mechanic:** per-crew Manhattan visibility plus shared report age (RFC 0015,
