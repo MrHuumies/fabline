@@ -74,6 +74,13 @@ All gates pass: oracle +78 over greedy, nearest 284, oracle success 1.00. Oracle
 sequences vary across seeds. See
 [`experiments/0055-crew-triage`](../experiments/0055-crew-triage/summary.md).
 
+## Spread-layout pilot (0059)
+
+Moving triage to the 48×24 spread layout did not widen the gap: greedy matched
+oracle at 600 on every pilot seed. Not promoted. Asymmetric values/deadlines or
+a third crew is the next triage variant. See
+[`experiments/0059-spread-triage-pilot`](../experiments/0059-spread-triage-pilot/summary.md).
+
 ## Known pitfalls
 
 - The internal `loop` role is the medium positive bridge.

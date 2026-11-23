@@ -88,6 +88,8 @@ retained for provenance.
   1 report −42; private −32 more; all gates pass.
 - [0058 — Report-rule pilot](0058-report-rule-pilot/summary.md) — pilot
   negative; no K=1 rule recovers the bandwidth loss; not promoted.
+- [0059 — Spread-triage pilot](0059-spread-triage-pilot/summary.md) — pilot
+  negative; greedy matches oracle (600); not promoted.
 
 The frozen benchmark is documented separately in
 [`benchmarks/factory-v0.1/card.md`](../../benchmarks/factory-v0.1/card.md).
