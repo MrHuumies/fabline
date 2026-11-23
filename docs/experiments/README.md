@@ -90,6 +90,8 @@ retained for provenance.
   negative; no K=1 rule recovers the bandwidth loss; not promoted.
 - [0059 — Spread-triage pilot](0059-spread-triage-pilot/summary.md) — pilot
   negative; greedy matches oracle (600); not promoted.
+- [0060 — Replacement handoff](0060-crew-replacement/summary.md) — oracle +20,
+  best scripted −38; H2 fails; not promoted.
 
 The frozen benchmark is documented separately in
 [`benchmarks/factory-v0.1/card.md`](../../benchmarks/factory-v0.1/card.md).

@@ -105,6 +105,9 @@ crew-multi-orphan:
 crew-triage:
 	$(PY) -m fabline crew-triage --out results/crew-triage --seeds 12000,12001,12002,12003,12004
 
+crew-replacement:
+	$(PY) -m fabline crew-replacement --out results/crew-replacement --seeds 19000,19001,19002,19003,19004
+
 power-allocation-stochastic:
 	$(PY) -m fabline power-allocation --out results/power-allocation/stochastic --episodes 5 --train-episodes 100 --load-jitter 30 --capacity-jitter 20 --variation-period 20
 

@@ -56,6 +56,8 @@ Current tasks:
   two orphans, two survivor decisions.
 - [Three-bridge survivor triage](crew-triage.md) — three positive bridges,
   failure at 100, two survivor jobs.
+- [Replacement crew handoff](crew-replacement.md) — C replaces the recalled
+  crew; A/C recovery pair.
 - [Power allocation](power-allocation.md) — three-action priority scheduling
   under a tight generator budget.
 - [Fault + power interaction](fault-power.md) — four-action repair and priority

@@ -186,3 +186,50 @@ def test_triage_has_three_positive_targets() -> None:
     assert info["phase"] == "replan"
     mask = env.action_mask()
     assert any(mask[choice * 4] for choice in (1, 2, 3))
+
+
+def test_replacement_crew_enters_after_recall() -> None:
+    env = CrewReplanEnv(
+        FactoryConfig(
+            width=32,
+            height=16,
+            ticks_per_episode=500,
+            decision_interval=10,
+            entity_budget=32,
+            rock_density=0.0,
+            ore_patches=1,
+            starter_line=True,
+            emit_events=True,
+        ),
+        CrewReplanConfig(
+            recall_tick=100,
+            job_failure_tick=100,
+            replan_jobs=1,
+            role_mode="three_positive",
+            replan_mode="all_positive",
+            replacement=True,
+            success_score=300,
+            randomize_crew_b=True,
+            crew_b_min_distance=8,
+            scenario="random_gear",
+            power=PowerConfig(
+                enabled=True,
+                topology="wired",
+                generator_count=1,
+                generator_capacity=24,
+                generator_radius=8,
+                wire_redundancy=2,
+            ),
+        ),
+    )
+    observation, info = env.reset(0)
+    while info["tick"] < 40:
+        observation, _, _, _, info = env.step(0)
+    observation, _, terminated, truncated, info = env.step(11)
+    assert not terminated and not truncated
+    assert info["phase"] == "replan"
+    assert info["replacement_arrived"]
+    assert any(env.action_mask()[action] for action in range(1, 16))
+    observation, _, terminated, truncated, info = env.step(11)
+    assert terminated and not truncated
+    assert info["score"] > 0

@@ -21,3 +21,4 @@ One RFC per new mechanic or major world change. Use
 - [0016 — Sequential survivor dispatch](0016-sequential-survivor.md)
 - [0017 — Three-bridge survivor triage](0017-crew-triage.md)
 - [0018 — Crew report budget](0018-crew-budget.md)
+- [0019 — Replacement crew handoff](0019-crew-replacement.md)

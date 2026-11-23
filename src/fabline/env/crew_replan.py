@@ -36,6 +36,7 @@ class CrewReplanConfig(MultiCrewConfig):
     replan_jobs: int = 1
     role_mode: str = "loop"
     replan_mode: str = "orphan"
+    replacement: bool = False
 
     def __post_init__(self) -> None:
         super().__post_init__()
@@ -115,10 +116,13 @@ class CrewReplanEnv(MultiCrewEnv):
         self.orphaned_roles: set[str] = set()
         self.job_failure_done = False
         self.replan_jobs_done = 0
+        self.replacement_arrived = False
+        self.replacement_base: tuple[int, int] | None = None
         self.b_aborted = 0
         self.initial_action = -1
         self.replan_action = -1
         _, _ = super().reset(seed)
+        self.replacement_base = self.crew_b
         self.score_start = self.world.state.score
         return self._observation(), self._info()
 
@@ -142,9 +146,19 @@ class CrewReplanEnv(MultiCrewEnv):
         if self.phase == "replan":
             mask = np.zeros(self.n_actions, dtype=bool)
             mask[0] = True
-            for role in self._remaining_targets():
-                choice = self.roles.index(role) + 1
-                mask[choice * CHOICES] = True
+            remaining = self._remaining_targets()
+            choices = {
+                self.roles.index(role) + 1 for role in remaining
+            }
+            if self.replacement_arrived:
+                for first in [0, *sorted(choices)]:
+                    for second in [0, *sorted(choices)]:
+                        if first > 0 and first == second:
+                            continue
+                        mask[first * CHOICES + second] = True
+            else:
+                for choice in choices:
+                    mask[choice * CHOICES] = True
             return mask
         return super().action_mask()
 
@@ -208,6 +222,14 @@ class CrewReplanEnv(MultiCrewEnv):
                         self.aborted += 1
                         self.b_aborted += 1
                         self._mark_orphan(job["role"])
+                if self.replan.replacement:
+                    self.crew_b = (
+                        self.replacement_base
+                        if self.replacement_base is not None
+                        else self.crew_b
+                    )
+                    self.crew_b_available = True
+                    self.replacement_arrived = True
 
     def _finish_initial(
         self,
@@ -219,7 +241,11 @@ class CrewReplanEnv(MultiCrewEnv):
                 job["distance"] * self.multi.travel_ticks_per_cell
             )
         self._run_jobs(jobs, handle_recall=True)
-        if not self.world.done and self.crew_b_available:
+        if (
+            not self.world.done
+            and self.crew_b_available
+            and not self.replacement_arrived
+        ):
             self._advance(max(0, self.recall_tick - self.world.state.tick))
             if self.world.state.tick >= self.recall_tick:
                 self.crew_b_available = False
@@ -277,6 +303,49 @@ class CrewReplanEnv(MultiCrewEnv):
         self.initial_action = action
         self.last_action = self.ACTION_NAMES[action]
         return self._finish_initial(jobs)
+
+    def _step_replacement(
+        self,
+        action: int,
+    ) -> tuple[np.ndarray, float, bool, bool, dict[str, Any]]:
+        first, second = divmod(action, CHOICES)
+        self.replan_action = action
+        self.last_action = self.ACTION_NAMES[action]
+        jobs: list[dict[str, Any]] = []
+        for choice, crew, crew_id in (
+            (first, self.crew_a, "a"),
+            (second, self.crew_b, "b"),
+        ):
+            job = self._job(choice, crew)
+            if job is not None:
+                job["crew_id"] = crew_id
+                job["preventive"] = False
+                jobs.append(job)
+                self.repairs += 1
+                self.travel_ticks += (
+                    job["distance"] * self.multi.travel_ticks_per_cell
+                )
+        self._run_jobs(jobs, handle_recall=False)
+        for job in jobs:
+            self.orphaned_roles.discard(job["role"])
+        self.replan_jobs_done += 1
+        self._advance(max(0, self.multi.episode_ticks - self.world.state.tick))
+        reward = float(self.world.state.score - self.score_start)
+        self.steps += 1
+        self.last_reward = reward
+        info = self._info()
+        info["illegal"] = False
+        info["reward"] = reward
+        info["jobs"] = [
+            {
+                "role": job["role"],
+                "crew": job["crew_id"],
+                "distance": job["distance"],
+                "duration": job["duration"],
+            }
+            for job in jobs
+        ]
+        return self._observation(), reward, True, False, info
 
     def _step_replan(
         self,
@@ -355,6 +424,8 @@ class CrewReplanEnv(MultiCrewEnv):
             raise ValueError(f"action {action} is outside the action space")
         if self.phase == "initial":
             return self._step_initial(action)
+        if self.replacement_arrived:
+            return self._step_replacement(action)
         return self._step_replan(action)
 
     def _observation(self) -> np.ndarray:
@@ -390,6 +461,7 @@ class CrewReplanEnv(MultiCrewEnv):
                 "crew_b_available": self.crew_b_available,
                 "orphaned_role": self.orphaned_role,
                 "orphaned_roles": sorted(self.orphaned_roles),
+                "replacement_arrived": self.replacement_arrived,
                 "b_aborted": self.b_aborted,
                 "initial_action": self.initial_action,
                 "replan_action": self.replan_action,

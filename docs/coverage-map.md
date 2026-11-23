@@ -194,8 +194,9 @@ The alternative remains:
 ### P2 — one new mechanic
 
 The [P2 coverage review](coverage-review-p2.md) consolidates 0042–0059. The
-line is saturated in several places; the recommended next slice is a third
-crew/replacement on triage.
+line is saturated in several places. A replacement handoff formal (0060) is
+mixed: replacement oracle +20 over no-replacement, but best scripted −38; not
+promoted. A better replacement policy or a full third crew is next.
 
 **Started: multi-agent coordination.** A two-crew parallel repair assignment
 (0042) passes: two crews score 260 vs single-crew 60; Q 260. A 40-seed
