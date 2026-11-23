@@ -100,6 +100,8 @@ retained for provenance.
   +156; three greedy 516, oracle 520; shallow.
 - [0066 — Asymmetric repair-cost triage](0066-crew-costs/summary.md) — negative;
   greedy matches oracle on fresh seeds; the pilot's +52 did not replicate.
+- [0067 — Random-topology triage](0067-crew-topology/summary.md) — negative;
+  random gap +4 vs spread +18; the topology axis is retired.
 
 The frozen benchmark is documented separately in
 [`benchmarks/factory-v0.1/card.md`](../../benchmarks/factory-v0.1/card.md).

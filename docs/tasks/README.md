@@ -64,6 +64,8 @@ Current tasks:
   recall, A/C recovery pair.
 - [Asymmetric repair-cost triage](crew-triage-costs.md) — role-specific repair
   durations on the three-bridge triage; negative formal.
+- [Random-topology triage](crew-topology.md) — three-line random layout; negative
+  formal, random gap +4 vs spread +18.
 - [View arrival](view-arrival.md) — generic multiview contract and
   episode-grouped view-arrival task.
 - [Power allocation](power-allocation.md) — three-action priority scheduling

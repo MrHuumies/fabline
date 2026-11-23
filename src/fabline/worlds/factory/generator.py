@@ -60,6 +60,14 @@ SCENARIOS: dict[str, Scenario] = {
         line_count=3,
         spread_lines=True,
     ),
+    "random_topology": Scenario(
+        "random_topology",
+        include_assembler=True,
+        extra_belt=True,
+        randomize_line=True,
+        line_count=3,
+        spread_lines=False,
+    ),
 }
 
 

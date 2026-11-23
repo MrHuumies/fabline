@@ -58,6 +58,8 @@ are pinned separately; see [`benchmarks/factory-v0.1/card.md`](benchmarks/factor
   oracle 520; shallow (0063).
 - Add asymmetric repair-cost triage: negative; greedy 386 matches oracle 386
   on fresh seeds (0066).
+- Add random-topology triage: negative; random gap +4 vs spread +18; topology
+  axis retired (0067).
 - Add the multiview observation contract and view-arrival task interface:
   named views, view masks, fixed-width flatten, and episode-grouped splits.
 - Add the P2 coverage review: coordination, visibility, and triage results;
