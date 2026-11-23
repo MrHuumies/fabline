@@ -44,6 +44,8 @@ are pinned separately; see [`benchmarks/factory-v0.1/card.md`](benchmarks/factor
   best; private nearest/aware 296 (0056).
 - Add report-budget comparison: two reports match shared; one costs 42;
   private costs 32 more (0057).
+- Document a negative one-report selection pilot: no scripted rule recovers the
+  K=1 loss; bandwidth is binding (0058).
 
 ## [0.1.2] — 2026-11-22
 

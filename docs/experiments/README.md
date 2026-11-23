@@ -86,6 +86,8 @@ retained for provenance.
   delayed60 +74 over private best; private nearest/aware 296.
 - [0057 — Report budget](0057-crew-budget/summary.md) — 2 reports match shared;
   1 report −42; private −32 more; all gates pass.
+- [0058 — Report-rule pilot](0058-report-rule-pilot/summary.md) — pilot
+  negative; no K=1 rule recovers the bandwidth loss; not promoted.
 
 The frozen benchmark is documented separately in
 [`benchmarks/factory-v0.1/card.md`](../../benchmarks/factory-v0.1/card.md).

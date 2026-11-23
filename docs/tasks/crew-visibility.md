@@ -106,6 +106,8 @@ Seeds 16000–16004; radius 16.
 Two reports per crew match shared; one report costs 42; private costs another
 32. All gates pass. See
 [`experiments/0057-crew-budget`](../experiments/0057-crew-budget/summary.md).
+A one-report selection pilot (0058) is negative: top-outage/efficiency 650,
+nearest/deadline 510, shared 710; bandwidth is binding.
 
 ## Known pitfalls
 
