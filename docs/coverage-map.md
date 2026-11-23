@@ -196,7 +196,9 @@ The alternative remains:
 The [P2 coverage review](coverage-review-p2.md) consolidates 0042–0059. The
 line is saturated in several places. A replacement handoff formal (0060) is
 mixed: replacement oracle +20 over no-replacement, but best scripted −38; not
-promoted. A better replacement policy or a full third crew is next.
+promoted. A pair-aware deadline/value pilot (0061) is negative: greedy remains
+best and no pair rule closes the gap. A full third crew or learned replacement
+is next.
 
 **Started: multi-agent coordination.** A two-crew parallel repair assignment
 (0042) passes: two crews score 260 vs single-crew 60; Q 260. A 40-seed

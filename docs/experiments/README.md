@@ -92,6 +92,8 @@ retained for provenance.
   negative; greedy matches oracle (600); not promoted.
 - [0060 — Replacement handoff](0060-crew-replacement/summary.md) — oracle +20,
   best scripted −38; H2 fails; not promoted.
+- [0061 — Pair-policy pilot](0061-pair-policy-pilot/summary.md) — pilot
+  negative; no pair rule beats greedy; not promoted.
 
 The frozen benchmark is documented separately in
 [`benchmarks/factory-v0.1/card.md`](../../benchmarks/factory-v0.1/card.md).

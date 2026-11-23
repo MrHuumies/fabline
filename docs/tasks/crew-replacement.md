@@ -68,6 +68,13 @@ pass; H2 fails. The handoff opportunity exists, but scripted pair policies do
 not capture it. See
 [`experiments/0060-crew-replacement`](../experiments/0060-crew-replacement/summary.md).
 
+## Pair-policy pilot (0061)
+
+A deadline/value pair heuristic and hybrid initial rules did not beat greedy
+(490 pilot mean); greedy remains the best replacement rule. The handoff gap is
+policy-limited, not a simple scoring fix. Not promoted. See
+[`experiments/0061-pair-policy-pilot`](../experiments/0061-pair-policy-pilot/summary.md).
+
 ## Known pitfalls
 
 - C reuses B's base; a new base or delay is future work.

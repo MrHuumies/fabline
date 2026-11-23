@@ -50,6 +50,8 @@ are pinned separately; see [`benchmarks/factory-v0.1/card.md`](benchmarks/factor
   not promoted (0059).
 - Document a mixed replacement handoff: oracle +20, best scripted −38; not
   promoted (0060).
+- Document a negative pair-aware replacement pilot: no rule beats greedy
+  (0061).
 - Add the P2 coverage review: coordination, visibility, and triage results;
   Q and visibility lines near saturation; third crew/replacement recommended.
 
