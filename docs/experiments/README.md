@@ -75,6 +75,9 @@ retained for provenance.
   negative on twin-line; radius still binary, delayed reports add nothing.
 - [0052 — Distributed visibility](0052-crew-visibility/summary.md) — spread
   layout: local cost +98, delayed60 +54, all gates pass.
+- [0053 — Multi-orphan pilot](0053-multi-orphan-pilot/summary.md) — pilot
+  negative; simultaneous job aborts collapse to a one-bridge task; not
+  promoted.
 
 The frozen benchmark is documented separately in
 [`benchmarks/factory-v0.1/card.md`](../../benchmarks/factory-v0.1/card.md).

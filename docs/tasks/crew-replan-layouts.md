@@ -83,6 +83,14 @@ dispatch is robust, but the twin-line assignment gap does not survive it. Not
 promoted. See
 [`experiments/0047-crew-replan-layouts`](../experiments/0047-crew-replan-layouts/summary.md).
 
+## Multi-orphan pilot (0053)
+
+Aborting both jobs at tick 80 leaves one survivor and one recoverable bridge.
+Greedy/aware match oracle at 280–330; the task collapses to a one-bridge choice.
+Not promoted. A sequential survivor dispatch or a third crew is the next
+repeated-failure design. See
+[`experiments/0053-multi-orphan-pilot`](../experiments/0053-multi-orphan-pilot/summary.md).
+
 ## Known pitfalls
 
 - Known recall, one orphan, one second dispatch.

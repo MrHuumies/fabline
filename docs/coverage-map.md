@@ -215,8 +215,10 @@ table and drop to 340-384. A compact-Q ensemble (0050) reaches 430 vs oracle
 visibility/communication pilot (0051) is negative on twin-line (radius still
 binary, reports add nothing), but the distributed 48×24 spread layout (0052)
 makes radius-16 local visibility useful: global 778, local 680, delayed60 734;
-local cost +98, communication gain +54, all gates pass. Repeated
-failure/multiple orphans on the twin-line layout is the next mechanic.
+local cost +98, communication gain +54, all gates pass. A simultaneous multi-orphan
+pilot (0053) is negative: both jobs aborting collapses to a one-bridge task and
+greedy/aware match oracle. Sequential survivor dispatch or a third crew is the
+next repeated-failure design.
 
 The alternative remains:
 
