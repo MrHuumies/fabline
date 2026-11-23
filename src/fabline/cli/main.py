@@ -705,6 +705,8 @@ def cmd_recipe_choice(args: argparse.Namespace) -> int:
         fast_cost=args.fast_cost,
         slow_ticks=args.slow_ticks,
         slow_cost=args.slow_cost,
+        byproduct_enabled=args.byproduct,
+        byproduct_capacity=args.byproduct_capacity,
     )
     power = (
         PowerConfig(
@@ -734,6 +736,8 @@ def cmd_recipe_choice(args: argparse.Namespace) -> int:
             "fast_cost": recipe.fast_cost,
             "slow_ticks": recipe.slow_ticks,
             "slow_cost": recipe.slow_cost,
+            "byproduct_enabled": recipe.byproduct_enabled,
+            "byproduct_capacity": recipe.byproduct_capacity,
             "success_score": recipe_env.success_score,
             "power_capacity": args.power_capacity,
             "power_radius": args.power_radius,
@@ -2158,6 +2162,8 @@ def build_parser() -> argparse.ArgumentParser:
     recipe_choice.add_argument("--success-score", type=int, default=150)
     recipe_choice.add_argument("--power-capacity", type=int, default=0)
     recipe_choice.add_argument("--power-radius", type=int, default=8)
+    recipe_choice.add_argument("--byproduct", action="store_true")
+    recipe_choice.add_argument("--byproduct-capacity", type=int, default=2)
     recipe_choice.set_defaults(func=cmd_recipe_choice)
 
     crew_triage = subparsers.add_parser(

@@ -4,6 +4,7 @@ import numpy as np
 import pytest
 
 from fabline.env.recipe import (
+    RECIPE_BYPRODUCT_FEATURES,
     RECIPE_FEATURES,
     RECIPE_POWER_FEATURES,
     RecipeEnv,
@@ -78,6 +79,32 @@ def test_recipe_env_with_power_observation() -> None:
     assert "brownout_ratio" in info
     observation, _, _, _, info = env.step(0)
     assert observation.shape == (len(RECIPE_POWER_FEATURES),)
+
+
+def test_recipe_byproduct_blocks_and_purges() -> None:
+    env = RecipeEnv(
+        _config(),
+        RecipeEnvConfig(
+            recipe=RecipeConfig(
+                enabled=True,
+                byproduct_enabled=True,
+                byproduct_capacity=2,
+            ),
+        ),
+    )
+    observation, info = env.reset(0)
+    assert observation.shape == (len(RECIPE_BYPRODUCT_FEATURES),)
+    assert env.n_actions == 3
+    for _ in range(6):
+        _, _, terminated, _, info = env.step(1)
+        if terminated:
+            break
+    assert info["assembler_byproduct"] >= 1
+    before = info["assembler_byproduct"]
+    _, _, _, _, info = env.step(2)
+    assert info["assembler_byproduct"] == 0
+    assert info["purges"] == 1
+    assert before >= 1
 
 
 def test_recipe_env_requires_enabled_recipe() -> None:

@@ -252,8 +252,9 @@ generative layout/recipe tasks.
 (+40) and one-step lookahead 278. The queue state is the decision variable; a
 myopic lookahead is not enough. Under a tight power budget (0071), buffer-aware
 stays at 314 vs fast 272; power-saver ties and headroom gating is worse, so
-power is a robustness constraint, not a new decision. The task is opt-in and
-the frozen benchmark is unchanged.
+power is a robustness constraint, not a new decision. A blocking byproduct
+queue (0072) is positive: purge-aware 302 vs fast 274 (+28); the purge action
+is the new decision. The task is opt-in and the frozen benchmark is unchanged.
 
 ### P0 progress
 

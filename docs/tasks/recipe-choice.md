@@ -2,8 +2,8 @@
 
 - **Task ID:** `factory.production.recipe-choice.v1`
 - **Version:** 0.1.0
-- **Status:** P3 debug task; formal positive; power robustness tested; not in
-  `factory-v0.1`
+- **Status:** P3 debug task; recipe, power robustness, and byproduct queue
+  tested; not in `factory-v0.1`
 - **World:** factory-0.1.0 with opt-in recipe switch
 - **Owner:** FABLINE
 - **Date:** 2026-11-24
@@ -57,7 +57,7 @@ tick. A seeded initial ingot buffer varies the trade-off per episode.
 ## Known pitfalls
 
 - The one-step lookahead is myopic; it is not a full oracle.
-- Only one assembler and one item; no byproducts yet.
+- One assembler; the byproduct is a counter, not a logistics item.
 - The initial buffer is the only per-seed variation.
 - Not part of `factory-v0.1`.
 
@@ -86,9 +86,17 @@ headroom-gated power policy is worse at 194. The queue policy is robust, but
 power state adds no new decision. See
 [`experiments/0071-recipe-power`](../experiments/0071-recipe-power/summary.md).
 
+## Byproduct condition (0072)
+
+Capacity 2, five fresh seeds 41,000–41,004. Purge-aware 302 vs fast 274 (+28);
+buffer-aware without purge 274; slow 20; slow+purge 200. The purge action is the
+new decision. See
+[`experiments/0072-recipe-byproduct`](../experiments/0072-recipe-byproduct/summary.md).
+
 ## Changelog
 
 - 2026-11-24 — task card created; recipe costs and gates defined.
 - 2026-11-24 — formal run positive; buffer-aware 318 vs fast 278.
 - 2026-11-24 — power condition robust; power-saver ties buffer-aware, headroom
   gating worse.
+- 2026-11-24 — byproduct queue positive; purge-aware 302 vs fast 274.

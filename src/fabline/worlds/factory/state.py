@@ -105,6 +105,7 @@ class Entity:
     acoustic: int = 0
     powered: bool = False
     brownout_ticks: int = 0
+    byproduct: int = 0
 
     def total_input(self) -> int:
         return sum(self.input_buffer.values())
@@ -136,6 +137,7 @@ class Entity:
             or self.acoustic
             or self.powered
             or self.brownout_ticks
+            or self.byproduct
         ):
             result["wear"] = self.wear
             result["faulted"] = self.faulted
@@ -146,6 +148,7 @@ class Entity:
             result["acoustic"] = self.acoustic
             result["powered"] = self.powered
             result["brownout_ticks"] = self.brownout_ticks
+            result["byproduct"] = self.byproduct
         return result
 
 

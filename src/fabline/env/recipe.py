@@ -33,7 +33,12 @@ RECIPE_FEATURES = (
     "assembler_output_norm",
 )
 
+RECIPE_BYPRODUCT_FEATURES = (*RECIPE_FEATURES, "byproduct_norm")
 RECIPE_POWER_FEATURES = (*RECIPE_FEATURES, *POWER_FEATURES)
+RECIPE_POWER_BYPRODUCT_FEATURES = (
+    *RECIPE_BYPRODUCT_FEATURES,
+    *POWER_FEATURES,
+)
 
 
 @dataclass(frozen=True)
@@ -62,8 +67,7 @@ class RecipeEnvConfig:
 class RecipeEnv:
     """Choose fast or slow assembler recipe at each decision interval."""
 
-    n_actions = 2
-    ACTION_NAMES = ("fast", "slow")
+    ACTION_NAMES = ("fast", "slow", "purge")
 
     def __init__(
         self,
@@ -74,6 +78,8 @@ class RecipeEnv:
         self.recipe = recipe or RecipeEnvConfig()
         if config.ticks_per_episode != self.recipe.episode_ticks:
             raise ValueError("recipe episode ticks must match config")
+        self.byproduct_enabled = self.recipe.recipe.byproduct_enabled
+        self.n_actions = 3 if self.byproduct_enabled else 2
         self.vector = VectorObservation(config)
         self.power_view = (
             PowerObservation(config, self.recipe.power)
@@ -108,6 +114,7 @@ class RecipeEnv:
         self.score_start = self.world.state.score
         self.steps = 0
         self.switches = 0
+        self.purges = 0
         self.last_action = 0
         self.initial_input = initial
         return self._observation(), self._info()
@@ -121,9 +128,15 @@ class RecipeEnv:
     ) -> tuple[np.ndarray, float, bool, bool, dict[str, Any]]:
         if action < 0 or action >= self.n_actions:
             raise ValueError(f"action {action} is outside the action space")
-        if action != self.world.state.recipe_index:
-            self.switches += 1
-        self.world.state.recipe_index = action
+        if action == 2:
+            if not self.byproduct_enabled:
+                raise ValueError("purge action requires byproduct_enabled")
+            self._assembler().byproduct = 0
+            self.purges += 1
+        else:
+            if action != self.world.state.recipe_index:
+                self.switches += 1
+            self.world.state.recipe_index = action
         self.last_action = action
         before = self.world.state.score
         self.world.run_ticks(self.recipe.decision_interval)
@@ -148,6 +161,14 @@ class RecipeEnv:
             dtype=np.float32,
         )
         parts = [base, extra]
+        if self.byproduct_enabled:
+            parts.append(
+                np.asarray(
+                    [assembler.byproduct
+                     / max(1, self.recipe.recipe.byproduct_capacity)],
+                    dtype=np.float32,
+                )
+            )
         if self.power_view is not None:
             parts.append(self.power_view.observe(self.world.state))
         return np.concatenate(parts)
@@ -178,6 +199,9 @@ class RecipeEnv:
                 float(power_values[4]) if power_values is not None else 0.0
             ),
             "assembler_output": assembler.total_output(),
+            "assembler_byproduct": assembler.byproduct,
+            "byproduct_capacity": self.recipe.recipe.byproduct_capacity,
+            "purges": self.purges,
             "switches": self.switches,
             "steps": self.steps,
             "last_action": self.last_action,

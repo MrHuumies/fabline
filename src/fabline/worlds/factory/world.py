@@ -395,6 +395,7 @@ class FactoryWorld:
                     output_capacity=self.config.furnace_output_capacity,
                 )
             elif entity.type is EntityType.ASSEMBLER:
+                byproduct = None
                 if (
                     self.recipe is not None
                     and self.recipe.enabled
@@ -402,6 +403,11 @@ class FactoryWorld:
                 ):
                     inputs = {Item.INGOT: self.recipe.slow_cost}
                     craft_ticks = self.recipe.slow_ticks
+                    if self.recipe.byproduct_enabled:
+                        byproduct = (
+                            self.recipe.byproduct_per_slow,
+                            self.recipe.byproduct_capacity,
+                        )
                 else:
                     inputs = {Item.INGOT: self.config.assembler_ingot_cost}
                     craft_ticks = self.config.assembler_ticks
@@ -412,6 +418,7 @@ class FactoryWorld:
                     craft_ticks=craft_ticks,
                     input_capacity=self.config.assembler_input_capacity,
                     output_capacity=self.config.assembler_output_capacity,
+                    byproduct=byproduct,
                 )
 
     def _advance_machine(
@@ -423,6 +430,7 @@ class FactoryWorld:
         craft_ticks: int,
         input_capacity: int,
         output_capacity: int,
+        byproduct: tuple[int, int] | None = None,
     ) -> None:
         if self._fault_tick(entity):
             return
@@ -435,6 +443,8 @@ class FactoryWorld:
             entity.craft_progress -= 1
             if entity.craft_progress == 0:
                 entity.output_buffer[output] = output_count + 1
+                if byproduct is not None:
+                    entity.byproduct += byproduct[0]
                 self._wear(entity, self.faults.wear_per_craft)
                 self._emit(
                     "craft_completed",
@@ -443,6 +453,8 @@ class FactoryWorld:
             return
 
         if output_count + 1 > output_capacity:
+            return
+        if byproduct is not None and entity.byproduct >= byproduct[1]:
             return
         for item, need in inputs.items():
             if entity.input_buffer.get(item, 0) < need:

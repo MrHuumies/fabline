@@ -64,6 +64,8 @@ are pinned separately; see [`benchmarks/factory-v0.1/card.md`](benchmarks/factor
   278; all gates pass (0070).
 - Add recipe choice under a tight power budget: buffer-aware 314 vs fast 272;
   power-saver ties, headroom gating is worse; power adds no decision (0071).
+- Add a blocking byproduct queue: purge-aware 302 vs fast 274; the purge action
+  is the new decision (0072).
 - Add the multiview observation contract and view-arrival task interface:
   named views, view masks, fixed-width flatten, and episode-grouped splits.
 - Add the P2 coverage review: coordination, visibility, and triage results;

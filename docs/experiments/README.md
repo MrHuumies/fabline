@@ -106,6 +106,8 @@ retained for provenance.
   buffer-aware 318 vs fast 278; myopic lookahead 278.
 - [0071 — Recipe under power](0071-recipe-power/summary.md) — robust;
   buffer-aware 314 vs fast 272; power state adds no decision.
+- [0072 — Byproduct queue](0072-recipe-byproduct/summary.md) — positive;
+  purge-aware 302 vs fast 274; the purge action is the decision.
 
 The frozen benchmark is documented separately in
 [`benchmarks/factory-v0.1/card.md`](../../benchmarks/factory-v0.1/card.md).

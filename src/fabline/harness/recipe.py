@@ -13,6 +13,7 @@ import numpy as np
 from fabline.env.recipe import RecipeEnv, RecipeEnvConfig
 from fabline.harness.stats import bootstrap_mean_ci
 from fabline.worlds.factory.config import FactoryConfig
+from fabline.worlds.factory.state import EntityType
 
 
 class RecipePolicy(Protocol):
@@ -114,6 +115,42 @@ class PowerSaverPolicy:
         return action if mask[action] else 0
 
 
+class PurgeAwarePolicy:
+    name = "purge_aware"
+
+    def __init__(self, threshold: int = 2) -> None:
+        self.threshold = threshold
+
+    def act(
+        self,
+        observation: np.ndarray,
+        info: dict[str, Any],
+        mask: np.ndarray,
+    ) -> int:
+        if info["assembler_byproduct"] >= info["byproduct_capacity"]:
+            action = 2
+        else:
+            action = 0 if info["assembler_input"] >= self.threshold else 1
+        return action if mask[action] else 0
+
+
+class SlowPurgePolicy:
+    name = "slow_purge"
+
+    def act(
+        self,
+        observation: np.ndarray,
+        info: dict[str, Any],
+        mask: np.ndarray,
+    ) -> int:
+        action = (
+            2
+            if info["assembler_byproduct"] >= info["byproduct_capacity"]
+            else 1
+        )
+        return action if mask[action] else 0
+
+
 class RandomRecipePolicy:
     name = "random"
 
@@ -198,9 +235,14 @@ def evaluate_lookahead(
         while not done:
             best_action = 0
             best_delta = -1.0
-            for action in (0, 1):
+            for action in range(env.n_actions):
                 clone = env.world.clone()
-                clone.state.recipe_index = action
+                if action == 2:
+                    for entity in clone.state.entities.values():
+                        if entity.type is EntityType.ASSEMBLER:
+                            entity.byproduct = 0
+                else:
+                    clone.state.recipe_index = action
                 before = clone.state.score
                 clone.run_ticks(env.recipe.decision_interval)
                 delta = float(clone.state.score - before)
@@ -286,6 +328,17 @@ def run_recipe_choice(
             for seed in seeds
         ]
     )
+    if env.byproduct_enabled:
+        for name, extra_policy in (
+            ("purge_aware", PurgeAwarePolicy(2)),
+            ("slow_purge", SlowPurgePolicy()),
+        ):
+            results[name] = _pool(
+                [
+                    evaluate_policy(env, extra_policy, episodes=1, seed=seed)
+                    for seed in seeds
+                ]
+            )
     results["lookahead"] = _pool(
         [
             evaluate_lookahead(env, episodes=1, seed=seed)
@@ -322,18 +375,7 @@ def write_recipe_report(
         "| policy | mean score | 95% CI | success | gears | switches |",
         "|---|---:|---:|---:|---:|---:|",
     ]
-    for name in (
-        "fast",
-        "slow",
-        "alternate",
-        "buffer_aware",
-        "buffer_aware4",
-        "power_aware",
-        "power_saver",
-        "random",
-        "lookahead",
-    ):
-        result = results[name]
+    for name, result in results.items():
         lines.append(
             f"| {name} | {result['mean_score']:.2f} "
             f"[{result['score_ci'][0]:.2f}, {result['score_ci'][1]:.2f}] | "
