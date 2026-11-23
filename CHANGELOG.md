@@ -62,6 +62,8 @@ are pinned separately; see [`benchmarks/factory-v0.1/card.md`](benchmarks/factor
   axis retired (0067).
 - Add assembler recipe choice: buffer-aware 318 vs fast 278; myopic lookahead
   278; all gates pass (0070).
+- Add recipe choice under a tight power budget: buffer-aware 314 vs fast 272;
+  power-saver ties, headroom gating is worse; power adds no decision (0071).
 - Add the multiview observation contract and view-arrival task interface:
   named views, view masks, fixed-width flatten, and episode-grouped splits.
 - Add the P2 coverage review: coordination, visibility, and triage results;

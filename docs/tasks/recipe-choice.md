@@ -2,7 +2,8 @@
 
 - **Task ID:** `factory.production.recipe-choice.v1`
 - **Version:** 0.1.0
-- **Status:** P3 debug task; formal run positive; not in `factory-v0.1`
+- **Status:** P3 debug task; formal positive; power robustness tested; not in
+  `factory-v0.1`
 - **World:** factory-0.1.0 with opt-in recipe switch
 - **Owner:** FABLINE
 - **Date:** 2026-11-24
@@ -77,7 +78,17 @@ Seeds 37,000–37,004.
 All gates pass: queue gain +40, planning +40, success 1.00. See
 [`experiments/0070-recipe-choice`](../experiments/0070-recipe-choice/summary.md).
 
+## Power condition (0071)
+
+Capacity 10, radius topology, five fresh seeds 39,000–39,004. Buffer-aware
+scores 314 vs fast 272 (+42); power-saver ties buffer-aware at 314;
+headroom-gated power policy is worse at 194. The queue policy is robust, but
+power state adds no new decision. See
+[`experiments/0071-recipe-power`](../experiments/0071-recipe-power/summary.md).
+
 ## Changelog
 
 - 2026-11-24 — task card created; recipe costs and gates defined.
 - 2026-11-24 — formal run positive; buffer-aware 318 vs fast 278.
+- 2026-11-24 — power condition robust; power-saver ties buffer-aware, headroom
+  gating worse.

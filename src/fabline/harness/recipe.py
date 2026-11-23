@@ -73,6 +73,47 @@ class BufferAwarePolicy:
         return action if mask[action] else 0
 
 
+class PowerAwarePolicy:
+    name = "power_aware"
+
+    def __init__(self, threshold: int = 2, headroom: float = 0.15) -> None:
+        self.threshold = threshold
+        self.headroom = headroom
+
+    def act(
+        self,
+        observation: np.ndarray,
+        info: dict[str, Any],
+        mask: np.ndarray,
+    ) -> int:
+        action = (
+            0
+            if info["assembler_input"] >= self.threshold
+            and info["power_headroom"] >= self.headroom
+            else 1
+        )
+        return action if mask[action] else 0
+
+
+class PowerSaverPolicy:
+    name = "power_saver"
+
+    def __init__(self, threshold: int = 2) -> None:
+        self.threshold = threshold
+
+    def act(
+        self,
+        observation: np.ndarray,
+        info: dict[str, Any],
+        mask: np.ndarray,
+    ) -> int:
+        if info["brownout_ratio"] > 0.0:
+            action = 1
+        else:
+            action = 0 if info["assembler_input"] >= self.threshold else 1
+        return action if mask[action] else 0
+
+
 class RandomRecipePolicy:
     name = "random"
 
@@ -228,6 +269,8 @@ def run_recipe_choice(
         ("alternate", AlternateRecipePolicy()),
         ("buffer_aware", BufferAwarePolicy(2)),
         ("buffer_aware4", BufferAwarePolicy(4)),
+        ("power_aware", PowerAwarePolicy(2, 0.15)),
+        ("power_saver", PowerSaverPolicy(2)),
     ):
         results[name] = _pool(
             [
@@ -285,6 +328,8 @@ def write_recipe_report(
         "alternate",
         "buffer_aware",
         "buffer_aware4",
+        "power_aware",
+        "power_saver",
         "random",
         "lookahead",
     ):

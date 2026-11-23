@@ -13,9 +13,11 @@ from typing import Any
 
 import numpy as np
 
+from fabline.obs.power import POWER_FEATURES, PowerObservation
 from fabline.obs.vector import FEATURES, VectorObservation
 from fabline.worlds.factory.config import FactoryConfig
 from fabline.worlds.factory.generator import SCENARIOS
+from fabline.worlds.factory.power import PowerConfig
 from fabline.worlds.factory.recipe import RecipeConfig
 from fabline.worlds.factory.state import Entity, EntityType, Item
 from fabline.worlds.factory.world import FactoryWorld
@@ -31,6 +33,8 @@ RECIPE_FEATURES = (
     "assembler_output_norm",
 )
 
+RECIPE_POWER_FEATURES = (*RECIPE_FEATURES, *POWER_FEATURES)
+
 
 @dataclass(frozen=True)
 class RecipeEnvConfig:
@@ -40,6 +44,7 @@ class RecipeEnvConfig:
     success_score: int = 150
     initial_input_max: int = 6
     recipe: RecipeConfig = field(default_factory=RecipeConfig)
+    power: PowerConfig = field(default_factory=PowerConfig)
 
     def __post_init__(self) -> None:
         if self.episode_ticks <= 0 or self.decision_interval <= 0:
@@ -70,7 +75,16 @@ class RecipeEnv:
         if config.ticks_per_episode != self.recipe.episode_ticks:
             raise ValueError("recipe episode ticks must match config")
         self.vector = VectorObservation(config)
-        self.world = FactoryWorld(config, recipe=self.recipe.recipe)
+        self.power_view = (
+            PowerObservation(config, self.recipe.power)
+            if self.recipe.power.enabled
+            else None
+        )
+        self.world = FactoryWorld(
+            config,
+            power=self.recipe.power,
+            recipe=self.recipe.recipe,
+        )
         self.reset(0)
 
     def _assembler(self) -> Entity:
@@ -133,10 +147,18 @@ class RecipeEnv:
             ],
             dtype=np.float32,
         )
-        return np.concatenate([base, extra])
+        parts = [base, extra]
+        if self.power_view is not None:
+            parts.append(self.power_view.observe(self.world.state))
+        return np.concatenate(parts)
 
     def _info(self) -> dict[str, Any]:
         assembler = self._assembler()
+        power_values = (
+            self.power_view.observe(self.world.state)
+            if self.power_view is not None
+            else None
+        )
         return {
             "score": self.world.state.score,
             "tick": self.world.state.tick,
@@ -145,6 +167,16 @@ class RecipeEnv:
             "delivered_gears": self.world.state.delivered.get(Item.GEAR, 0),
             "assembler_input": assembler.total_input(),
             "initial_input": self.initial_input,
+            "assembler_powered": assembler.powered,
+            "power_headroom": (
+                float(power_values[10]) if power_values is not None else 1.0
+            ),
+            "power_demand_ratio": (
+                float(power_values[2]) if power_values is not None else 0.0
+            ),
+            "brownout_ratio": (
+                float(power_values[4]) if power_values is not None else 0.0
+            ),
             "assembler_output": assembler.total_output(),
             "switches": self.switches,
             "steps": self.steps,

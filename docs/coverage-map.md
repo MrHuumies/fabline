@@ -250,8 +250,10 @@ generative layout/recipe tasks.
 
 **Assembler recipe choice (0070) is positive:** buffer-aware 318 vs fast 278
 (+40) and one-step lookahead 278. The queue state is the decision variable; a
-myopic lookahead is not enough. The task is opt-in and the frozen benchmark is
-unchanged.
+myopic lookahead is not enough. Under a tight power budget (0071), buffer-aware
+stays at 314 vs fast 272; power-saver ties and headroom gating is worse, so
+power is a robustness constraint, not a new decision. The task is opt-in and
+the frozen benchmark is unchanged.
 
 ### P0 progress
 

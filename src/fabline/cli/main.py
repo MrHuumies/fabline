@@ -706,12 +706,23 @@ def cmd_recipe_choice(args: argparse.Namespace) -> int:
         slow_ticks=args.slow_ticks,
         slow_cost=args.slow_cost,
     )
+    power = (
+        PowerConfig(
+            enabled=True,
+            generator_count=1,
+            generator_capacity=args.power_capacity,
+            generator_radius=args.power_radius,
+        )
+        if args.power_capacity > 0
+        else PowerConfig()
+    )
     recipe_env = RecipeEnvConfig(
         episode_ticks=500,
         decision_interval=10,
         scenario="gear",
         success_score=args.success_score,
         recipe=recipe,
+        power=power,
     )
     seeds = tuple(int(value) for value in args.seeds.split(","))
     results = run_recipe_choice(config, recipe_env, seeds=seeds)
@@ -724,6 +735,8 @@ def cmd_recipe_choice(args: argparse.Namespace) -> int:
             "slow_ticks": recipe.slow_ticks,
             "slow_cost": recipe.slow_cost,
             "success_score": recipe_env.success_score,
+            "power_capacity": args.power_capacity,
+            "power_radius": args.power_radius,
             "seeds": list(seeds),
         },
     )
@@ -2143,6 +2156,8 @@ def build_parser() -> argparse.ArgumentParser:
     recipe_choice.add_argument("--slow-ticks", type=int, default=20)
     recipe_choice.add_argument("--slow-cost", type=int, default=1)
     recipe_choice.add_argument("--success-score", type=int, default=150)
+    recipe_choice.add_argument("--power-capacity", type=int, default=0)
+    recipe_choice.add_argument("--power-radius", type=int, default=8)
     recipe_choice.set_defaults(func=cmd_recipe_choice)
 
     crew_triage = subparsers.add_parser(

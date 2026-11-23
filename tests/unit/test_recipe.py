@@ -3,8 +3,14 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from fabline.env.recipe import RECIPE_FEATURES, RecipeEnv, RecipeEnvConfig
+from fabline.env.recipe import (
+    RECIPE_FEATURES,
+    RECIPE_POWER_FEATURES,
+    RecipeEnv,
+    RecipeEnvConfig,
+)
 from fabline.worlds.factory.config import FactoryConfig
+from fabline.worlds.factory.power import PowerConfig
 from fabline.worlds.factory.recipe import RecipeConfig
 from fabline.worlds.factory.world import FactoryWorld
 
@@ -51,6 +57,27 @@ def test_recipe_env_action_switches_recipe() -> None:
     observation, _, _, _, info = env.step(0)
     assert info["recipe"] == 0
     assert info["switches"] == 2
+
+
+def test_recipe_env_with_power_observation() -> None:
+    env = RecipeEnv(
+        _config(),
+        RecipeEnvConfig(
+            recipe=RecipeConfig(enabled=True),
+            power=PowerConfig(
+                enabled=True,
+                generator_count=1,
+                generator_capacity=10,
+                generator_radius=8,
+            ),
+        ),
+    )
+    observation, info = env.reset(0)
+    assert observation.shape == (len(RECIPE_POWER_FEATURES),)
+    assert "power_headroom" in info
+    assert "brownout_ratio" in info
+    observation, _, _, _, info = env.step(0)
+    assert observation.shape == (len(RECIPE_POWER_FEATURES),)
 
 
 def test_recipe_env_requires_enabled_recipe() -> None:

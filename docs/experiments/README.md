@@ -104,6 +104,8 @@ retained for provenance.
   random gap +4 vs spread +18; the topology axis is retired.
 - [0070 — Assembler recipe choice](0070-recipe-choice/summary.md) — positive;
   buffer-aware 318 vs fast 278; myopic lookahead 278.
+- [0071 — Recipe under power](0071-recipe-power/summary.md) — robust;
+  buffer-aware 314 vs fast 272; power state adds no decision.
 
 The frozen benchmark is documented separately in
 [`benchmarks/factory-v0.1/card.md`](../../benchmarks/factory-v0.1/card.md).
