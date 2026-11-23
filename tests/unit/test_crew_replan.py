@@ -12,6 +12,7 @@ from fabline.harness.crew_replan import (
     evaluate_policy,
 )
 from fabline.worlds.factory.config import FactoryConfig
+from fabline.worlds.factory.power import PowerConfig
 
 
 def _config() -> FactoryConfig:
@@ -85,3 +86,56 @@ def test_recall_replan_beats_no_replan_and_single_crew() -> None:
     assert aware.mean_score == 260
     assert aware.mean_score >= no_replan.mean_score + 10
     assert aware.mean_b_aborted == 1
+
+
+def _multi_env() -> CrewReplanEnv:
+    return CrewReplanEnv(
+        FactoryConfig(
+            width=32,
+            height=16,
+            ticks_per_episode=500,
+            decision_interval=10,
+            entity_budget=32,
+            rock_density=0.0,
+            ore_patches=1,
+            starter_line=True,
+            emit_events=True,
+        ),
+        CrewReplanConfig(
+            warning_tick=40,
+            recall_tick=80,
+            job_failure_tick=80,
+            replan_jobs=2,
+            success_score=400,
+            randomize_crew_b=True,
+            crew_b_min_distance=8,
+            scenario="random_gear",
+            power=PowerConfig(
+                enabled=True,
+                topology="wired",
+                generator_count=1,
+                generator_capacity=24,
+                generator_radius=8,
+                wire_redundancy=2,
+            ),
+        ),
+    )
+
+
+def test_sequential_replan_recovers_two_orphans() -> None:
+    env = _multi_env()
+    observation, info = env.reset(0)
+    while info["tick"] < 40:
+        observation, _, _, _, info = env.step(0)
+    observation, reward, terminated, truncated, info = env.step(11)
+    assert not terminated and not truncated
+    assert info["phase"] == "replan"
+    assert set(info["orphaned_roles"]) == {"small", "large"}
+    observation, reward, terminated, truncated, info = env.step(12)
+    assert not terminated and not truncated
+    assert info["phase"] == "replan"
+    assert info["orphaned_roles"] == ["small"]
+    assert info["score"] > 0
+    observation, reward, terminated, truncated, info = env.step(8)
+    assert terminated and not truncated
+    assert info["score"] > 300

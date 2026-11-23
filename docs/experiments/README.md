@@ -78,6 +78,8 @@ retained for provenance.
 - [0053 — Multi-orphan pilot](0053-multi-orphan-pilot/summary.md) — pilot
   negative; simultaneous job aborts collapse to a one-bridge task; not
   promoted.
+- [0054 — Sequential survivor](0054-crew-multi-orphan/summary.md) — recovery
+  +342; nearest 438, greedy/aware/oracle 460; shallow, greedy matches oracle.
 
 The frozen benchmark is documented separately in
 [`benchmarks/factory-v0.1/card.md`](../../benchmarks/factory-v0.1/card.md).

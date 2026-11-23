@@ -28,11 +28,24 @@ class CrewReplanPolicy(Protocol):
 
 
 def _orphan_action(info: dict[str, Any], mask: np.ndarray) -> int:
-    orphan = info["orphaned_role"]
-    if info["phase"] != "replan" or orphan is None:
+    if info["phase"] != "replan":
         return 0
-    action = (ROLES.index(orphan) + 1) * CHOICES
-    return action if mask[action] else 0
+    choices = [
+        role
+        for role in ROLES
+        if info["roles"][role]["outage"] > 0
+        and mask[(ROLES.index(role) + 1) * CHOICES]
+    ]
+    if not choices:
+        return 0
+    role = max(
+        choices,
+        key=lambda item: (
+            info["roles"][item]["outage"],
+            -info["roles"][item]["deadline"],
+        ),
+    )
+    return (ROLES.index(role) + 1) * CHOICES
 
 
 class NoopPolicy:

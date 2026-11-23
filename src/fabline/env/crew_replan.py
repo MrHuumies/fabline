@@ -32,11 +32,19 @@ class CrewReplanConfig(MultiCrewConfig):
     """Two-crew task plus the tick at which crew B is recalled."""
 
     recall_tick: int = 100
+    job_failure_tick: int = 0
+    replan_jobs: int = 1
 
     def __post_init__(self) -> None:
         super().__post_init__()
         if not self.warning_tick < self.recall_tick < self.episode_ticks:
             raise ValueError("recall must follow the warning and precede the end")
+        if self.job_failure_tick and not (
+            self.warning_tick < self.job_failure_tick < self.episode_ticks
+        ):
+            raise ValueError("job failure must follow the warning and precede end")
+        if self.replan_jobs <= 0:
+            raise ValueError("replan_jobs must be positive")
 
 
 class CrewReplanEnv(MultiCrewEnv):
@@ -55,6 +63,9 @@ class CrewReplanEnv(MultiCrewEnv):
         self.recall_tick = self.replan.recall_tick
         self.crew_b_available = True
         self.orphaned_role: str | None = None
+        self.orphaned_roles: set[str] = set()
+        self.job_failure_done = False
+        self.replan_jobs_done = 0
         self.b_aborted = 0
         self.initial_action = -1
         self.replan_action = -1
@@ -66,14 +77,17 @@ class CrewReplanEnv(MultiCrewEnv):
         if self.phase == "replan":
             mask = np.zeros(self.n_actions, dtype=bool)
             mask[0] = True
-            if (
-                self.orphaned_role is not None
-                and self.role_outages[self.orphaned_role] > 0
-            ):
-                choice = self.roles.index(self.orphaned_role) + 1
-                mask[choice * CHOICES] = True
+            for role in self.orphaned_roles:
+                if self.role_outages[role] > 0:
+                    choice = self.roles.index(role) + 1
+                    mask[choice * CHOICES] = True
             return mask
         return super().action_mask()
+
+    def _mark_orphan(self, role: str) -> None:
+        self.orphaned_roles.add(role)
+        if self.orphaned_role is None:
+            self.orphaned_role = role
 
     def _run_jobs(
         self,
@@ -94,8 +108,7 @@ class CrewReplanEnv(MultiCrewEnv):
                     self.aborted += 1
                     if job["crew_id"] == "b":
                         self.b_aborted += 1
-                        if self.orphaned_role is None:
-                            self.orphaned_role = job["role"]
+                    self._mark_orphan(job["role"])
                 else:
                     self.world.repair_wire(wire.id)
                     endpoint = self._nearest_endpoint(wire, job["crew"])
@@ -108,6 +121,19 @@ class CrewReplanEnv(MultiCrewEnv):
                 remaining.remove(job)
             if (
                 handle_recall
+                and self.replan.job_failure_tick
+                and not self.job_failure_done
+                and self.world.state.tick >= self.replan.job_failure_tick
+            ):
+                self.job_failure_done = True
+                for job in list(remaining):
+                    remaining.remove(job)
+                    self.aborted += 1
+                    if job["crew_id"] == "b":
+                        self.b_aborted += 1
+                    self._mark_orphan(job["role"])
+            if (
+                handle_recall
                 and self.crew_b_available
                 and self.world.state.tick >= self.recall_tick
             ):
@@ -117,8 +143,7 @@ class CrewReplanEnv(MultiCrewEnv):
                         remaining.remove(job)
                         self.aborted += 1
                         self.b_aborted += 1
-                        if self.orphaned_role is None:
-                            self.orphaned_role = job["role"]
+                        self._mark_orphan(job["role"])
 
     def _finish_initial(
         self,
@@ -215,6 +240,35 @@ class CrewReplanEnv(MultiCrewEnv):
                 job["distance"] * self.multi.travel_ticks_per_cell
             )
             self._run_jobs(jobs, handle_recall=False)
+        if job is not None:
+            self.orphaned_roles.discard(job["role"])
+            self.replan_jobs_done += 1
+        remaining = [
+            role
+            for role in self.orphaned_roles
+            if self.role_outages[role] > 0
+        ]
+        if (
+            job is not None
+            and remaining
+            and self.replan_jobs_done < self.replan.replan_jobs
+            and not self.world.done
+            and self.world.state.tick < self.multi.episode_ticks
+        ):
+            self.steps += 1
+            info = self._info()
+            info["illegal"] = False
+            info["reward"] = 0.0
+            info["jobs"] = [
+                {
+                    "role": job["role"],
+                    "crew": job["crew_id"],
+                    "distance": job["distance"],
+                    "duration": job["duration"],
+                }
+                for job in jobs
+            ]
+            return self._observation(), 0.0, False, False, info
         self._advance(max(0, self.multi.episode_ticks - self.world.state.tick))
         reward = float(self.world.state.score - self.score_start)
         self.steps += 1
@@ -275,6 +329,7 @@ class CrewReplanEnv(MultiCrewEnv):
                 "recall_tick": self.recall_tick,
                 "crew_b_available": self.crew_b_available,
                 "orphaned_role": self.orphaned_role,
+                "orphaned_roles": sorted(self.orphaned_roles),
                 "b_aborted": self.b_aborted,
                 "initial_action": self.initial_action,
                 "replan_action": self.replan_action,

@@ -50,8 +50,10 @@ Current tasks:
   oracle 441 vs greedy 419, nearest 361.
 - [Recall/replanning on twin lines](crew-replan-layouts.md) — recovery +240,
   but oracle-greedy +9 misses H3; not promoted.
-- [Crew visibility and communication](crew-visibility.md) — pilot negative;
-  radius still binary and delayed reports add nothing.
+- [Crew visibility and communication](crew-visibility.md) — distributed
+  layout: local cost +98, delayed60 +54; all gates pass.
+- [Sequential survivor dispatch](crew-multi-orphan.md) — double job failure,
+  two orphans, two survivor decisions.
 - [Power allocation](power-allocation.md) — three-action priority scheduling
   under a tight generator budget.
 - [Fault + power interaction](fault-power.md) — four-action repair and priority

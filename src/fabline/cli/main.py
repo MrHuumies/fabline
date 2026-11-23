@@ -27,6 +27,10 @@ from fabline.harness.crew_layout_q import (
     run_crew_layout_q,
     write_crew_layout_q_report,
 )
+from fabline.harness.crew_multi_orphan import (
+    run_crew_multi_orphan,
+    write_crew_multi_orphan_report,
+)
 from fabline.harness.crew_replan import (
     run_crew_replan,
     write_crew_replan_report,
@@ -656,6 +660,65 @@ def cmd_multi_crew(args: argparse.Namespace) -> int:
         },
     )
     print(json.dumps({"report": str(report), "results": results}, indent=2, sort_keys=True))
+    return 0
+
+
+def cmd_crew_multi_orphan(args: argparse.Namespace) -> int:
+    config = FactoryConfig(
+        width=32,
+        height=16,
+        ticks_per_episode=500,
+        decision_interval=10,
+        entity_budget=32,
+        rock_density=0.0,
+        ore_patches=1,
+        starter_line=True,
+        emit_events=True,
+    )
+    replan = CrewReplanConfig(
+        episode_ticks=500,
+        decision_interval=10,
+        loop_failure_tick=90,
+        small_failure_tick=110,
+        large_failure_tick=130,
+        recall_tick=80,
+        job_failure_tick=80,
+        replan_jobs=2,
+        success_score=400,
+        randomize_crew_b=True,
+        crew_b_min_distance=8,
+        scenario="random_gear",
+        power=PowerConfig(
+            enabled=True,
+            topology="wired",
+            generator_count=1,
+            generator_capacity=24,
+            generator_radius=8,
+            wire_redundancy=2,
+        ),
+    )
+    seeds = tuple(int(value) for value in args.seeds.split(","))
+    results = run_crew_multi_orphan(config, replan, seeds=seeds)
+    report = write_crew_multi_orphan_report(
+        args.out,
+        results,
+        config={
+            "width": config.width,
+            "height": config.height,
+            "failure_tick": replan.job_failure_tick,
+            "recall_tick": replan.recall_tick,
+            "replan_jobs": replan.replan_jobs,
+            "success_score": replan.success_score,
+            "seeds": list(seeds),
+        },
+    )
+    print(
+        json.dumps(
+            {"report": str(report), "results": results},
+            indent=2,
+            sort_keys=True,
+        )
+    )
     return 0
 
 
@@ -1493,6 +1556,18 @@ def build_parser() -> argparse.ArgumentParser:
     multi_crew.add_argument("--large-failure", type=int, default=130)
     multi_crew.add_argument("--success-score", type=int, default=150)
     multi_crew.set_defaults(func=cmd_multi_crew)
+
+    crew_multi_orphan = subparsers.add_parser(
+        "crew-multi-orphan",
+        help="run sequential survivor dispatch on the twin-line layout",
+    )
+    crew_multi_orphan.add_argument(
+        "--out", type=str, default="results/crew-multi-orphan"
+    )
+    crew_multi_orphan.add_argument(
+        "--seeds", type=str, default="11000,11001,11002,11003,11004"
+    )
+    crew_multi_orphan.set_defaults(func=cmd_crew_multi_orphan)
 
     crew_visibility = subparsers.add_parser(
         "crew-visibility",

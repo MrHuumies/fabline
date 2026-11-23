@@ -216,9 +216,9 @@ visibility/communication pilot (0051) is negative on twin-line (radius still
 binary, reports add nothing), but the distributed 48×24 spread layout (0052)
 makes radius-16 local visibility useful: global 778, local 680, delayed60 734;
 local cost +98, communication gain +54, all gates pass. A simultaneous multi-orphan
-pilot (0053) is negative: both jobs aborting collapses to a one-bridge task and
-greedy/aware match oracle. Sequential survivor dispatch or a third crew is the
-next repeated-failure design.
+pilot (0053) is negative. Sequential survivor dispatch (0054) is positive but
+shallow: recovery +342, nearest 438, greedy/aware/oracle 460; order is the same
+on every seed. A harder asymmetric trade-off or a third crew is next.
 
 The alternative remains:
 

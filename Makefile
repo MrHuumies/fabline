@@ -93,6 +93,9 @@ crew-layout-ensemble:
 crew-visibility:
 	$(PY) -m fabline crew-visibility --out results/crew-visibility --seeds 10000,10001,10002,10003,10004 --radius 16 --ages 30,60
 
+crew-multi-orphan:
+	$(PY) -m fabline crew-multi-orphan --out results/crew-multi-orphan --seeds 11000,11001,11002,11003,11004
+
 power-allocation-stochastic:
 	$(PY) -m fabline power-allocation --out results/power-allocation/stochastic --episodes 5 --train-episodes 100 --load-jitter 30 --capacity-jitter 20 --variation-period 20
 

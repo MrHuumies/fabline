@@ -36,6 +36,8 @@ are pinned separately; see [`benchmarks/factory-v0.1/card.md`](benchmarks/factor
   all gates pass on the 48×24 spread layout (0052).
 - Document a negative simultaneous multi-orphan pilot: both jobs aborting
   collapses to a one-bridge task; not promoted (0053).
+- Add sequential survivor dispatch: recovery +342; nearest 438,
+  greedy/aware/oracle 460; shallow, greedy matches oracle (0054).
 
 ## [0.1.2] — 2026-11-22
 
