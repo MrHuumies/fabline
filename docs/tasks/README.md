@@ -62,8 +62,8 @@ Current tasks:
   64-action initial coverage.
 - [Three-crew recall](crew-three-replan.md) — 64-action initial dispatch, B
   recall, A/C recovery pair.
-- [View arrival](view-arrival.md) — generic multiview contract; base, residual,
-  cached, and full update baselines.
+- [View arrival](view-arrival.md) — generic multiview contract and
+  episode-grouped view-arrival task.
 - [Power allocation](power-allocation.md) — three-action priority scheduling
   under a tight generator budget.
 - [Fault + power interaction](fault-power.md) — four-action repair and priority

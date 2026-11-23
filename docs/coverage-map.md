@@ -54,6 +54,7 @@ This document is a map, not a commitment to implement every row.
 | preventive wire | control | degraded wire | warning makes repair actionable |
 | preventive machine | control | diagnostics | delayed-credit Q is unstable |
 | maintenance threshold | bandit | context | representation fix; deterministic |
+| view arrival | classification | multiview | contract only; consumer-side update methods |
 
 ### Current baselines
 

@@ -302,8 +302,9 @@ ViewArrivalData
 ```
 
 Splits are grouped by episode id; a row-level random split is rejected. The
-task protocol is `spec` plus `load()`. The training/update runner is a separate
-consumer of this contract.
+task protocol is `spec` plus `load()`. Training and update methods are
+consumer-side; the public package does not prescribe a model architecture or a
+specific adaptation method.
 
 ## Episode schema
 

@@ -1,8 +1,8 @@
 """Generic view-arrival data contracts.
 
-This module defines the task-facing shape of a view-arrival experiment. The
-runner is deliberately separate: a task only has to expose named views, labels,
-episode-grouped splits, and the base/new/retention view roles.
+This module defines the task-facing shape of a view-arrival experiment. A task
+only has to expose named views, labels, episode-grouped splits, and the
+base/new/retention view roles; training and update methods are consumer-side.
 """
 
 from __future__ import annotations

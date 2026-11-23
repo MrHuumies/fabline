@@ -10,8 +10,8 @@
 Implement the public `multiview.v1` observation contract and the task-facing
 shape of a view-arrival experiment. This is a contract-first slice: named views,
 a boolean view mask, a fixed-width flatten path, a named-view registry, and a
-generic `ViewArrivalTask` data contract. The training/update runner is a
-separate slice.
+generic `ViewArrivalTask` data contract. Training and update methods are
+consumer-side.
 
 ## Motivation
 
@@ -49,7 +49,7 @@ retention against a stable contract.
 
 ## What this does not do
 
-- No training runner, residual head, cache accounting, or cost benchmark yet.
+- No training method or cost benchmark in the public package.
 - No dataset or public result table.
 - No frozen `factory-v0.1` changes.
 - No private consumer naming, private experiment numbers, or private results.
@@ -65,4 +65,5 @@ retention against a stable contract.
 
 ## Decision
 
-Accepted. See ADR 0033. The runner and update-cost report are a follow-up.
+Accepted. See ADR 0033. Any training/update method is consumer-side and is not
+part of the public package.
