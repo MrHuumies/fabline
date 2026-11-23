@@ -34,6 +34,8 @@ class CrewReplanConfig(MultiCrewConfig):
     recall_tick: int = 100
     job_failure_tick: int = 0
     replan_jobs: int = 1
+    role_mode: str = "loop"
+    replan_mode: str = "orphan"
 
     def __post_init__(self) -> None:
         super().__post_init__()
@@ -45,6 +47,10 @@ class CrewReplanConfig(MultiCrewConfig):
             raise ValueError("job failure must follow the warning and precede end")
         if self.replan_jobs <= 0:
             raise ValueError("replan_jobs must be positive")
+        if self.role_mode not in {"loop", "three_positive"}:
+            raise ValueError("role_mode must be loop or three_positive")
+        if self.replan_mode not in {"orphan", "all_positive"}:
+            raise ValueError("replan_mode must be orphan or all_positive")
 
 
 class CrewReplanEnv(MultiCrewEnv):
@@ -57,6 +63,49 @@ class CrewReplanEnv(MultiCrewEnv):
     ) -> None:
         self.replan = replan or CrewReplanConfig()
         super().__init__(config, self.replan)
+
+    def _select_roles(
+        self,
+        outages: dict[int, int],
+    ) -> tuple[dict[str, int], dict[str, int], dict[str, int]]:
+        if self.replan.role_mode != "three_positive":
+            return super()._select_roles(outages)
+        positive = sorted(
+            (
+                (size, wire_id)
+                for wire_id, size in outages.items()
+                if size > 0
+            ),
+            key=lambda item: (item[0], item[1]),
+        )
+        if len(positive) < 3:
+            raise RuntimeError("triage task needs three positive wires")
+        small = positive[0]
+        large = positive[-1]
+        middle = [
+            item for item in positive
+            if item[1] not in {small[1], large[1]}
+        ]
+        if not middle:
+            raise RuntimeError("triage task needs three distinct wires")
+        medium = middle[len(middle) // 2]
+        return (
+            {
+                "loop": medium[1],
+                "small": small[1],
+                "large": large[1],
+            },
+            {
+                "loop": medium[0],
+                "small": small[0],
+                "large": large[0],
+            },
+            {
+                "loop": self.multi.loop_failure_tick,
+                "small": self.multi.small_failure_tick,
+                "large": self.multi.large_failure_tick,
+            },
+        )
 
     def reset(self, seed: int = 0) -> tuple[np.ndarray, dict[str, Any]]:
         self.phase = "initial"
@@ -73,14 +122,29 @@ class CrewReplanEnv(MultiCrewEnv):
         self.score_start = self.world.state.score
         return self._observation(), self._info()
 
+    def _remaining_targets(self) -> list[str]:
+        if self.replan.replan_mode == "all_positive":
+            return [
+                role
+                for role in self.roles
+                if self.role_outages[role] > 0
+                and (
+                    self._wire(self.role_wires[role]).degraded
+                    or self._wire(self.role_wires[role]).failed
+                )
+            ]
+        return [
+            role for role in self.orphaned_roles
+            if self.role_outages[role] > 0
+        ]
+
     def action_mask(self) -> np.ndarray:
         if self.phase == "replan":
             mask = np.zeros(self.n_actions, dtype=bool)
             mask[0] = True
-            for role in self.orphaned_roles:
-                if self.role_outages[role] > 0:
-                    choice = self.roles.index(role) + 1
-                    mask[choice * CHOICES] = True
+            for role in self._remaining_targets():
+                choice = self.roles.index(role) + 1
+                mask[choice * CHOICES] = True
             return mask
         return super().action_mask()
 
@@ -243,11 +307,7 @@ class CrewReplanEnv(MultiCrewEnv):
         if job is not None:
             self.orphaned_roles.discard(job["role"])
             self.replan_jobs_done += 1
-        remaining = [
-            role
-            for role in self.orphaned_roles
-            if self.role_outages[role] > 0
-        ]
+        remaining = self._remaining_targets()
         if (
             job is not None
             and remaining

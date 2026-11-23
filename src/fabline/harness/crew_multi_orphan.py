@@ -114,6 +114,7 @@ def write_crew_multi_orphan_report(
     results: dict[str, dict[str, Any]],
     *,
     config: dict[str, Any],
+    title: str = "Sequential survivor dispatch",
 ) -> Path:
     out = Path(out)
     out.mkdir(parents=True, exist_ok=True)
@@ -128,7 +129,7 @@ def write_crew_multi_orphan_report(
         encoding="utf-8",
     )
     lines = [
-        "# Sequential survivor dispatch",
+        f"# {title}",
         "",
         f"Failure/recall {config['failure_tick']}; replan jobs "
         f"{config['replan_jobs']}; success ≥ {config['success_score']}.",

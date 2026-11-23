@@ -38,6 +38,8 @@ are pinned separately; see [`benchmarks/factory-v0.1/card.md`](benchmarks/factor
   collapses to a one-bridge task; not promoted (0053).
 - Add sequential survivor dispatch: recovery +342; nearest 438,
   greedy/aware/oracle 460; shallow, greedy matches oracle (0054).
+- Add three-bridge survivor triage: oracle 456, greedy 378, nearest 284; all
+  gates pass (0055).
 
 ## [0.1.2] — 2026-11-22
 

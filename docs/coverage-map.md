@@ -218,7 +218,9 @@ makes radius-16 local visibility useful: global 778, local 680, delayed60 734;
 local cost +98, communication gain +54, all gates pass. A simultaneous multi-orphan
 pilot (0053) is negative. Sequential survivor dispatch (0054) is positive but
 shallow: recovery +342, nearest 438, greedy/aware/oracle 460; order is the same
-on every seed. A harder asymmetric trade-off or a third crew is next.
+on every seed. Three-bridge triage with failure at 100 (0055) makes the initial
+assignment matter: oracle 456, greedy 378, nearest 284; all gates pass. A harder
+asymmetric trade-off or a third crew is next.
 
 The alternative remains:
 

@@ -96,6 +96,9 @@ crew-visibility:
 crew-multi-orphan:
 	$(PY) -m fabline crew-multi-orphan --out results/crew-multi-orphan --seeds 11000,11001,11002,11003,11004
 
+crew-triage:
+	$(PY) -m fabline crew-triage --out results/crew-triage --seeds 12000,12001,12002,12003,12004
+
 power-allocation-stochastic:
 	$(PY) -m fabline power-allocation --out results/power-allocation/stochastic --episodes 5 --train-episodes 100 --load-jitter 30 --capacity-jitter 20 --variation-period 20
 

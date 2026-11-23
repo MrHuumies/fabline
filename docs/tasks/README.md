@@ -54,6 +54,8 @@ Current tasks:
   layout: local cost +98, delayed60 +54; all gates pass.
 - [Sequential survivor dispatch](crew-multi-orphan.md) — double job failure,
   two orphans, two survivor decisions.
+- [Three-bridge survivor triage](crew-triage.md) — three positive bridges,
+  failure at 100, two survivor jobs.
 - [Power allocation](power-allocation.md) — three-action priority scheduling
   under a tight generator budget.
 - [Fault + power interaction](fault-power.md) — four-action repair and priority

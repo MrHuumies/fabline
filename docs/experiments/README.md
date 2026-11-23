@@ -80,6 +80,8 @@ retained for provenance.
   promoted.
 - [0054 — Sequential survivor](0054-crew-multi-orphan/summary.md) — recovery
   +342; nearest 438, greedy/aware/oracle 460; shallow, greedy matches oracle.
+- [0055 — Three-bridge triage](0055-crew-triage/summary.md) — oracle 456,
+  greedy 378, nearest 284; all gates pass.
 
 The frozen benchmark is documented separately in
 [`benchmarks/factory-v0.1/card.md`](../../benchmarks/factory-v0.1/card.md).
