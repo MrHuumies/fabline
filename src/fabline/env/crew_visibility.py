@@ -187,3 +187,74 @@ class VisibilityEnv:
             truncated,
             self._mask_info(info),
         )
+
+
+class PrivateVisibilityEnv(VisibilityEnv):
+    """Per-crew views with no shared memory; each crew sees only its radius."""
+
+    def __init__(self, env: MultiCrewEnv, *, radius: int) -> None:
+        super().__init__(env, radius=radius, report_age=0)
+
+    def _crew_role_data(
+        self,
+        info: dict[str, Any],
+        role: str,
+        crew: str,
+    ) -> dict[str, Any]:
+        visible = self._visible(role, crew)
+        if visible:
+            data = dict(info["roles"][role])
+            known = True
+        else:
+            data = {
+                "wire_id": info["roles"][role]["wire_id"],
+                "outage": 0,
+                "degraded": False,
+                "failed": False,
+                "deadline": 0,
+                "distance_a": 0,
+                "distance_b": 0,
+                "service_a": 0,
+                "service_b": 0,
+            }
+            known = False
+        data["visible_a"] = visible if crew == "a" else False
+        data["visible_b"] = visible if crew == "b" else False
+        data["known"] = known
+        return data
+
+    def _private_info(self, info: dict[str, Any]) -> dict[str, Any]:
+        masked = self._mask_info(info)
+        masked["crew_roles"] = {
+            "a": {
+                role: self._crew_role_data(info, role, "a")
+                for role in self.env.roles
+            },
+            "b": {
+                role: self._crew_role_data(info, role, "b")
+                for role in self.env.roles
+            },
+        }
+        return masked
+
+    def reset(self, seed: int = 0) -> tuple[np.ndarray, dict[str, Any]]:
+        observation, info = self.env.reset(seed)
+        return (
+            self._mask_observation(observation, info),
+            self._private_info(info),
+        )
+
+    def step(
+        self,
+        action: int,
+    ) -> tuple[np.ndarray, float, bool, bool, dict[str, Any]]:
+        observation, reward, terminated, truncated, info = self.env.step(
+            action
+        )
+        return (
+            self._mask_observation(observation, info),
+            reward,
+            terminated,
+            truncated,
+            self._private_info(info),
+        )

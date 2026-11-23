@@ -76,6 +76,22 @@ Local cost is +98 for oracle; delayed60 recovers +54 of it. All five gates
 pass. See
 [`experiments/0052-crew-visibility`](../experiments/0052-crew-visibility/summary.md).
 
+## Private per-crew policies (0056)
+
+Seeds 14000–14004; radius 16; report age 60.
+
+| condition | best scripted | oracle | success |
+|---|---:|---:|---:|
+| global | 762 | 762 | 1.00 |
+| shared local | 606 | 614 | 0.60 |
+| shared delayed60 | 640 | 648 | 0.60 |
+| private | 574 | — | 0.40 |
+
+Sharing views beats private best by +40 (local) and +74 (delayed60); the report
+adds +34 over local. Private nearest/aware collapse to 296 with zero success.
+All gates pass. See
+[`experiments/0056-crew-private`](../experiments/0056-crew-private/summary.md).
+
 ## Known pitfalls
 
 - Manhattan radius ignores walls/occlusion.
@@ -87,3 +103,5 @@ pass. See
 
 - 2026-11-23 — card created; pilot contract and gates defined.
 - 2026-11-23 — formal run: local cost +98, delayed60 +54, all gates pass.
+- 2026-11-23 — private views: shared local +40 and delayed60 +74 over private;
+  private nearest/aware 296; all gates pass.

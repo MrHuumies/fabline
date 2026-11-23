@@ -93,6 +93,9 @@ crew-layout-ensemble:
 crew-visibility:
 	$(PY) -m fabline crew-visibility --out results/crew-visibility --seeds 10000,10001,10002,10003,10004 --radius 16 --ages 30,60
 
+crew-private:
+	$(PY) -m fabline crew-private --out results/crew-private --seeds 13000,13001,13002,13003,13004 --radius 16 --report-age 60
+
 crew-multi-orphan:
 	$(PY) -m fabline crew-multi-orphan --out results/crew-multi-orphan --seeds 11000,11001,11002,11003,11004
 

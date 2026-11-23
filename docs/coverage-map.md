@@ -219,8 +219,10 @@ local cost +98, communication gain +54, all gates pass. A simultaneous multi-orp
 pilot (0053) is negative. Sequential survivor dispatch (0054) is positive but
 shallow: recovery +342, nearest 438, greedy/aware/oracle 460; order is the same
 on every seed. Three-bridge triage with failure at 100 (0055) makes the initial
-assignment matter: oracle 456, greedy 378, nearest 284; all gates pass. A harder
-asymmetric trade-off or a third crew is next.
+assignment matter: oracle 456, greedy 378, nearest 284; all gates pass. Private
+views versus shared reports (0056) show a real communication gain: shared local
++40 and delayed60 +74 over private best; private nearest/aware collapse to 296.
+A message budget or a stronger decentralized protocol is next.
 
 The alternative remains:
 

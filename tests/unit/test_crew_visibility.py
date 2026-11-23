@@ -1,7 +1,11 @@
 from __future__ import annotations
 
 from fabline.env.crew_replan import CrewReplanConfig, CrewReplanEnv
-from fabline.env.crew_visibility import VisibilityEnv
+from fabline.env.crew_visibility import PrivateVisibilityEnv, VisibilityEnv
+from fabline.harness.crew_private import (
+    CrewNearestPolicy,
+    PrivatePairPolicy,
+)
 from fabline.worlds.factory.config import FactoryConfig
 from fabline.worlds.factory.power import PowerConfig
 
@@ -66,3 +70,16 @@ def test_local_visibility_masks_unknown_targets() -> None:
                 assert info["roles"][env.roles[first - 1]]["known"]
             if second > 0:
                 assert info["roles"][env.roles[second - 1]]["known"]
+
+
+def test_private_views_and_pair_policy() -> None:
+    env = PrivateVisibilityEnv(_env(), radius=16)
+    observation, info = env.reset(14000)
+    assert set(info["crew_roles"]) == {"a", "b"}
+    while info["tick"] < 40:
+        observation, _, _, _, info = env.step(0)
+    policy = PrivatePairPolicy(
+        CrewNearestPolicy("a"), CrewNearestPolicy("b")
+    )
+    action = policy.act(observation, info, env.action_mask())
+    assert env.action_mask()[action]

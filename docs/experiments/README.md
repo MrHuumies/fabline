@@ -82,6 +82,8 @@ retained for provenance.
   +342; nearest 438, greedy/aware/oracle 460; shallow, greedy matches oracle.
 - [0055 — Three-bridge triage](0055-crew-triage/summary.md) — oracle 456,
   greedy 378, nearest 284; all gates pass.
+- [0056 — Private views](0056-crew-private/summary.md) — shared local +40 and
+  delayed60 +74 over private best; private nearest/aware 296.
 
 The frozen benchmark is documented separately in
 [`benchmarks/factory-v0.1/card.md`](../../benchmarks/factory-v0.1/card.md).

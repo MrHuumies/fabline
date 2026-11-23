@@ -40,6 +40,8 @@ are pinned separately; see [`benchmarks/factory-v0.1/card.md`](benchmarks/factor
   greedy/aware/oracle 460; shallow, greedy matches oracle (0054).
 - Add three-bridge survivor triage: oracle 456, greedy 378, nearest 284; all
   gates pass (0055).
+- Add private-view comparison: shared local +40 and delayed60 +74 over private
+  best; private nearest/aware 296 (0056).
 
 ## [0.1.2] — 2026-11-22
 
