@@ -18,6 +18,7 @@ from fabline.env.power_allocation import PowerAllocationConfig
 from fabline.env.preventive_fault import PreventiveFaultConfig
 from fabline.env.preventive_threshold import ThresholdConfig
 from fabline.env.preventive_wire import PreventiveWireConfig
+from fabline.env.recipe import RecipeEnvConfig
 from fabline.env.three_crew_replan import ThreeCrewReplanConfig
 from fabline.env.wire_repair import WireRepairConfig
 from fabline.harness.crew_budget import (
@@ -102,6 +103,7 @@ from fabline.harness.preventive_wire import (
     run_preventive_wire,
     write_preventive_wire_report,
 )
+from fabline.harness.recipe import run_recipe_choice, write_recipe_report
 from fabline.harness.runner import run_throughput_benchmark
 from fabline.harness.shared_suite import SharedSuiteConfig, run_shared_suite
 from fabline.harness.suite import SuiteConfig, run_suite
@@ -117,6 +119,7 @@ from fabline.tasks.throughput import ThroughputConfig, ThroughputTask
 from fabline.worlds.factory.config import FactoryConfig, load_config
 from fabline.worlds.factory.faults import FaultConfig
 from fabline.worlds.factory.power import PowerConfig
+from fabline.worlds.factory.recipe import RecipeConfig
 from fabline.worlds.factory.world import FactoryWorld
 
 
@@ -681,6 +684,56 @@ def cmd_multi_crew(args: argparse.Namespace) -> int:
         },
     )
     print(json.dumps({"report": str(report), "results": results}, indent=2, sort_keys=True))
+    return 0
+
+
+def cmd_recipe_choice(args: argparse.Namespace) -> int:
+    config = FactoryConfig(
+        width=16,
+        height=8,
+        ticks_per_episode=500,
+        decision_interval=10,
+        entity_budget=32,
+        rock_density=0.0,
+        ore_patches=1,
+        starter_line=True,
+        emit_events=True,
+    )
+    recipe = RecipeConfig(
+        enabled=True,
+        fast_ticks=args.fast_ticks,
+        fast_cost=args.fast_cost,
+        slow_ticks=args.slow_ticks,
+        slow_cost=args.slow_cost,
+    )
+    recipe_env = RecipeEnvConfig(
+        episode_ticks=500,
+        decision_interval=10,
+        scenario="gear",
+        success_score=args.success_score,
+        recipe=recipe,
+    )
+    seeds = tuple(int(value) for value in args.seeds.split(","))
+    results = run_recipe_choice(config, recipe_env, seeds=seeds)
+    report = write_recipe_report(
+        args.out,
+        results,
+        config={
+            "fast_ticks": recipe.fast_ticks,
+            "fast_cost": recipe.fast_cost,
+            "slow_ticks": recipe.slow_ticks,
+            "slow_cost": recipe.slow_cost,
+            "success_score": recipe_env.success_score,
+            "seeds": list(seeds),
+        },
+    )
+    print(
+        json.dumps(
+            {"report": str(report), "results": results},
+            indent=2,
+            sort_keys=True,
+        )
+    )
     return 0
 
 
@@ -2074,6 +2127,23 @@ def build_parser() -> argparse.ArgumentParser:
     multi_crew.add_argument("--large-failure", type=int, default=130)
     multi_crew.add_argument("--success-score", type=int, default=150)
     multi_crew.set_defaults(func=cmd_multi_crew)
+
+    recipe_choice = subparsers.add_parser(
+        "recipe-choice",
+        help="run the fast/expensive vs slow/cheap assembler recipe task",
+    )
+    recipe_choice.add_argument(
+        "--out", type=str, default="results/recipe-choice"
+    )
+    recipe_choice.add_argument(
+        "--seeds", type=str, default="36000,36001,36002,36003,36004"
+    )
+    recipe_choice.add_argument("--fast-ticks", type=int, default=12)
+    recipe_choice.add_argument("--fast-cost", type=int, default=2)
+    recipe_choice.add_argument("--slow-ticks", type=int, default=20)
+    recipe_choice.add_argument("--slow-cost", type=int, default=1)
+    recipe_choice.add_argument("--success-score", type=int, default=150)
+    recipe_choice.set_defaults(func=cmd_recipe_choice)
 
     crew_triage = subparsers.add_parser(
         "crew-triage",

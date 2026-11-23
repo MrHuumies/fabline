@@ -168,6 +168,7 @@ class WorldState:
     power_load_factors: list[int] = field(default_factory=list)
     power_capacity_factors: list[int] = field(default_factory=list)
     power_priority: int = 0
+    recipe_index: int = 0
 
     def in_bounds(self, x: int, y: int) -> bool:
         return 0 <= x < self.width and 0 <= y < self.height
@@ -237,6 +238,8 @@ class WorldState:
             )
         if self.power_priority:
             result["power_priority"] = self.power_priority
+        if self.recipe_index:
+            result["recipe_index"] = self.recipe_index
         return result
 
     def state_hash(self) -> str:

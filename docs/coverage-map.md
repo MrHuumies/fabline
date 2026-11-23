@@ -148,7 +148,7 @@ Scores are qualitative: **diagnostic value**, **reuse of existing code**, and
 | Stochastic faults and sensor noise | calibration, robust control, anomaly detection | fault detection, risk-sensitive repair | high | low | **P1** |
 | Multi-agent workers/vehicles | coordination, communication, credit assignment, partial views | cooperative control, communication limits, agent failure | low | high | **P2** |
 | Routing / trains / long-distance logistics | long-horizon planning, nonlocal dependencies | routing, build-order, throughput under delay | low | medium | **P2** |
-| Dynamic recipes / byproducts / queues | compositional generalization, constraint satisfaction | multi-input crafting, scheduling, transfer | medium | medium | **P2** |
+| Dynamic recipes / byproducts / queues | compositional generalization, constraint satisfaction | multi-input crafting, scheduling, transfer | medium | medium | **P3** |
 | Deadlines / contracts / markets | credit assignment, multi-objective trade-offs | scheduling, auction/market control | low | medium | **P3** |
 | Adversarial disruptions / sabotage | robustness, recovery, anomaly detection | attack/repair, anomaly detection | medium | medium | **P3** |
 | Weather/environment effects | distribution shift, sensor/power robustness | shifted prediction and control | medium | medium | **P3** |
@@ -247,6 +247,11 @@ The alternative remains:
 
 Dynamic recipes, deadlines/markets, adversarial disruptions, weather,
 generative layout/recipe tasks.
+
+**Assembler recipe choice (0070) is positive:** buffer-aware 318 vs fast 278
+(+40) and one-step lookahead 278. The queue state is the decision variable; a
+myopic lookahead is not enough. The task is opt-in and the frozen benchmark is
+unchanged.
 
 ### P0 progress
 

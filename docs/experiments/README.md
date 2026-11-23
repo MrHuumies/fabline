@@ -102,6 +102,8 @@ retained for provenance.
   greedy matches oracle on fresh seeds; the pilot's +52 did not replicate.
 - [0067 — Random-topology triage](0067-crew-topology/summary.md) — negative;
   random gap +4 vs spread +18; the topology axis is retired.
+- [0070 — Assembler recipe choice](0070-recipe-choice/summary.md) — positive;
+  buffer-aware 318 vs fast 278; myopic lookahead 278.
 
 The frozen benchmark is documented separately in
 [`benchmarks/factory-v0.1/card.md`](../../benchmarks/factory-v0.1/card.md).

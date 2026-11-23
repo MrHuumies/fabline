@@ -27,3 +27,4 @@ One RFC per new mechanic or major world change. Use
 - [0022 — Multiview observation and view-arrival contract](0022-multiview.md)
 - [0024 — Asymmetric repair-cost triage](0024-crew-costs.md)
 - [0025 — Random-topology triage](0025-crew-topology.md)
+- [0026 — Assembler recipe choice](0026-recipe-choice.md)

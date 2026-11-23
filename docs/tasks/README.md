@@ -66,6 +66,8 @@ Current tasks:
   durations on the three-bridge triage; negative formal.
 - [Random-topology triage](crew-topology.md) — three-line random layout; negative
   formal, random gap +4 vs spread +18.
+- [Assembler recipe choice](recipe-choice.md) — fast/expensive vs slow/cheap;
+  buffer-aware 318 vs fast 278.
 - [View arrival](view-arrival.md) — generic multiview contract and
   episode-grouped view-arrival task.
 - [Power allocation](power-allocation.md) — three-action priority scheduling

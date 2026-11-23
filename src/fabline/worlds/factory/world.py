@@ -15,6 +15,7 @@ from .config import FactoryConfig
 from .faults import FaultConfig
 from .generator import Scenario, generate_state
 from .power import PowerConfig
+from .recipe import RecipeConfig
 from .state import Entity, EntityType, Item, WorldState
 from .wire import entity_connected, reachable_cells
 
@@ -31,10 +32,12 @@ class FactoryWorld:
         config: FactoryConfig | None = None,
         faults: FaultConfig | None = None,
         power: PowerConfig | None = None,
+        recipe: RecipeConfig | None = None,
     ) -> None:
         self.config = config or FactoryConfig()
         self.faults = faults or FaultConfig()
         self.power = power or PowerConfig()
+        self.recipe = recipe
         self.state = generate_state(self.config, seed=0, power=self.power)
         self._tick_delivered: dict[Item, int] = {Item.INGOT: 0, Item.GEAR: 0}
         self._suppress_events = False
@@ -80,6 +83,7 @@ class FactoryWorld:
         clone.config = self.config
         clone.faults = self.faults
         clone.power = self.power
+        clone.recipe = self.recipe
         clone.state = self.state.clone(keep_events=keep_events)
         clone._tick_delivered = dict(self._tick_delivered)
         clone._suppress_events = not keep_events
@@ -391,11 +395,21 @@ class FactoryWorld:
                     output_capacity=self.config.furnace_output_capacity,
                 )
             elif entity.type is EntityType.ASSEMBLER:
+                if (
+                    self.recipe is not None
+                    and self.recipe.enabled
+                    and self.state.recipe_index
+                ):
+                    inputs = {Item.INGOT: self.recipe.slow_cost}
+                    craft_ticks = self.recipe.slow_ticks
+                else:
+                    inputs = {Item.INGOT: self.config.assembler_ingot_cost}
+                    craft_ticks = self.config.assembler_ticks
                 self._advance_machine(
                     entity,
-                    inputs={Item.INGOT: self.config.assembler_ingot_cost},
+                    inputs=inputs,
                     output=Item.GEAR,
-                    craft_ticks=self.config.assembler_ticks,
+                    craft_ticks=craft_ticks,
                     input_capacity=self.config.assembler_input_capacity,
                     output_capacity=self.config.assembler_output_capacity,
                 )

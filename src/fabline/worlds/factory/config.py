@@ -35,6 +35,7 @@ class FactoryConfig:
     assembler_input_capacity: int = 6
     assembler_output_capacity: int = 2
 
+
     depot_ingot_score: int = 2
     depot_gear_score: int = 10
 
