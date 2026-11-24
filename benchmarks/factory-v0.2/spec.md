@@ -6,6 +6,8 @@
 - **Related:** RFC 0029, ADR 0041,
   [`factory-v0.1`](../factory-v0.1/card.md)
 - **Frozen predecessor:** `factory-v0.1` remains immutable
+- **Freeze review:** the current candidate is the three-block 160-core scope in
+  [`freeze-review.md`](freeze-review.md); the 180/layout version is deferred
 
 ## Purpose
 

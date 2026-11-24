@@ -25,4 +25,5 @@ The first frozen benchmark is [`factory-v0.1`](factory-v0.1/card.md), tagged
 
 The 0.3.0 candidate is [`factory-v0.2`](factory-v0.2/spec.md). It is a **draft**:
 the task set, splits, baselines, and expected summary are frozen only after the
-0.3.0 pilots pass their gates.
+0.3.0 pilots pass their gates. The current [freeze review](factory-v0.2/freeze-review.md)
+selects a three-block 160-core candidate; decentralized/generative are deferred.
