@@ -8,6 +8,7 @@ import sys
 from pathlib import Path
 
 from fabline import __version__
+from fabline.cli.wizard import run_wizard
 from fabline.env.contract_board import ContractBoardConfig, ContractBoardEnv
 from fabline.env.control import ControlConfig
 from fabline.env.crew_replan import CrewReplanConfig
@@ -77,6 +78,14 @@ from fabline.harness.crew_visibility import (
     write_crew_visibility_report,
 )
 from fabline.harness.data import load_dataset
+from fabline.harness.factory_v02 import (
+    FactoryV02Config,
+    build_expected_summary,
+    compare_expected_summary,
+    run_factory_v02,
+    write_expected_summary,
+    write_factory_v02_report,
+)
 from fabline.harness.fault_calibration import (
     FaultCalibrationConfig,
     run_fault_calibration,
@@ -740,6 +749,67 @@ def cmd_causal_remove(args: argparse.Namespace) -> int:
         )
     )
     return 0
+
+
+def cmd_benchmark_v02(args: argparse.Namespace) -> int:
+    if args.expected and args.skip_planning:
+        print(
+            "error: --expected requires the planning block; remove "
+            "--skip-planning",
+            file=sys.stderr,
+        )
+        return 2
+    config = FactoryV02Config()
+    report = run_factory_v02(
+        args.out,
+        config,
+        include_planning=not args.skip_planning,
+        include_diagnostics=not args.skip_diagnostics,
+    )
+    path = write_factory_v02_report(args.out, report)
+    payload: dict[str, object] = {
+        "report": str(path),
+        "core_episodes": report["blocks"]["core"]["episodes"],
+        "core_hash": report["blocks"]["core"]["config_hash"],
+    }
+    if args.expected:
+        summary = build_expected_summary(report)
+        expected_path = write_expected_summary(args.expected, summary)
+        payload["expected"] = str(expected_path)
+    if args.check_expected:
+        try:
+            expected = json.loads(
+                Path(args.check_expected).read_text(encoding="utf-8")
+            )
+        except (OSError, json.JSONDecodeError) as exc:
+            print(
+                f"error: could not read expected summary "
+                f"{args.check_expected}: {exc}",
+                file=sys.stderr,
+            )
+            return 2
+        actual = build_expected_summary(report)
+        sections = None
+        if args.skip_planning:
+            sections = tuple(key for key in actual if key != "planning")
+        mismatches = compare_expected_summary(
+            expected,
+            actual,
+            sections=sections,
+        )
+        payload["check"] = {
+            "ok": not mismatches,
+            "mismatches": mismatches[:50],
+            "mismatch_count": len(mismatches),
+        }
+        print(json.dumps(payload, indent=2, sort_keys=True))
+        return 0 if not mismatches else 1
+    print(json.dumps(payload, indent=2, sort_keys=True))
+    return 0
+
+
+def cmd_wizard(args: argparse.Namespace) -> int:
+    return run_wizard(dry_run=args.dry_run)
 
 
 def cmd_planning_triage(args: argparse.Namespace) -> int:
@@ -2364,6 +2434,48 @@ def build_parser() -> argparse.ArgumentParser:
     causal_remove.add_argument("--episodes", type=int, default=40)
     causal_remove.add_argument("--seed-start", type=int, default=57000)
     causal_remove.set_defaults(func=cmd_causal_remove)
+
+    benchmark_v02 = subparsers.add_parser(
+        "benchmark-v02",
+        help="run the frozen factory-v0.2 benchmark",
+    )
+    benchmark_v02.add_argument(
+        "--out", type=str, default="results/factory-v0.2"
+    )
+    benchmark_v02.add_argument(
+        "--expected",
+        type=str,
+        default=None,
+        help="write the compact frozen expected summary to this path",
+    )
+    benchmark_v02.add_argument(
+        "--check-expected",
+        type=str,
+        default=None,
+        help="compare the run against a frozen expected summary",
+    )
+    benchmark_v02.add_argument(
+        "--skip-planning",
+        action="store_true",
+        help="skip the expensive planning block (cheap regression check)",
+    )
+    benchmark_v02.add_argument(
+        "--skip-diagnostics",
+        action="store_true",
+        help="skip the fault/power diagnostic blocks",
+    )
+    benchmark_v02.set_defaults(func=cmd_benchmark_v02)
+
+    wizard = subparsers.add_parser(
+        "wizard",
+        help="interactive wizard for common commands",
+    )
+    wizard.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="print the selected command without running it",
+    )
+    wizard.set_defaults(func=cmd_wizard)
 
     planning_triage = subparsers.add_parser(
         "planning-triage",

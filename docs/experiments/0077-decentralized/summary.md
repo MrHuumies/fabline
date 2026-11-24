@@ -74,9 +74,9 @@ Private Q pooled over 3 Q seeds × 5 evaluation seeds: `780, 600, 180, 570,
    training/decentralized execution; target success ≥0.60.
 2. Add a communication-budget condition (shared top-2 reports) and compare with
    the private Q.
-3. Keep the task as a `factory-v0.2` candidate only if the reliability gate is
-   fixed or the benchmark accepts the oracle/local gap without the local-success
-   gate.
+3. **Deferred from `factory-v0.2`**: the local-success gate is still open; the
+   task remains a debug task, not a frozen benchmark task. See the
+   [freeze review](../../../benchmarks/factory-v0.2/freeze-review.md).
 
 ## Artifacts
 

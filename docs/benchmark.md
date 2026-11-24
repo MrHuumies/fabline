@@ -3,9 +3,17 @@
 This document defines how methods are compared on FABLINE. The benchmark is a
 contract: frozen tasks, frozen splits, fixed budgets, standard reports.
 
-**Current release:** `factory-v0.1` — see
-[`benchmarks/factory-v0.1/card.md`](../benchmarks/factory-v0.1/card.md). It is a
-small benchmark candidate (46 episodes, 852 samples), not a public leaderboard.
+**Current release:** `factory-v0.2` — see
+[`benchmarks/factory-v0.2/card.md`](../benchmarks/factory-v0.2/card.md). It is a
+research benchmark (159 core episodes, 2,948 samples, plus planning,
+calibration, and causal blocks), not a public leaderboard. `factory-v0.1`
+remains frozen for provenance.
+
+Run the current benchmark with:
+
+```bash
+.venv/bin/python -m fabline benchmark-v02 --out results/factory-v0.2
+```
 
 ## Goals
 
@@ -19,14 +27,16 @@ small benchmark candidate (46 episodes, 852 samples), not a public leaderboard.
 A benchmark release is a set of tasks with pinned versions:
 
 ```text
-benchmark: factory-v0.1
+benchmark: factory-v0.2
 tasks:
   - factory.throughput.predict.v1
   - factory.bottleneck.classify.v1
-  - factory.next_state.v1
   - factory.build.control.v1
-splits: train / val / test, plus compositional and shift sets
-seeds: 0..9
+  - factory.planning.triage.v1
+  - factory.fault.calibration.v1
+  - factory.causal.remove.v1
+splits: train / val / test / shift, plus decision-block seeds
+seeds: fixed per task; see benchmark.toml
 budgets: per task
 ```
 

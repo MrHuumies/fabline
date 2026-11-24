@@ -110,6 +110,9 @@ on unknown hardware. A same-machine regression is a test failure.
 - a short headless integration run;
 - replay validation;
 - docs link check and card presence;
+- a cheap `factory-v0.2` regression check (`--skip-planning
+  --skip-diagnostics`) on every push;
+- a scheduled full `factory-v0.2` check;
 - nightly perf and benchmark smoke.
 
 No GPU is required for the core test suite.

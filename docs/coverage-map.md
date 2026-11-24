@@ -1,12 +1,12 @@
 # Coverage map — model families, benchmarks, and mechanics
 
 - **Status:** living design document
-- **Date:** 2026-11-21
+- **Date:** 2026-11-24
 - **Purpose:** choose world mechanics and benchmarks because they expose a
   specific model weakness, not because they add content or serve one consumer.
 - **Related:** [`testbed.md`](testbed.md), [`research-axes.md`](research-axes.md),
   [`coverage-review-0.1.2.md`](coverage-review-0.1.2.md),
-  [`benchmarks/factory-v0.1/card.md`](../benchmarks/factory-v0.1/card.md)
+  [`benchmarks/factory-v0.2/card.md`](../benchmarks/factory-v0.2/card.md)
 
 ## How to use this map
 
@@ -57,6 +57,9 @@ This document is a map, not a commitment to implement every row.
 | view arrival | classification | multiview | contract only; consumer-side update methods |
 | crew coordination | control/multi-agent | crew view | P2 debug; assignment, recall, triage |
 | production scheduling | control/selection | recipe/board | P3; recipe, byproduct, contract board |
+| triage planning | planning | crew-replan state | true CEM = oracle; learned value negative |
+| fault calibration | calibration/detection | context + sensors | top-4 GBDT ECE 0.008 |
+| causal removal | prediction | state + intervention | target GBDT R² 0.910 vs type-only −0.300 |
 
 ### Current baselines
 
@@ -260,14 +263,18 @@ queue (0072) is positive: purge-aware 302 vs fast 274 (+28); the purge action
 is the new decision. A single revealed deadline contract was negative (0073):
 deadline-aware tied buffer-aware/random; the task was easy or impossible. A
 gear-contract board with an explicit contract choice (0074) is positive:
-board-aware 112 vs best fixed 90 (+22), oracle 122. Triage planning (0076) is positive for true-simulator CEM (454 vs
-oracle 454) but negative for a learned value model (166); the task is a
-`factory-v0.2` candidate, the world-model gap remains open. Decentralized
-private-view triage (0077) has a +288 local/global gap; independent Q gains
-+122 over local greedy but succeeds only 0.47. The task is opt-in and the frozen
-benchmark is unchanged. Fault calibration (0078) on the top-4 view is positive
-(GBDT ECE 0.008, balanced 0.950); base views are at majority. Counterfactual removal (0079) is positive: target GBDT
-R² 0.910 vs type-only −0.300.
+board-aware 112 vs best fixed 90 (+22), oracle 122. Triage planning (0076) is
+positive for true-simulator CEM (454 vs oracle 454) but negative for a learned
+value model (166); the task is in `factory-v0.2`, and the world-model gap remains
+open. Decentralized private-view triage (0077) has a +288 local/global gap;
+independent Q gains +122 over local greedy but succeeds only 0.47; it is
+deferred. Fault calibration (0078) on the top-4 view is positive (GBDT ECE
+0.008, balanced 0.950); base views are at majority. Counterfactual removal
+(0079) is positive: target GBDT R² 0.910 vs type-only −0.300.
+[`factory-v0.2`](../benchmarks/factory-v0.2/spec.md) is frozen at 10 headline
+tasks on 159 core episodes plus planning, fault calibration, and causal
+removal; fault prediction, stochastic power, and next-state are diagnostics,
+and decentralized/generative are deferred.
 
 ### P0 progress
 

@@ -3,7 +3,7 @@
 - **Task ID:** `factory.planning.triage.v1`
 - **Version:** 0.1.0
 - **Status:** P3 planning task; formal true planning positive; learned value
-  model negative
+  model negative; included in `factory-v0.2`
 - **World:** factory-0.1.0, 32×16 twin-line triage
 - **Owner:** FABLINE
 - **Date:** 2026-11-24
@@ -81,6 +81,11 @@ Seeds 49,000–49,004.
 
 H1/H4/H5 pass; H2/H3 fail. See
 [`experiments/0076-planning-triage`](../experiments/0076-planning-triage/summary.md).
+
+On the `factory-v0.2` seeds (62,000–62,004), CEM true is 462 = oracle, random
+108, and CEM learned 232. H2 passes there, but H3 still fails: the learned value
+model is far below the true planner. The value model remains a negative
+baseline; do not treat H2 as a world-model success.
 
 ## Changelog
 

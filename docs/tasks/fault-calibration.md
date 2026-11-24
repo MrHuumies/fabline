@@ -2,7 +2,8 @@
 
 - **Task ID:** `factory.fault.calibration.v1`
 - **Version:** 0.1.0
-- **Status:** P3 calibration task; formal positive on top-4 view
+- **Status:** P3 calibration task; formal positive on top-4 view; included in
+  `factory-v0.2`
 - **World:** factory-0.1.0 + opt-in faults
 - **Owner:** FABLINE
 - **Date:** 2026-11-24
@@ -67,6 +68,10 @@ Three 40-episode blocks; top-4 view:
 Base context+thermal is at majority (balanced 0.50), so its low ECE is not
 skill. H1/H2/H3/H5 pass; H4 caveat reported. See
 [`experiments/0078-fault-calibration`](../experiments/0078-fault-calibration/summary.md).
+
+On the `factory-v0.2` seeds (63,000 / 63,100 / 63,200), the top-4 GBDT mean is
+balanced 0.923 and ECE 0.0118; the base views remain near 0.50. The ordering and
+gates are unchanged.
 
 ## Changelog
 

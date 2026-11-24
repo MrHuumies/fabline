@@ -68,7 +68,9 @@ block, positive rate 0.076:
 1. **Causal intervention task:** remove/disable a component and compare
    observational vs interventional prediction.
 2. Optional calibration follow-up: Platt/isotonic on the skilled view.
-3. Keep the frozen benchmark unchanged.
+3. **Benchmark:** included as a headline task in `factory-v0.2`; see the
+   [benchmark card](../../../benchmarks/factory-v0.2/card.md).
+4. Keep the frozen `factory-v0.1` benchmark unchanged.
 
 ## Artifacts
 

@@ -23,7 +23,9 @@ Rules:
 The first frozen benchmark is [`factory-v0.1`](factory-v0.1/card.md), tagged
 `factory-v0.1`. It remains immutable; changes require a new benchmark version.
 
-The 0.3.0 candidate is [`factory-v0.2`](factory-v0.2/spec.md). It is a **draft**:
-the task set, splits, baselines, and expected summary are frozen only after the
-0.3.0 pilots pass their gates. The current [freeze review](factory-v0.2/freeze-review.md)
-selects a three-block 160-core candidate; decentralized/generative are deferred.
+The 0.3.0 benchmark is [`factory-v0.2`](factory-v0.2/spec.md), frozen on
+2026-11-24. It has 10 headline tasks on 159 core episodes plus planning,
+fault-calibration, and causal-removal blocks. Its expected summary is in
+`factory-v0.2/expected/summary.json`; the [freeze review](factory-v0.2/freeze-review.md)
+records the scope cuts (no layout split; decentralized/generative deferred;
+fault/power/next-state are diagnostics).

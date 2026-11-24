@@ -1,9 +1,16 @@
 # Changelog
 
 All notable changes to FABLINE are recorded here. World and benchmark versions
-are pinned separately; see [`benchmarks/factory-v0.1/card.md`](benchmarks/factory-v0.1/card.md).
+are pinned separately; see [`benchmarks/factory-v0.2/card.md`](benchmarks/factory-v0.2/card.md).
 
 ## [Unreleased]
+
+- Freeze `factory-v0.2`: 10 headline tasks on 159 core episodes plus triage
+  planning, fault-onset calibration, and causal entity removal. `factory-v0.1`
+  remains immutable.
+
+- Add a stdlib `fabline wizard` for smoke, dataset, shared-suite, benchmark,
+  and result-summary workflows. It previews commands and supports `--dry-run`.
 
 - Add counterfactual entity-removal prediction: target GBDT R² 0.910 vs
   type-only −0.300 (0079).

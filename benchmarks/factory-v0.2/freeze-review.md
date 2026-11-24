@@ -1,126 +1,107 @@
-# `factory-v0.2` freeze review (draft)
+# `factory-v0.2` freeze review
 
-- **Status:** draft freeze review; **not frozen**
+- **Status:** frozen as `factory-v0.2`
+- **Version:** 0.2.0
 - **Date:** 2026-11-24
-- **Scope:** 0.3.0 benchmark candidate
-- **Related:** [spec](spec.md), RFC 0029, ADR 0041, P3 reviews
+- **Scope:** 0.3.0 benchmark
+- **Related:** [spec](spec.md), [card](card.md), RFC 0029, ADR 0041
+- **Expected summary:** [`expected/summary.json`](expected/summary.json)
+- **Predecessor:** `factory-v0.1` remains immutable
 
-## Decision summary
+## Decision
 
-`factory-v0.2` will be an **extended, runnable benchmark** built from three
-blocks:
+`factory-v0.2` is an extended benchmark built from **10 headline tasks**:
 
-1. **Core block:** 160 shared episodes of the v0.1 task family, with more test
-   and shift episodes.
-2. **Fault/power block:** 40 episodes each for fault prediction and power
-   brownout.
-3. **Decision block:** planning-triage, fault calibration, and causal removal.
+1. **Core block:** seven v0.1 task families on 159 shared episodes, with 20 test
+   and 20 shift episodes.
+2. **Planning block:** three-bridge triage planning with true-simulator CEM,
+   random shooting, scripted policies, and a negative ridge value model.
+3. **Calibration block:** fault-onset calibration on the hard context + sensor
+   views, including the skilled top-4 entity view.
+4. **Causal block:** same-type counterfactual entity removal with target vs
+   type-only features.
 
-This is a scope cut from the draft spec (180 episodes plus a separate 20-episode
-layout split). The layout split and decentralized multi-agent task are deferred:
-the shared-suite API does not yet support a fifth split, and the decentralized
-Q success gate is open.
+Fault prediction, stochastic power, next-state, decentralized multi-agent, and
+generative layout/recipe are **not frozen**. They are diagnostics or deferred
+pilots; they remain runnable and documented.
 
-## Task list
+## Evidence
 
-### Core block (frozen candidate)
+| Candidate | Gate | Result | Decision |
+|---|---|---|---|
+| core v0.1 family | 20 test + 20 shift episodes; baseline ordering stable | 159 episodes, 2,948 samples | freeze |
+| planning-triage (0076) | CEM true ≥ random + 10; success ≥ 0.60 | CEM true 454 = oracle; random 188; success 1.00 | freeze task; learned value model negative |
+| fault calibration (0078) | top-4 balanced ≥ 0.70; ECE ≤ 0.05 | GBDT balanced 0.950 ± 0.011; ECE 0.008 | freeze |
+| causal removal (0079) | target GBDT R² ≥ 0.30; target ≥ type-only + 0.20 | target 0.910; type-only −0.300 | freeze |
+| decentralized (0077) | local success ≥ 0.60 | local greedy 0.40; private Q 0.47 | defer |
+| fault prediction | not saturated | GBDT 1.000, Brier ≈ 0 | diagnostic only |
+| stochastic power | not near majority | balanced 0.50–0.56 | diagnostic only |
+| generative pilot | validity/diversity gate | not run | defer |
+| next-state | not saturated | copy/linear saturated | diagnostic only |
 
-- throughput-vector
-- throughput-grid
-- throughput-entities
-- masked-grid
-- bottleneck
-- expand-control
-- control-dynamics
+The table cites the task pilots. On the frozen benchmark seeds, the ordering is
+the same: planning CEM true 462 = oracle, random 108, CEM learned 232; top-4
+calibration GBDT balanced 0.923, ECE 0.0118; causal target GBDT R² 0.987,
+type-only −0.074. The learned planner beats random on these seeds but is far
+below the true planner; the H3 model-quality gate still fails. The compact
+expected summary is the source of truth for the benchmark numbers.
 
-`next-state` is excluded: copy/linear saturates it.
+## Scope cuts
 
-### Fault/power block
+- **No layout split.** The draft 20-episode layout split is deferred. The
+  shared-suite API supports four splits, and adding a fifth split is a separate
+  interface change that was not justified by a stable layout task.
+- **No decentralized task.** The local/global gap is real (+288), and private Q
+  improves on local greedy (+122), but the local-success gate is open. Freezing
+  it would freeze a task whose local baselines are unreliable.
+- **No fault prediction or power headline.** Both are useful diagnostics, but
+  they fail the "not saturated / not near majority" freeze criterion.
+- **No generative task.** The optional pilot did not run and is not
+  release-blocking.
 
-- fault prediction (existing fault benchmark)
-- power brownout (stochastic power)
+## Why the frozen set is 10 tasks
 
-### Decision block
+The v0.1 core supplies regression, classification, self-supervised, and control
+coverage. The three new tasks add the missing decision and inference surfaces:
+planning, calibration, and intervention. Together they form a runnable
+10-task benchmark without inflating episode count or freezing known-saturated
+tasks.
 
-- triage planning: true CEM and scripted/oracle baselines; the learned value
-  model is a negative baseline.
-- fault calibration: top-4 view, Brier/NLL/ECE.
-- counterfactual removal: same-type pairs, target vs type-only.
+The 159-episode core is a 3.5× increase over v0.1's 46 episodes. The test and
+shift splits are each 20 episodes, up from 6.
 
-### Not frozen
+## Reproduction and checks
 
-- decentralized private-view triage: debug task; Q success 0.47, below 0.60.
-- generative layout/recipe: optional pilot, not run.
-- next-state: retired headline.
-- all P2/P3 debug tasks not listed above.
+```bash
+.venv/bin/python -m fabline benchmark-v02 --out results/factory-v0.2
+.venv/bin/python -m fabline benchmark-v02 --out results/factory-v0.2 \
+  --check-expected benchmarks/factory-v0.2/expected/summary.json
+```
 
-## Episode and seed plan
-
-Core:
-
-| split | episodes |
-|---|---:|
-| train | ~100 total (34/33/33 across ingot/gear/extra_ingot) |
-| val | 20 (10/10 across ingot/gear) |
-| test | 20 (extra_gear) |
-| shift | 20 (shift_gear) |
-| **total** | **160** |
-
-Fault/power: 40 episodes each, seed blocks fixed at freeze.
-
-Decision:
-
-- planning: 5 evaluation seeds, 5 seeds × 20? Use the 5-seed formal block.
-- calibration: 3 × 40-episode blocks.
-- causal: 3 × 40-episode blocks.
-
-## Runner
-
-A new `fabline benchmark-v02` orchestrator will:
-
-1. run `shared-suite` with the v0.2 plan;
-2. run the fault and power benchmarks;
-3. run planning, calibration, and causal harnesses;
-4. write one `factory_v02_results.json` and a report.
-
-The benchmark is not frozen until this runner produces an expected summary and
-a CI regression check.
+The expected summary is compact (headline metrics only). The comparison uses
+`rtol=0.03` and `atol=0.02`. The full check includes planning; CI can use
+`--skip-planning --skip-diagnostics` for a cheap check, and the scheduled
+workflow runs the full check.
 
 ## Freeze gates
 
-- `factory-v0.1` hash and assets unchanged.
-- 160 core episodes; 20 test and 20 shift.
-- Fault/power/decision blocks complete.
-- Expected summary generated once and checked into
-  `benchmarks/factory-v0.2/expected/`.
-- CI runs a reduced or full benchmark and compares key metrics.
-- Benchmark card, spec, and task cards complete.
-- No private consumer references.
+- [x] `factory-v0.1` hash and assets unchanged.
+- [x] 159 core episodes; 20 test and 20 shift.
+- [x] planning, calibration, and causal blocks complete.
+- [x] compact expected summary checked in.
+- [x] full expected-summary comparison implemented.
+- [x] benchmark card, spec, and task cards complete.
+- [x] public export scrub remains clean.
 
-## Why not include decentralized now
+## Follow-ups
 
-The task is a valid local/global benchmark, but:
-- local scripted success is 0.40;
-- private Q success is 0.47;
-- the 0.60 gate is open.
-
-Freezing it would freeze a task whose local baselines are unreliable. Keep it
-as a debug task and revisit after a compact-state or centralized-training
-follow-up.
-
-## Why not include generative now
-
-The optional generative pilot has not run. It is not release-blocking.
-
-## Next steps
-
-1. Implement `benchmark-v02`.
-2. Generate expected summaries for the three blocks.
-3. Write the benchmark card and freeze tag `factory-v0.2`.
-4. Build the wizard/viewer.
-5. Release audit for 0.3.0.
+1. Build the stdlib wizard and viewer QoL.
+2. Run the 0.3.0 release audit.
+3. Revisit decentralized Q only with a compact state or centralized training.
+4. Revisit a transition-model planning baseline as a new pre-registration.
 
 ## Changelog
 
-- 2026-11-24 — draft freeze review; core + fault/power + decision blocks;
-  decentralized/generative deferred.
+- 2026-11-24 — draft freeze review; core + fault/power + decision blocks.
+- 2026-11-24 — frozen at 10 headline tasks; fault/power and next-state are
+  diagnostics; layout split and decentralized/generative deferred.

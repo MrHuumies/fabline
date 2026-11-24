@@ -70,14 +70,14 @@ Current tasks:
   buffer-aware 318 vs fast 278.
 - [Gear-contract board](contract-board.md) — choose one of three contracts;
   board-aware 112 vs best fixed 90.
-- [Triage planning](planning-triage.md) — true planning reaches oracle 454;
-  learned value model negative.
-- [Decentralized triage](crew-decentralized.md) — private views; global 748,
-  local greedy 460, private Q 582; success 0.47.
-- [Fault calibration](fault-calibration.md) — top-4 GBDT ECE 0.008; base
-  views at majority.
-- [Counterfactual removal](causal-removal.md) — target GBDT R² 0.910 vs
-  type-only −0.300.
+- [Triage planning](planning-triage.md) — `factory-v0.2`; true planning
+  reaches oracle 454, learned value model negative.
+- [Decentralized triage](crew-decentralized.md) — deferred; private views;
+  global 748, local greedy 460, private Q 582; success 0.47.
+- [Fault calibration](fault-calibration.md) — `factory-v0.2`; top-4 GBDT ECE
+  0.008, base views at majority.
+- [Counterfactual removal](causal-removal.md) — `factory-v0.2`; target GBDT
+  R² 0.910 vs type-only −0.300.
 - [View arrival](view-arrival.md) — generic multiview contract and
   episode-grouped view-arrival task.
 - [Power allocation](power-allocation.md) — three-action priority scheduling
@@ -85,9 +85,10 @@ Current tasks:
 - [Fault + power interaction](fault-power.md) — four-action repair and priority
   scheduling under faults and a tight power budget.
 
-These are benchmark candidates for `factory-v0.1`, not public releases. Some
-tasks have headroom; next-state is saturated and throughput is still easy on
-the vector view.
+`factory-v0.2` freezes 10 headline tasks: seven core tasks plus planning,
+fault calibration, and causal removal. Decentralized triage, fault prediction,
+stochastic power, and next-state are diagnostics or deferred tasks. Some tasks
+have headroom; throughput is still easy on the vector view.
 
 ## Adding a task
 

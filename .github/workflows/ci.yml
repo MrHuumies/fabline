@@ -32,3 +32,10 @@ jobs:
 
       - name: Test
         run: pytest -q
+
+      - name: Benchmark v0.2 regression
+        run: |
+          python -m fabline benchmark-v02 \
+            --out /tmp/factory-v02-ci \
+            --skip-planning --skip-diagnostics \
+            --check-expected benchmarks/factory-v0.2/expected/summary.json

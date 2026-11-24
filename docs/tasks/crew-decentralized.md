@@ -3,7 +3,7 @@
 - **Task ID:** `factory.multiagent.decentralized.v1`
 - **Version:** 0.1.0
 - **Status:** P3 multi-agent task; formal local/global positive; Q mean positive;
-  success gate fails
+  success gate fails; deferred from `factory-v0.2`
 - **World:** factory-0.1.0, 48×24 spread layout, wired power
 - **Owner:** FABLINE
 - **Date:** 2026-11-24

@@ -65,10 +65,11 @@ Per-block target GBDT: `0.986, 0.753, 0.992`.
 
 ## Next
 
-1. Include the causal task in the `factory-v0.2` candidate set.
+1. **Included in `factory-v0.2`** as a headline task; see the
+   [benchmark card](../../../benchmarks/factory-v0.2/card.md).
 2. Add a multi-horizon or multi-intervention variant only if it adds a new
    decision; do not tune this one.
-3. Move to the GUI/wizard and benchmark-freeze phase.
+3. Move to the GUI/wizard and release audit phase.
 
 ## Artifacts
 

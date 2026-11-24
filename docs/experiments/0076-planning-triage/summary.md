@@ -72,8 +72,8 @@ Per-seed CEM learned: `270, 60, 140, 300, 60`.
 1. **Transition-model planning:** train a one-step `(state, action) -> next
    state` model on triage transitions; compare rollout error and CEM.
 2. **Decentralized multi-agent** remains the next 0.3.0 flagship.
-3. Keep the true-simulator planning task as a `factory-v0.2` candidate; include
-   the learned value model as a negative baseline.
+3. **Included in `factory-v0.2`** with the learned value model as a negative
+   baseline; see the [benchmark card](../../../benchmarks/factory-v0.2/card.md).
 
 ## Artifacts
 

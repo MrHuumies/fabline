@@ -1,0 +1,99 @@
+# factory-v0.2 benchmark specification.
+# The runner uses these defaults; this file is the human-readable contract.
+
+[benchmark]
+name = "factory-v0.2"
+status = "frozen"
+version = "0.2.0"
+date = "2026-11-24"
+world_version = "factory-0.1.0"
+plan = "compositional-v0.2"
+target_release = "0.3.0"
+command = ".venv/bin/python -m fabline benchmark-v02 --out results/factory-v0.2"
+expected = "benchmarks/factory-v0.2/expected/summary.json"
+
+[factory]
+width = 16
+height = 8
+ticks_per_episode = 500
+decision_interval = 10
+entity_budget = 32
+rock_density = 0.02
+ore_patches = 2
+starter_line = true
+
+[episode]
+warmup_ticks = 100
+warmup_jitter = 20
+episode_ticks = 300
+sample_interval = 10
+horizon = 50
+bottleneck_horizon = 30
+
+[splits]
+train = ["ingot", "gear", "extra_ingot"]
+val = ["ingot", "gear"]
+test = ["extra_gear"]
+shift = ["shift_gear"]
+
+[episodes_per_scenario]
+train = 33
+val = 10
+test = 20
+shift = 20
+
+[tasks]
+core = ["throughput-vector", "throughput-grid", "throughput-entities", "masked-grid", "bottleneck", "expand-control", "control-dynamics"]
+planning = "planning-triage"
+calibration = "fault-calibration"
+causal = "causal-removal"
+diagnostics = ["fault-prediction", "power-brownout", "next-state"]
+
+[control]
+episode_ticks = 300
+decision_interval = 10
+build_penalty = 0.05
+success_score = 20
+train_episodes = 300
+eval_episodes = 10
+seeds = [0, 1, 2, 3, 4]
+
+[planning]
+seeds = [62000, 62001, 62002, 62003, 62004]
+population = 32
+elites = 8
+iterations = 6
+random_samples = 128
+model_sequences = 300
+model_seeds = 8
+
+[calibration]
+seeds = [63000, 63100, 63200]
+episodes = 40
+horizon = 10
+sample_interval = 5
+noise = 0.30
+views = ["context_thermal", "context_thermal_vibration", "context_thermal_vibration_top4"]
+
+[causal]
+seeds = [64000, 64100, 64200]
+episodes = 40
+sample_ticks = [150, 250, 350]
+horizon = 100
+
+[diagnostics.fault]
+seed_start = 60000
+episodes = 40
+horizon = 50
+
+[diagnostics.power]
+seed_start = 61000
+episodes = 40
+load_jitter = 60
+capacity_jitter = 40
+variation_period = 10
+
+[expected]
+rtol = 0.03
+atol = 0.02
+check = ".venv/bin/python -m fabline benchmark-v02 --out results/factory-v0.2 --check-expected benchmarks/factory-v0.2/expected/summary.json"

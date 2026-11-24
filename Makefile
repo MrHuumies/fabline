@@ -1,6 +1,6 @@
 PY ?= .venv/bin/python
 
-.PHONY: test lint smoke dataset benchmark suite shared-suite render-install render play demo human-bc fault-benchmark fault-recovery fault-power power-benchmark power-allocation power-allocation-stochastic perf
+.PHONY: test lint smoke dataset benchmark suite shared-suite benchmark-v02 benchmark-v02-check wizard render-install render play demo human-bc fault-benchmark fault-recovery fault-power power-benchmark power-allocation power-allocation-stochastic perf
 
 test:
 	$(PY) -m pytest -q
@@ -23,6 +23,15 @@ suite:
 
 shared-suite:
 	$(PY) -m fabline shared-suite --out results/factory-v0.1
+
+benchmark-v02:
+	$(PY) -m fabline benchmark-v02 --out results/factory-v0.2
+
+benchmark-v02-check:
+	$(PY) -m fabline benchmark-v02 --out results/factory-v0.2 --check-expected benchmarks/factory-v0.2/expected/summary.json
+
+wizard:
+	$(PY) -m fabline wizard
 
 render-install:
 	.tools/uv pip install --python .venv/bin/python -e ".[render]"

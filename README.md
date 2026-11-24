@@ -21,6 +21,7 @@ cd fabline
 .venv/bin/python -m pytest -q
 .venv/bin/python -m fabline smoke --ticks 200
 .venv/bin/python -m fabline shared-suite --out results/factory-v0.1
+.venv/bin/python -m fabline wizard
 ```
 
 Generate a small dataset and run the M1 benchmark:
@@ -61,23 +62,28 @@ make render-install
 - **Risk-sensitive contract:** choose a delivery target under stochastic power;
   mean and CVaR objectives separate; the replicated gain is +13 to +17 CVaR for
   a roughly 5-point mean premium.
+- **Wizard:** a stdlib-only interactive runner for smoke, dataset, shared-suite,
+  benchmark, and result-summary workflows; it previews commands and supports
+  `--dry-run`.
 
-Every mechanic is opt-in. The frozen `factory-v0.1` benchmark is action-free and
-does not depend on faults or power.
+Every mechanic is opt-in. The frozen `factory-v0.1` benchmark remains available
+for provenance; `factory-v0.2` is the current benchmark.
 
 ## Benchmark
 
-The frozen benchmark is [`factory-v0.1`](benchmarks/factory-v0.1/card.md):
+The current frozen benchmark is [`factory-v0.2`](benchmarks/factory-v0.2/card.md):
 
-- 46 shared episodes, scenario-based train/val/test/shift splits;
-- throughput, next-state, masked-grid, bottleneck, control, and
-  control-dynamics projections;
+- 159 shared episodes, scenario-based train/val/test/shift splits, with 20 test
+  and 20 shift episodes;
+- the v0.1 core tasks plus triage planning, fault-onset calibration, and causal
+  entity removal;
 - baseline families with seeds, confidence intervals, and replay validation.
 
 The expected summary is in
-[`benchmarks/factory-v0.1/expected/summary.json`](benchmarks/factory-v0.1/expected/summary.json).
-The current coverage review is in
-[`docs/coverage-review-0.1.2.md`](docs/coverage-review-0.1.2.md).
+[`benchmarks/factory-v0.2/expected/summary.json`](benchmarks/factory-v0.2/expected/summary.json).
+The first frozen benchmark, [`factory-v0.1`](benchmarks/factory-v0.1/card.md),
+remains immutable. The current coverage map is in
+[`docs/coverage-map.md`](docs/coverage-map.md).
 Small library-version differences are acceptable; headline ordering should be
 stable.
 

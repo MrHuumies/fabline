@@ -247,8 +247,8 @@ The action mask shape is `(5, 5, H, W, 4)` = (op, entity, y, x, direction).
 `repair` is legal only on a faulted non-depot entity. Illegal actions return a
 typed error and leave the state unchanged.
 
-The frozen `factory-v0.1` benchmark is action-free; the version bump matters
-only for action consumers.
+The frozen `factory-v0.1` core is action-free; `factory-v0.2` adds planning and
+intervention tasks while keeping the world and action contracts unchanged.
 
 ### `macro.v1`
 
@@ -373,7 +373,7 @@ observation: grid-0.1.0, vector-0.1.0, entities-0.1.0
 action:      grid-build-0.1.0
 task:        throughput-predict-0.1.0
 dataset:     2026.11-factory-debug
-benchmark:   factory-v0.1
+benchmark:   factory-v0.2
 ```
 
 Compatibility rules:

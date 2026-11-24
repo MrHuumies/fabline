@@ -119,5 +119,9 @@ retained for provenance.
 - [0079 — Counterfactual removal](0079-causal-removal/summary.md) — target
   GBDT R² 0.910 vs type-only −0.300.
 
-The frozen benchmark is documented separately in
-[`benchmarks/factory-v0.1/card.md`](../../benchmarks/factory-v0.1/card.md).
+The current frozen benchmark is documented separately in
+[`benchmarks/factory-v0.2/card.md`](../../benchmarks/factory-v0.2/card.md);
+`factory-v0.1` remains available for provenance.
+
+The `factory-v0.2` freeze review is in
+[`benchmarks/factory-v0.2/freeze-review.md`](../../benchmarks/factory-v0.2/freeze-review.md).

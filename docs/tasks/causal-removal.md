@@ -2,7 +2,8 @@
 
 - **Task ID:** `factory.causal.remove.v1`
 - **Version:** 0.1.0
-- **Status:** P3 causal task; formal positive (target GBDT R² 0.910)
+- **Status:** P3 causal task; formal positive (target GBDT R² 0.910);
+  included in `factory-v0.2`
 - **World:** factory-0.1.0, 16×8 gear line, no faults
 - **Owner:** FABLINE
 - **Date:** 2026-11-24
@@ -60,6 +61,10 @@ Three 40-episode blocks; target GBDT R² `0.986, 0.753, 0.992` (mean 0.910);
 type-only GBDT `−0.234, −0.594, −0.072` (mean −0.300). H1/H2/H4 pass; linear
 target 0.598, MLP 0.157. See
 [`experiments/0079-causal-removal`](../experiments/0079-causal-removal/summary.md).
+
+On the `factory-v0.2` seeds (64,000 / 64,100 / 64,200), target GBDT mean R² is
+0.987 and type-only is −0.074; H1/H2 still pass. The benchmark point estimates
+differ from the pilot but preserve the ordering.
 
 ## Changelog
 
