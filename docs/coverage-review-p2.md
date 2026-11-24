@@ -4,7 +4,7 @@
 - **Date:** 2026-11-23
 - **Scope:** experiments 0042–0059; opt-in tasks on `main`, not the frozen
   `factory-v0.1` benchmark
-- **Related:** [coverage map](coverage-map.md), [roadmap](roadmap.md), frozen
+- **Related:** [coverage map](coverage-map.md), the roadmap, frozen
   [benchmark card](../benchmarks/factory-v0.1/card.md)
 
 ## Verdict
@@ -126,6 +126,6 @@ near its practical ceiling; move to random topology or P3.
 
 ## Map maintenance
 
-Update the [coverage map](coverage-map.md) and [roadmap](roadmap.md) when the
+Update the [coverage map](coverage-map.md) and the roadmap when the
 next slice is accepted or rejected. Do not add another Q or visibility variant
 without a new named question.
