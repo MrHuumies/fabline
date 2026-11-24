@@ -35,6 +35,8 @@ from fabline.harness.crew_budget import (
 )
 from fabline.harness.crew_decentralized import (
     run_decentralized,
+    run_decentralized_compact,
+    write_decentralized_compact_report,
     write_decentralized_report,
 )
 from fabline.harness.crew_layout_ensemble import (
@@ -1511,7 +1513,7 @@ def cmd_crew_private(args: argparse.Namespace) -> int:
     return 0
 
 
-def cmd_crew_decentralized(args: argparse.Namespace) -> int:
+def _decentralized_task() -> tuple[FactoryConfig, CrewReplanConfig]:
     config = FactoryConfig(
         width=48,
         height=24,
@@ -1543,6 +1545,11 @@ def cmd_crew_decentralized(args: argparse.Namespace) -> int:
             wire_redundancy=2,
         ),
     )
+    return config, replan
+
+
+def cmd_crew_decentralized(args: argparse.Namespace) -> int:
+    config, replan = _decentralized_task()
     seeds = tuple(int(value) for value in args.seeds.split(","))
     q_seeds = tuple(int(value) for value in args.q_seeds.split(","))
     results = run_decentralized(
@@ -1560,6 +1567,42 @@ def cmd_crew_decentralized(args: argparse.Namespace) -> int:
             "height": config.height,
             "radius": 16,
             "seeds": list(seeds),
+            "success_score": replan.success_score,
+        },
+    )
+    print(
+        json.dumps(
+            {"report": str(report), "results": results},
+            indent=2,
+            sort_keys=True,
+        )
+    )
+    return 0
+
+
+def cmd_crew_decentralized_compact(args: argparse.Namespace) -> int:
+    config, replan = _decentralized_task()
+    seeds = tuple(int(value) for value in args.seeds.split(","))
+    q_seeds = tuple(int(value) for value in args.q_seeds.split(","))
+    results = run_decentralized_compact(
+        config,
+        replan,
+        seeds=seeds,
+        q_seeds=q_seeds,
+        train_episodes=args.train_episodes,
+        train_seed_start=args.train_seed_start,
+    )
+    report = write_decentralized_compact_report(
+        args.out,
+        results,
+        config={
+            "width": config.width,
+            "height": config.height,
+            "radius": 16,
+            "seeds": list(seeds),
+            "q_seeds": list(q_seeds),
+            "train_episodes": args.train_episodes,
+            "train_seed_start": args.train_seed_start,
             "success_score": replan.success_score,
         },
     )
@@ -2656,6 +2699,29 @@ def build_parser() -> argparse.ArgumentParser:
     crew_decentralized.add_argument("--q-seeds", type=str, default="0,1,2")
     crew_decentralized.add_argument("--train-episodes", type=int, default=500)
     crew_decentralized.set_defaults(func=cmd_crew_decentralized)
+
+    crew_decentralized_compact = subparsers.add_parser(
+        "crew-decentralized-compact",
+        help="run compact relative-geometry Q on decentralized triage",
+    )
+    crew_decentralized_compact.add_argument(
+        "--out", type=str, default="results/crew-decentralized-compact"
+    )
+    crew_decentralized_compact.add_argument(
+        "--seeds", type=str, default="56000,56001,56002,56003,56004"
+    )
+    crew_decentralized_compact.add_argument(
+        "--q-seeds", type=str, default="0,1,2"
+    )
+    crew_decentralized_compact.add_argument(
+        "--train-episodes", type=int, default=1000
+    )
+    crew_decentralized_compact.add_argument(
+        "--train-seed-start", type=int, default=60000
+    )
+    crew_decentralized_compact.set_defaults(
+        func=cmd_crew_decentralized_compact
+    )
 
     crew_visibility = subparsers.add_parser(
         "crew-visibility",

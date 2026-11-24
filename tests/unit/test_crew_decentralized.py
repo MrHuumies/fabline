@@ -5,6 +5,8 @@ import numpy as np
 from fabline.env.crew_decentralized import DecentralizedVisibilityEnv
 from fabline.env.crew_replan import CrewReplanConfig
 from fabline.harness.crew_decentralized import (
+    CompactIndependentQPolicy,
+    IndependentQEnsemblePolicy,
     LocalGreedyPolicy,
     evaluate_crew_policy,
 )
@@ -66,3 +68,45 @@ def test_local_greedy_policy_runs() -> None:
     assert metrics.mean_score >= 0.0
     assert 0.0 <= metrics.success_rate <= 1.0
     assert np.isfinite(metrics.mean_score)
+
+
+def test_compact_q_key_is_relative() -> None:
+    env = DecentralizedVisibilityEnv(_config(), _replan(), radius=16)
+    info = env.reset(0)
+    policy = CompactIndependentQPolicy()
+    key = policy._key("a", env.agent_info("a", info))
+    assert len(key) == 16
+    assert key[0] == 0
+    assert key[1] == 1
+    assert key[3] == 0
+
+    replan = dict(info)
+    replan["phase"] = "replan"
+    replan["tick"] = 150
+    key = policy._key("a", env.agent_info("a", replan))
+    assert key[0] == 1
+    assert key[3] == 2
+
+
+def test_compact_q_trains_and_acts() -> None:
+    env = DecentralizedVisibilityEnv(_config(), _replan(), radius=16)
+    policy = CompactIndependentQPolicy()
+    policy.train(env, episodes=2, seed=0, train_seed_start=60000)
+    metrics = evaluate_crew_policy(env, policy, seed=0)
+    assert np.isfinite(metrics.mean_score)
+    assert 0.0 <= metrics.success_rate <= 1.0
+
+
+def test_compact_q_ensemble_acts() -> None:
+    env = DecentralizedVisibilityEnv(_config(), _replan(), radius=16)
+    info = env.reset(0)
+    ensemble = IndependentQEnsemblePolicy(
+        [CompactIndependentQPolicy(), CompactIndependentQPolicy()]
+    )
+    for crew in ("a", "b"):
+        action = ensemble.act(
+            crew,
+            env.agent_info(crew, info),
+            env.agent_mask(crew, info),
+        )
+        assert 0 <= action < 4

@@ -73,7 +73,8 @@ Current tasks:
 - [Triage planning](planning-triage.md) — `factory-v0.2`; true planning
   reaches oracle 454, learned value model negative.
 - [Decentralized triage](crew-decentralized.md) — deferred; private views;
-  global 748, local greedy 460, private Q 582; success 0.47.
+  global 748, local greedy 460, private Q 582; success 0.47. Follow-up 0081
+  tests compact relative-geometry Q and an ensemble.
 - [Fault calibration](fault-calibration.md) — `factory-v0.2`; top-4 GBDT ECE
   0.008, base views at majority.
 - [Counterfactual removal](causal-removal.md) — `factory-v0.2`; target GBDT

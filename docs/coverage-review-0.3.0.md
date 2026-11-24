@@ -1,7 +1,7 @@
 # Coverage review — FABLINE 0.3.0
 
-- **Status:** complete; post-release review
-- **Date:** 2026-11-24
+- **Status:** complete; post-release review (updated with 0081)
+- **Date:** 2026-11-25
 - **Scope:** experiments 0075–0079, `factory-v0.2`, the wizard, and the
   `v0.3.0` surface
 - **Related:** [coverage map](coverage-map.md), frozen
@@ -31,6 +31,7 @@ decentralized reliability gate, not add another calibration or planning sweep.
 | 0077 | Decentralized triage | global 748; local greedy 460; Q 582, success 0.47 | task positive; Q reliability open |
 | 0078 | Fault calibration | top-4 GBDT balanced 0.950, ECE 0.008 | positive on a skilled view |
 | 0079 | Causal removal | target GBDT R² 0.910 vs type-only −0.300 | positive intervention signal |
+| 0081 | Compact decentralized Q | compact 616/0.40 vs old 616/0.40 | negative representation/ensemble |
 | — | `factory-v0.2` | 10 tasks, 159 core episodes | frozen |
 | — | Wizard | stdlib command runner + summary | shipped |
 
@@ -69,10 +70,14 @@ the pilots.
 ### Decentralized multi-agent
 
 - Private radius-16 views create a large local/global gap (+288 on the 0077
-  seeds).
-- Independent Q improves on local greedy (+122) but succeeds only 0.47.
-- The local scripted success gate also fails (0.40), so the task is hard for
-  both scripted and learned local policies.
+  seeds; +232 on the 0081 seeds).
+- Independent Q improves on local greedy (+122 on 0077; +84 on 0081) but
+  succeeds only 0.47 / 0.40.
+- Compact relative-geometry Q and a three-policy ensemble do not change the
+  learned policy: both score 616 with success 0.40, exactly matching the old
+  state at equal budget.
+- The local scripted success gate also fails (0.20–0.40), so the task is hard
+  for both scripted and learned local policies.
 - The task is a valid debug task, but it is not freeze-ready.
 
 ### Benchmark and tooling
@@ -97,8 +102,8 @@ the pilots.
 
 ## Remaining gaps
 
-1. **Decentralized reliability.** Compact state and/or centralized training
-   with decentralized execution is the smallest credible fix.
+1. **Decentralized reliability.** Compact state is negative; centralized
+   training with decentralized execution is the next credible fix.
 2. **Transition world models.** True planning works; learning
    `(state, action) -> next state` and rolling it out is still open.
 3. **Maintenance calibration.** The 0.3.0 RFC named fault and maintenance
@@ -112,22 +117,23 @@ the pilots.
 
 ## Recommended next slice
 
-**Compact relative-geometry Q with a small ensemble on decentralized triage.**
-See the [0081 pre-registration](experiments/0081-decentralized-compact-q/preregistration.md).
+**Centralized training with decentralized execution on decentralized triage.**
+Compact Q is negative: [0081](experiments/0081-decentralized-compact-q/summary.md)
+scored 616/0.40 for compact Q, the old state, and the ensemble, against oracle
+764/1.00.
 
-- Keep the existing task, radius, seeds, and joint action space.
-- Replace absolute tick/distance buckets with relative service, deadline slack,
-  and visibility features.
-- Train independent per-crew Q at an equal budget to the old private Q.
-- Evaluate a three-policy ensemble (mean action value).
-- Gate: success ≥ 0.60, mean ≥ best local scripted + 10, and ensemble no worse
-  than the best single compact Q.
+- Keep the task, radius, seeds, and action space.
+- Train a centralized critic with the full state; execute per crew with the
+  private view.
+- Compare against local greedy, old private Q, compact Q, and the oracle.
+- Gate: success ≥ 0.60 and mean ≥ best local scripted + 10.
 
-If compact Q still misses 0.60, the next pre-registration is centralized
-training with decentralized execution, not another compact-state variant.
+If CTDE also misses 0.60, retire the current local-policy line and report the
+task as oracle/scripted-only rather than adding another representation variant.
 
 ## What not to do next
 
+- another compact-state Q variant on this task;
 - another Q variant trained only on `factory-v0.2` seeds;
 - another visibility radius or report-budget sweep;
 - another fault/power calibration threshold;

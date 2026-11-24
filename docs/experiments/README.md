@@ -119,7 +119,7 @@ retained for provenance.
 - [0079 — Counterfactual removal](0079-causal-removal/summary.md) — target
   GBDT R² 0.910 vs type-only −0.300.
 
-- [0081 — Compact Q for decentralized triage](0081-decentralized-compact-q/preregistration.md) — preregistered; compact relative-geometry Q and ensemble.
+- [0081 — Compact Q for decentralized triage](0081-decentralized-compact-q/summary.md) — negative; compact Q and ensemble 616/0.40, equal to the old state.
 
 The current frozen benchmark is documented separately in
 [`benchmarks/factory-v0.2/card.md`](../../benchmarks/factory-v0.2/card.md);

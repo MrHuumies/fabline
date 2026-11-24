@@ -65,6 +65,8 @@ make render-install
 - **Wizard:** a stdlib-only interactive runner for smoke, dataset, shared-suite,
   benchmark, and result-summary workflows; it previews commands and supports
   `--dry-run`.
+- **Decentralized triage (debug):** private per-crew views and tabular Q
+  baselines; the task is not in the frozen benchmark.
 
 Every mechanic is opt-in. The frozen `factory-v0.1` benchmark remains available
 for provenance; `factory-v0.2` is the current benchmark.

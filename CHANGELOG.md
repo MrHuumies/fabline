@@ -3,6 +3,13 @@
 All notable changes to FABLINE are recorded here. World and benchmark versions
 are pinned separately; see [`benchmarks/factory-v0.2/card.md`](benchmarks/factory-v0.2/card.md).
 
+## [Unreleased]
+
+- Add a compact relative-geometry Q baseline for decentralized triage. It is
+  negative: compact Q, the old state, and the ensemble all score 616/0.40
+  against oracle 764/1.00 (0081). Next is centralized training with
+  decentralized execution.
+
 ## [0.3.0] — 2026-11-24
 
 0.3.0 adds the planning, calibration, and causal decision surfaces, freezes

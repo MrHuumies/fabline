@@ -3,7 +3,8 @@
 - **Task ID:** `factory.multiagent.decentralized.v1`
 - **Version:** 0.1.0
 - **Status:** P3 multi-agent task; formal local/global positive; Q mean positive;
-  success gate fails; deferred from `factory-v0.2`
+  success gate fails; compact-Q follow-up negative; deferred from
+  `factory-v0.2`
 - **World:** factory-0.1.0, 48×24 spread layout, wired power
 - **Owner:** FABLINE
 - **Date:** 2026-11-24
@@ -93,8 +94,23 @@ budget and a three-policy ensemble.
 
 See
 [`experiments/0081-decentralized-compact-q/preregistration.md`](../experiments/0081-decentralized-compact-q/preregistration.md).
-If the gates fail, the next slice is centralized training with decentralized
-execution, not another compact-state variant.
+
+### Results (0081)
+
+Formal seeds 56,000–56,004; 1,000 training episodes per Q seed:
+
+| policy | mean score | success |
+|---|---:|---:|
+| local greedy | 532 | 0.20 |
+| private Q (old state) | 616 | 0.40 |
+| compact Q | 616 | 0.40 |
+| compact ensemble | 616 | 0.40 |
+| global oracle | 764 | 1.00 |
+
+H1/H2 pass; H3/H4 fail. The compact state and ensemble did not change the
+learned policy. The next slice is centralized training with decentralized
+execution, not another compact-state variant. See
+[`experiments/0081-decentralized-compact-q/summary.md`](../experiments/0081-decentralized-compact-q/summary.md).
 
 ## Changelog
 
@@ -103,3 +119,5 @@ execution, not another compact-state variant.
   success 0.47 misses 0.60.
 - 2026-11-24 — follow-up 0081 preregistered: compact relative-geometry Q and
   ensemble.
+- 2026-11-25 — 0081 formal negative: compact Q and ensemble 616/0.40, equal to
+  the old state; CTDE is next.

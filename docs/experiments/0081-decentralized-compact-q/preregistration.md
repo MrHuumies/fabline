@@ -1,6 +1,6 @@
 # Experiment 0081 — Compact relative-geometry Q for decentralized triage
 
-- **Status:** preregistered (implementation and formal run pending)
+- **Status:** complete (negative; see [summary](summary.md))
 - **Date:** 2026-11-24
 - **Type:** P3 decentralized multi-agent follow-up
 - **Task:** `factory.multiagent.decentralized.v1` (debug/P3, not in
