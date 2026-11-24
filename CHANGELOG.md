@@ -5,6 +5,11 @@ are pinned separately; see [`benchmarks/factory-v0.1/card.md`](benchmarks/factor
 
 ## [Unreleased]
 
+## [0.2.0] — 2026-11-24
+
+P3 production decisions and the public multiview contract. The frozen
+`factory-v0.1` benchmark is unchanged.
+
 - Add the 0.1.2 coverage review and next-slice recommendation.
 - Add crew repair scheduling with travel: earliest-deadline-first 260 vs
   impact-only 62.4; the original Q fails (156.4).
