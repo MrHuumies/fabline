@@ -112,6 +112,8 @@ retained for provenance.
   board-aware 112 vs best fixed 90; oracle 122.
 - [0076 — Triage planning](0076-planning-triage/summary.md) — true planning
   positive (454 = oracle); learned value model negative.
+- [0077 — Decentralized triage](0077-decentralized/summary.md) — local/global
+  +288; private Q +122 but success 0.47.
 
 The frozen benchmark is documented separately in
 [`benchmarks/factory-v0.1/card.md`](../../benchmarks/factory-v0.1/card.md).

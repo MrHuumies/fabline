@@ -5,6 +5,9 @@ are pinned separately; see [`benchmarks/factory-v0.1/card.md`](benchmarks/factor
 
 ## [Unreleased]
 
+- Add decentralized private-view triage: global 748, local greedy 460, private
+  Q 582; success 0.47 (0077).
+
 - Add triage planning: true CEM 454 = oracle; learned value model 166;
   planning positive, world-model negative (0076).
 

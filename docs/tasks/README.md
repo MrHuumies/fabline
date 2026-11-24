@@ -72,6 +72,8 @@ Current tasks:
   board-aware 112 vs best fixed 90.
 - [Triage planning](planning-triage.md) — true planning reaches oracle 454;
   learned value model negative.
+- [Decentralized triage](crew-decentralized.md) — private views; global 748,
+  local greedy 460, private Q 582; success 0.47.
 - [View arrival](view-arrival.md) — generic multiview contract and
   episode-grouped view-arrival task.
 - [Power allocation](power-allocation.md) — three-action priority scheduling

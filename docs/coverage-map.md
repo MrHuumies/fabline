@@ -262,8 +262,10 @@ deadline-aware tied buffer-aware/random; the task was easy or impossible. A
 gear-contract board with an explicit contract choice (0074) is positive:
 board-aware 112 vs best fixed 90 (+22), oracle 122. Triage planning (0076) is positive for true-simulator CEM (454 vs
 oracle 454) but negative for a learned value model (166); the task is a
-`factory-v0.2` candidate, the world-model gap remains open. The task is opt-in
-and the frozen benchmark is unchanged.
+`factory-v0.2` candidate, the world-model gap remains open. Decentralized
+private-view triage (0077) has a +288 local/global gap; independent Q gains
++122 over local greedy but succeeds only 0.47. The task is opt-in and the frozen
+benchmark is unchanged.
 
 ### P0 progress
 

@@ -27,6 +27,10 @@ from fabline.harness.crew_budget import (
     run_crew_budget,
     write_crew_budget_report,
 )
+from fabline.harness.crew_decentralized import (
+    run_decentralized,
+    write_decentralized_report,
+)
 from fabline.harness.crew_layout_ensemble import (
     run_crew_layout_ensemble,
     write_crew_layout_ensemble_report,
@@ -1393,6 +1397,68 @@ def cmd_crew_private(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_crew_decentralized(args: argparse.Namespace) -> int:
+    config = FactoryConfig(
+        width=48,
+        height=24,
+        ticks_per_episode=500,
+        decision_interval=10,
+        entity_budget=48,
+        rock_density=0.0,
+        ore_patches=1,
+        starter_line=True,
+        emit_events=True,
+    )
+    replan = CrewReplanConfig(
+        episode_ticks=500,
+        decision_interval=10,
+        loop_failure_tick=90,
+        small_failure_tick=110,
+        large_failure_tick=130,
+        recall_tick=100,
+        success_score=600,
+        randomize_crew_b=True,
+        crew_b_min_distance=8,
+        scenario="spread_gear",
+        power=PowerConfig(
+            enabled=True,
+            topology="wired",
+            generator_count=1,
+            generator_capacity=48,
+            generator_radius=8,
+            wire_redundancy=2,
+        ),
+    )
+    seeds = tuple(int(value) for value in args.seeds.split(","))
+    q_seeds = tuple(int(value) for value in args.q_seeds.split(","))
+    results = run_decentralized(
+        config,
+        replan,
+        seeds=seeds,
+        q_seeds=q_seeds,
+        train_episodes=args.train_episodes,
+    )
+    report = write_decentralized_report(
+        args.out,
+        results,
+        config={
+            "width": config.width,
+            "height": config.height,
+            "radius": 16,
+            "seeds": list(seeds),
+            "success_score": replan.success_score,
+        },
+    )
+    print(
+        json.dumps(
+            {"report": str(report), "results": results},
+            indent=2,
+            sort_keys=True,
+        )
+    )
+    return 0
+
+
 def cmd_crew_visibility(args: argparse.Namespace) -> int:
     config = FactoryConfig(
         width=48,
@@ -2393,6 +2459,20 @@ def build_parser() -> argparse.ArgumentParser:
     crew_private.add_argument("--radius", type=int, default=16)
     crew_private.add_argument("--report-age", type=int, default=60)
     crew_private.set_defaults(func=cmd_crew_private)
+
+    crew_decentralized = subparsers.add_parser(
+        "crew-decentralized",
+        help="run per-crew private-view policies on the spread layout",
+    )
+    crew_decentralized.add_argument(
+        "--out", type=str, default="results/crew-decentralized"
+    )
+    crew_decentralized.add_argument(
+        "--seeds", type=str, default="52000,52001,52002,52003,52004"
+    )
+    crew_decentralized.add_argument("--q-seeds", type=str, default="0,1,2")
+    crew_decentralized.add_argument("--train-episodes", type=int, default=500)
+    crew_decentralized.set_defaults(func=cmd_crew_decentralized)
 
     crew_visibility = subparsers.add_parser(
         "crew-visibility",
