@@ -260,8 +260,10 @@ queue (0072) is positive: purge-aware 302 vs fast 274 (+28); the purge action
 is the new decision. A single revealed deadline contract was negative (0073):
 deadline-aware tied buffer-aware/random; the task was easy or impossible. A
 gear-contract board with an explicit contract choice (0074) is positive:
-board-aware 112 vs best fixed 90 (+22), oracle 122. The task is opt-in and the
-frozen benchmark is unchanged.
+board-aware 112 vs best fixed 90 (+22), oracle 122. Triage planning (0076) is positive for true-simulator CEM (454 vs
+oracle 454) but negative for a learned value model (166); the task is a
+`factory-v0.2` candidate, the world-model gap remains open. The task is opt-in
+and the frozen benchmark is unchanged.
 
 ### P0 progress
 

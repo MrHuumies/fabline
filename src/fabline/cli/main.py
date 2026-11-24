@@ -88,6 +88,11 @@ from fabline.harness.multi_crew import (
     write_crew_robustness_report,
     write_multi_crew_report,
 )
+from fabline.harness.planning_triage import (
+    TriagePlanningConfig,
+    run_triage_planning,
+    write_triage_planning_report,
+)
 from fabline.harness.power import run_power_benchmark
 from fabline.harness.power_allocation import (
     run_power_allocation,
@@ -686,6 +691,45 @@ def cmd_multi_crew(args: argparse.Namespace) -> int:
         },
     )
     print(json.dumps({"report": str(report), "results": results}, indent=2, sort_keys=True))
+    return 0
+
+
+def cmd_planning_triage(args: argparse.Namespace) -> int:
+    config = TriagePlanningConfig(
+        population=args.population,
+        elites=args.elites,
+        iterations=args.iterations,
+        random_samples=args.random_samples,
+        model_sequences=args.model_sequences,
+        model_seeds=args.model_seeds,
+    )
+    seeds = tuple(int(value) for value in args.seeds.split(","))
+    report = run_triage_planning(
+        config,
+        seeds=seeds,
+        model_seed_start=args.model_seed_start,
+    )
+    out = Path(args.out)
+    write_triage_planning_report(report, out)
+    print(
+        json.dumps(
+            {
+                "task": report["task"],
+                "out": str(out),
+                "model_mse": report["model_mse"],
+                "results": {
+                    name: {
+                        "mean_score": row["mean_score"],
+                        "success_rate": row["success_rate"],
+                        "mean_seconds": row["mean_seconds"],
+                    }
+                    for name, row in report["results"].items()
+                },
+            },
+            indent=2,
+            sort_keys=True,
+        )
+    )
     return 0
 
 
@@ -2183,6 +2227,25 @@ def build_parser() -> argparse.ArgumentParser:
     multi_crew.add_argument("--large-failure", type=int, default=130)
     multi_crew.add_argument("--success-score", type=int, default=150)
     multi_crew.set_defaults(func=cmd_multi_crew)
+
+    planning_triage = subparsers.add_parser(
+        "planning-triage",
+        help="run model-based planning on three-bridge triage",
+    )
+    planning_triage.add_argument(
+        "--out", type=str, default="results/planning-triage"
+    )
+    planning_triage.add_argument(
+        "--seeds", type=str, default="48000,48001,48002,48003,48004"
+    )
+    planning_triage.add_argument("--model-seed-start", type=int, default=50000)
+    planning_triage.add_argument("--population", type=int, default=32)
+    planning_triage.add_argument("--elites", type=int, default=8)
+    planning_triage.add_argument("--iterations", type=int, default=6)
+    planning_triage.add_argument("--random-samples", type=int, default=128)
+    planning_triage.add_argument("--model-sequences", type=int, default=300)
+    planning_triage.add_argument("--model-seeds", type=int, default=8)
+    planning_triage.set_defaults(func=cmd_planning_triage)
 
     contract_board = subparsers.add_parser(
         "contract-board",

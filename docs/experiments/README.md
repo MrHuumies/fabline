@@ -110,6 +110,8 @@ retained for provenance.
   purge-aware 302 vs fast 274; the purge action is the decision.
 - [0074 — Contract board](0074-contract-board/summary.md) — positive;
   board-aware 112 vs best fixed 90; oracle 122.
+- [0076 — Triage planning](0076-planning-triage/summary.md) — true planning
+  positive (454 = oracle); learned value model negative.
 
 The frozen benchmark is documented separately in
 [`benchmarks/factory-v0.1/card.md`](../../benchmarks/factory-v0.1/card.md).

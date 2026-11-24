@@ -5,6 +5,9 @@ are pinned separately; see [`benchmarks/factory-v0.1/card.md`](benchmarks/factor
 
 ## [Unreleased]
 
+- Add triage planning: true CEM 454 = oracle; learned value model 166;
+  planning positive, world-model negative (0076).
+
 ## [0.2.0] — 2026-11-24
 
 P3 production decisions and the public multiview contract. The frozen

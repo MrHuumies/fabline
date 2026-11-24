@@ -70,6 +70,8 @@ Current tasks:
   buffer-aware 318 vs fast 278.
 - [Gear-contract board](contract-board.md) — choose one of three contracts;
   board-aware 112 vs best fixed 90.
+- [Triage planning](planning-triage.md) — true planning reaches oracle 454;
+  learned value model negative.
 - [View arrival](view-arrival.md) — generic multiview contract and
   episode-grouped view-arrival task.
 - [Power allocation](power-allocation.md) — three-action priority scheduling
