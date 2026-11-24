@@ -265,7 +265,9 @@ oracle 454) but negative for a learned value model (166); the task is a
 `factory-v0.2` candidate, the world-model gap remains open. Decentralized
 private-view triage (0077) has a +288 local/global gap; independent Q gains
 +122 over local greedy but succeeds only 0.47. The task is opt-in and the frozen
-benchmark is unchanged.
+benchmark is unchanged. Fault calibration (0078) on the top-4 view is positive
+(GBDT ECE 0.008, balanced 0.950); base views are at majority. Counterfactual removal (0079) is positive: target GBDT
+R² 0.910 vs type-only −0.300.
 
 ### P0 progress
 

@@ -114,6 +114,10 @@ retained for provenance.
   positive (454 = oracle); learned value model negative.
 - [0077 — Decentralized triage](0077-decentralized/summary.md) — local/global
   +288; private Q +122 but success 0.47.
+- [0078 — Fault calibration](0078-fault-calibration/summary.md) — top-4 GBDT
+  balanced 0.950, ECE 0.008; base views at majority.
+- [0079 — Counterfactual removal](0079-causal-removal/summary.md) — target
+  GBDT R² 0.910 vs type-only −0.300.
 
 The frozen benchmark is documented separately in
 [`benchmarks/factory-v0.1/card.md`](../../benchmarks/factory-v0.1/card.md).

@@ -10,7 +10,10 @@ from typing import Any
 import numpy as np
 
 from fabline.core.hashing import config_hash
-from fabline.harness.baselines import evaluate_classification_baselines
+from fabline.harness.baselines import (
+    evaluate_calibration_baselines,
+    evaluate_classification_baselines,
+)
 from fabline.harness.data import LoadedDataset, load_dataset
 from fabline.obs.base import build_observation
 from fabline.record.replay import validate_replay
@@ -56,6 +59,8 @@ def run_fault_benchmark(
     seed_start: int = 0,
     config: FactoryConfig | None = None,
     faults: FaultConfig | None = None,
+    horizon: int = 50,
+    sample_interval: int = 10,
 ) -> dict[str, Any]:
     config = config or FactoryConfig(
         width=16,
@@ -85,6 +90,8 @@ def run_fault_benchmark(
         "config_hash": config_hash(config),
         "faults": asdict(faults),
         "episodes": episodes,
+        "horizon": horizon,
+        "sample_interval": sample_interval,
         "views": {},
     }
 
@@ -92,7 +99,11 @@ def run_fault_benchmark(
         adapter = build_observation(name, config, faults)
         task = FaultPredictionTask(
             config,
-            FaultTaskConfig(faults=faults),
+            FaultTaskConfig(
+                faults=faults,
+                horizon=horizon,
+                sample_interval=sample_interval,
+            ),
             adapter,
         )
         episodes_data = task.generate(episodes, seed_start=seed_start)
@@ -133,6 +144,13 @@ def run_fault_benchmark(
             "samples": int(len(loaded.y)),
             "positive_rate": float(np.mean(loaded.y)),
             "metrics": metrics,
+            "calibration": evaluate_calibration_baselines(
+                X_train,
+                y_train,
+                X_test,
+                y_test,
+                with_ci=True,
+            ),
         }
 
     (out / "fault_results.json").write_text(
@@ -153,6 +171,8 @@ def _write_report(path: Path, results: dict[str, Any]) -> None:
         f"- world: `{results['world_version']}`",
         f"- faults: `{results['faults']}`",
         f"- episodes: {results['episodes']}",
+        f"- horizon: {results['horizon']} ticks; sample interval "
+        f"{results['sample_interval']}",
         "",
     ]
     for name, payload in results["views"].items():
@@ -174,6 +194,19 @@ def _write_report(path: Path, results: dict[str, Any]) -> None:
             balanced = _cell(test["balanced_accuracy"], ci.get("balanced_accuracy"))
             lines.append(
                 f"| {method} | {accuracy} | {balanced} | {test['macro_f1']:.4f} |"
+            )
+        lines.extend(
+            [
+                "",
+                "| method | Brier | NLL | ECE |",
+                "|---|---:|---:|---:|",
+            ]
+        )
+        for method, result in payload["calibration"].items():
+            test = result["test"]
+            lines.append(
+                f"| {method} | {test['brier']:.4f} | "
+                f"{test['nll']:.4f} | {test['ece']:.4f} |"
             )
         lines.append("")
     lines.extend(

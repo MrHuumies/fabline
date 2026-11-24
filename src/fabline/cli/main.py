@@ -22,6 +22,11 @@ from fabline.env.preventive_wire import PreventiveWireConfig
 from fabline.env.recipe import RecipeEnvConfig
 from fabline.env.three_crew_replan import ThreeCrewReplanConfig
 from fabline.env.wire_repair import WireRepairConfig
+from fabline.harness.causal_intervention import (
+    CausalConfig,
+    run_causal,
+    write_causal_report,
+)
 from fabline.harness.contract_board import run_contract_board, write_board_report
 from fabline.harness.crew_budget import (
     run_crew_budget,
@@ -72,6 +77,11 @@ from fabline.harness.crew_visibility import (
     write_crew_visibility_report,
 )
 from fabline.harness.data import load_dataset
+from fabline.harness.fault_calibration import (
+    FaultCalibrationConfig,
+    run_fault_calibration,
+    write_fault_calibration_report,
+)
 from fabline.harness.fault_power import (
     run_fault_power,
     write_fault_power_report,
@@ -361,6 +371,20 @@ def cmd_human_bc(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_fault_calibration(args: argparse.Namespace) -> int:
+    config = FaultCalibrationConfig(
+        episodes=args.episodes,
+        seed_start=args.seed_start,
+        horizon=args.horizon,
+        sample_interval=args.sample_interval,
+        noise=args.noise,
+    )
+    results = run_fault_calibration(config)
+    report = write_fault_calibration_report(args.out, results)
+    print(json.dumps({"report": str(report), "results": results}, indent=2, sort_keys=True))
+    return 0
+
+
 def cmd_fault_benchmark(args: argparse.Namespace) -> int:
     config = FactoryConfig(
         width=16,
@@ -385,6 +409,8 @@ def cmd_fault_benchmark(args: argparse.Namespace) -> int:
         seed_start=args.seed_start,
         config=config,
         faults=faults,
+        horizon=args.horizon,
+        sample_interval=args.sample_interval,
     )
     summary = {
         "out": args.out,
@@ -695,6 +721,24 @@ def cmd_multi_crew(args: argparse.Namespace) -> int:
         },
     )
     print(json.dumps({"report": str(report), "results": results}, indent=2, sort_keys=True))
+    return 0
+
+
+def cmd_causal_remove(args: argparse.Namespace) -> int:
+    config = CausalConfig(
+        episodes=args.episodes,
+        seed_start=args.seed_start,
+    )
+    report = run_causal(config)
+    out = Path(args.out)
+    write_causal_report(out, report)
+    print(
+        json.dumps(
+            {"out": str(out), "rows": report["rows"], "views": report["views"]},
+            indent=2,
+            sort_keys=True,
+        )
+    )
     return 0
 
 
@@ -2194,6 +2238,20 @@ def build_parser() -> argparse.ArgumentParser:
     human_bc.add_argument("--seed", type=int, default=0)
     human_bc.set_defaults(func=cmd_human_bc)
 
+    fault_calibration = subparsers.add_parser(
+        "fault-calibration",
+        help="run fault calibration on hard onset views",
+    )
+    fault_calibration.add_argument(
+        "--out", type=str, default="results/fault-calibration"
+    )
+    fault_calibration.add_argument("--episodes", type=int, default=40)
+    fault_calibration.add_argument("--seed-start", type=int, default=55000)
+    fault_calibration.add_argument("--horizon", type=int, default=10)
+    fault_calibration.add_argument("--sample-interval", type=int, default=5)
+    fault_calibration.add_argument("--noise", type=float, default=0.30)
+    fault_calibration.set_defaults(func=cmd_fault_calibration)
+
     fault_benchmark = subparsers.add_parser(
         "fault-benchmark",
         help="run the opt-in fault-mechanic debug benchmark",
@@ -2203,6 +2261,8 @@ def build_parser() -> argparse.ArgumentParser:
     fault_benchmark.add_argument("--seed-start", type=int, default=0)
     fault_benchmark.add_argument("--threshold", type=int, default=20)
     fault_benchmark.add_argument("--repair-ticks", type=int, default=30)
+    fault_benchmark.add_argument("--horizon", type=int, default=50)
+    fault_benchmark.add_argument("--sample-interval", type=int, default=10)
     fault_benchmark.set_defaults(func=cmd_fault_benchmark)
 
     fault_power = subparsers.add_parser(
@@ -2293,6 +2353,17 @@ def build_parser() -> argparse.ArgumentParser:
     multi_crew.add_argument("--large-failure", type=int, default=130)
     multi_crew.add_argument("--success-score", type=int, default=150)
     multi_crew.set_defaults(func=cmd_multi_crew)
+
+    causal_remove = subparsers.add_parser(
+        "causal-remove",
+        help="run counterfactual entity-removal prediction",
+    )
+    causal_remove.add_argument(
+        "--out", type=str, default="results/causal-remove"
+    )
+    causal_remove.add_argument("--episodes", type=int, default=40)
+    causal_remove.add_argument("--seed-start", type=int, default=57000)
+    causal_remove.set_defaults(func=cmd_causal_remove)
 
     planning_triage = subparsers.add_parser(
         "planning-triage",

@@ -5,6 +5,12 @@ are pinned separately; see [`benchmarks/factory-v0.1/card.md`](benchmarks/factor
 
 ## [Unreleased]
 
+- Add counterfactual entity-removal prediction: target GBDT R² 0.910 vs
+  type-only −0.300 (0079).
+
+- Add fault calibration: top-4 GBDT balanced 0.950, ECE 0.008; base views at
+  majority (0078).
+
 - Add decentralized private-view triage: global 748, local greedy 460, private
   Q 582; success 0.47 (0077).
 

@@ -37,7 +37,12 @@ def test_fault_benchmark_end_to_end(tmp_path) -> None:
         assert view["samples"] > 0
         assert 0.0 <= view["positive_rate"] <= 1.0
         assert "gbdt" in view["metrics"]
+        assert set(view["calibration"]) == {"gbdt", "mlp"}
+        for method in view["calibration"].values():
+            for key in ("brier", "nll", "ece"):
+                assert key in method["test"]
     report = (tmp_path / "fault_report.md").read_text(encoding="utf-8")
     assert "Fault-mechanic benchmark" in report
+    assert "| method | Brier | NLL | ECE |" in report
     payload = json.loads((tmp_path / "fault_results.json").read_text())
     assert payload["faults"]["enabled"] is True

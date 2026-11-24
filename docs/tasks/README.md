@@ -74,6 +74,10 @@ Current tasks:
   learned value model negative.
 - [Decentralized triage](crew-decentralized.md) — private views; global 748,
   local greedy 460, private Q 582; success 0.47.
+- [Fault calibration](fault-calibration.md) — top-4 GBDT ECE 0.008; base
+  views at majority.
+- [Counterfactual removal](causal-removal.md) — target GBDT R² 0.910 vs
+  type-only −0.300.
 - [View arrival](view-arrival.md) — generic multiview contract and
   episode-grouped view-arrival task.
 - [Power allocation](power-allocation.md) — three-action priority scheduling
