@@ -55,6 +55,8 @@ This document is a map, not a commitment to implement every row.
 | preventive machine | control | diagnostics | delayed-credit Q is unstable |
 | maintenance threshold | bandit | context | representation fix; deterministic |
 | view arrival | classification | multiview | contract only; consumer-side update methods |
+| crew coordination | control/multi-agent | crew view | P2 debug; assignment, recall, triage |
+| production scheduling | control/selection | recipe/board | P3; recipe, byproduct, contract board |
 
 ### Current baselines
 
@@ -63,7 +65,8 @@ This document is a map, not a commitment to implement every row.
 - GBDT;
 - MLP;
 - `graph_mp` message-passing features;
-- scripted, random, tabular Q, behavior cloning.
+- scripted, random, tabular Q, behavior cloning;
+- scripted multi-agent assignment/triage and queue-aware recipe/contract policies.
 
 **Representative families added in P0/P1:** CNN, end-to-end GNN/MPNN,
 Transformer, GRU/RNN, calibration, CVaR/risk selection, and bandits. Still
