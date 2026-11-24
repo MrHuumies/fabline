@@ -83,7 +83,8 @@ The expected summary is in
 [`benchmarks/factory-v0.2/expected/summary.json`](benchmarks/factory-v0.2/expected/summary.json).
 The first frozen benchmark, [`factory-v0.1`](benchmarks/factory-v0.1/card.md),
 remains immutable. The current coverage map is in
-[`docs/coverage-map.md`](docs/coverage-map.md).
+[`docs/coverage-map.md`](docs/coverage-map.md); the
+[0.3.0 review](docs/coverage-review-0.3.0.md) records the next slice.
 Small library-version differences are acceptable; headline ordering should be
 stable.
 
