@@ -113,6 +113,7 @@ the pilots.
 ## Recommended next slice
 
 **Compact relative-geometry Q with a small ensemble on decentralized triage.**
+See the [0081 pre-registration](experiments/0081-decentralized-compact-q/preregistration.md).
 
 - Keep the existing task, radius, seeds, and joint action space.
 - Replace absolute tick/distance buckets with relative service, deadline slack,
