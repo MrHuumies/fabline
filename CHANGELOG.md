@@ -3,11 +3,13 @@
 All notable changes to FABLINE are recorded here. World and benchmark versions
 are pinned separately; see [`benchmarks/factory-v0.2/card.md`](benchmarks/factory-v0.2/card.md).
 
-## [Unreleased]
+## [0.3.0] — 2026-11-24
+
+0.3.0 adds the planning, calibration, and causal decision surfaces, freezes
+`factory-v0.2`, and adds a stdlib wizard. `factory-v0.1` remains immutable.
 
 - Freeze `factory-v0.2`: 10 headline tasks on 159 core episodes plus triage
-  planning, fault-onset calibration, and causal entity removal. `factory-v0.1`
-  remains immutable.
+  planning, fault-onset calibration, and causal entity removal.
 
 - Add a stdlib `fabline wizard` for smoke, dataset, shared-suite, benchmark,
   and result-summary workflows. It previews commands and supports `--dry-run`.
@@ -18,8 +20,9 @@ are pinned separately; see [`benchmarks/factory-v0.2/card.md`](benchmarks/factor
 - Add fault calibration: top-4 GBDT balanced 0.950, ECE 0.008; base views at
   majority (0078).
 
-- Add decentralized private-view triage: global 748, local greedy 460, private
-  Q 582; success 0.47 (0077).
+- Add decentralized private-view triage as a debug task: global 748, local
+  greedy 460, private Q 582; success 0.47 (0077). It is deferred from the
+  frozen benchmark because the local-success gate is open.
 
 - Add triage planning: true CEM 454 = oracle; learned value model 166;
   planning positive, world-model negative (0076).
