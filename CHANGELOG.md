@@ -66,6 +66,8 @@ are pinned separately; see [`benchmarks/factory-v0.1/card.md`](benchmarks/factor
   power-saver ties, headroom gating is worse; power adds no decision (0071).
 - Add a blocking byproduct queue: purge-aware 302 vs fast 274; the purge action
   is the new decision (0072).
+- Add a gear-contract board: board-aware 112 vs best fixed 90; oracle 122;
+  all gates pass (0074).
 - Add the multiview observation contract and view-arrival task interface:
   named views, view masks, fixed-width flatten, and episode-grouped splits.
 - Add the P2 coverage review: coordination, visibility, and triage results;

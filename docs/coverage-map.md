@@ -255,9 +255,10 @@ stays at 314 vs fast 272; power-saver ties and headroom gating is worse, so
 power is a robustness constraint, not a new decision. A blocking byproduct
 queue (0072) is positive: purge-aware 302 vs fast 274 (+28); the purge action
 is the new decision. A single revealed deadline contract was negative (0073):
-deadline-aware tied buffer-aware/random; the task was easy or impossible. The
-next slice is a gear-contract board with an explicit contract choice. The task
-is opt-in and the frozen benchmark is unchanged.
+deadline-aware tied buffer-aware/random; the task was easy or impossible. A
+gear-contract board with an explicit contract choice (0074) is positive:
+board-aware 112 vs best fixed 90 (+22), oracle 122. The task is opt-in and the
+frozen benchmark is unchanged.
 
 ### P0 progress
 

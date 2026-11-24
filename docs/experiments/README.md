@@ -108,6 +108,8 @@ retained for provenance.
   buffer-aware 314 vs fast 272; power state adds no decision.
 - [0072 — Byproduct queue](0072-recipe-byproduct/summary.md) — positive;
   purge-aware 302 vs fast 274; the purge action is the decision.
+- [0074 — Contract board](0074-contract-board/summary.md) — positive;
+  board-aware 112 vs best fixed 90; oracle 122.
 
 The frozen benchmark is documented separately in
 [`benchmarks/factory-v0.1/card.md`](../../benchmarks/factory-v0.1/card.md).

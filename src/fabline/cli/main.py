@@ -8,6 +8,7 @@ import sys
 from pathlib import Path
 
 from fabline import __version__
+from fabline.env.contract_board import ContractBoardConfig, ContractBoardEnv
 from fabline.env.control import ControlConfig
 from fabline.env.crew_replan import CrewReplanConfig
 from fabline.env.crew_schedule import CrewScheduleConfig
@@ -21,6 +22,7 @@ from fabline.env.preventive_wire import PreventiveWireConfig
 from fabline.env.recipe import RecipeEnvConfig
 from fabline.env.three_crew_replan import ThreeCrewReplanConfig
 from fabline.env.wire_repair import WireRepairConfig
+from fabline.harness.contract_board import run_contract_board, write_board_report
 from fabline.harness.crew_budget import (
     run_crew_budget,
     write_crew_budget_report,
@@ -684,6 +686,43 @@ def cmd_multi_crew(args: argparse.Namespace) -> int:
         },
     )
     print(json.dumps({"report": str(report), "results": results}, indent=2, sort_keys=True))
+    return 0
+
+
+def cmd_contract_board(args: argparse.Namespace) -> int:
+    config = FactoryConfig(
+        width=16,
+        height=8,
+        ticks_per_episode=500,
+        decision_interval=10,
+        entity_budget=32,
+        rock_density=0.0,
+        ore_patches=1,
+        starter_line=True,
+        emit_events=True,
+    )
+    board = ContractBoardConfig(recipe=RecipeConfig(enabled=True))
+    env = ContractBoardEnv(config, board)
+    seeds = tuple(int(value) for value in args.seeds.split(","))
+    results = run_contract_board(env, seeds=seeds)
+    report = write_board_report(
+        args.out,
+        results,
+        config={
+            "boards": [
+                [list(contract) for contract in variant]
+                for variant in board.boards
+            ],
+            "seeds": list(seeds),
+        },
+    )
+    print(
+        json.dumps(
+            {"report": str(report), "results": results},
+            indent=2,
+            sort_keys=True,
+        )
+    )
     return 0
 
 
@@ -2144,6 +2183,18 @@ def build_parser() -> argparse.ArgumentParser:
     multi_crew.add_argument("--large-failure", type=int, default=130)
     multi_crew.add_argument("--success-score", type=int, default=150)
     multi_crew.set_defaults(func=cmd_multi_crew)
+
+    contract_board = subparsers.add_parser(
+        "contract-board",
+        help="run the gear-contract board with recipe control",
+    )
+    contract_board.add_argument(
+        "--out", type=str, default="results/contract-board"
+    )
+    contract_board.add_argument(
+        "--seeds", type=str, default="44000,44001,44002,44003,44004"
+    )
+    contract_board.set_defaults(func=cmd_contract_board)
 
     recipe_choice = subparsers.add_parser(
         "recipe-choice",

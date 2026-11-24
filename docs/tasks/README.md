@@ -68,6 +68,8 @@ Current tasks:
   formal, random gap +4 vs spread +18.
 - [Assembler recipe choice](recipe-choice.md) — fast/expensive vs slow/cheap;
   buffer-aware 318 vs fast 278.
+- [Gear-contract board](contract-board.md) — choose one of three contracts;
+  board-aware 112 vs best fixed 90.
 - [View arrival](view-arrival.md) — generic multiview contract and
   episode-grouped view-arrival task.
 - [Power allocation](power-allocation.md) — three-action priority scheduling
