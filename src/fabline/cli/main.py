@@ -109,6 +109,11 @@ from fabline.harness.human_demos import (
     train_human_bc,
     write_human_bc_report,
 )
+from fabline.harness.maintenance_calibration import (
+    MaintenanceCalibrationConfig,
+    run_maintenance_calibration,
+    write_maintenance_calibration_report,
+)
 from fabline.harness.multi_crew import (
     run_crew_robustness,
     run_multi_crew,
@@ -400,6 +405,25 @@ def cmd_fault_calibration(args: argparse.Namespace) -> int:
     results = run_fault_calibration(config)
     report = write_fault_calibration_report(args.out, results)
     print(json.dumps({"report": str(report), "results": results}, indent=2, sort_keys=True))
+    return 0
+
+
+def cmd_maintenance_calibration(args: argparse.Namespace) -> int:
+    config = MaintenanceCalibrationConfig(
+        episodes=args.episodes,
+        seed_start=args.seed_start,
+        horizon=args.horizon,
+        maintenance_probability=args.maintenance_probability,
+    )
+    results = run_maintenance_calibration(config)
+    report = write_maintenance_calibration_report(args.out, results)
+    print(
+        json.dumps(
+            {"report": str(report), "results": results},
+            indent=2,
+            sort_keys=True,
+        )
+    )
     return 0
 
 
@@ -2450,6 +2474,23 @@ def build_parser() -> argparse.ArgumentParser:
     fault_calibration.add_argument("--sample-interval", type=int, default=5)
     fault_calibration.add_argument("--noise", type=float, default=0.30)
     fault_calibration.set_defaults(func=cmd_fault_calibration)
+
+    maintenance_calibration = subparsers.add_parser(
+        "maintenance-calibration",
+        help="run preventive-maintenance risk calibration",
+    )
+    maintenance_calibration.add_argument(
+        "--out", type=str, default="results/maintenance-calibration"
+    )
+    maintenance_calibration.add_argument("--episodes", type=int, default=60)
+    maintenance_calibration.add_argument(
+        "--seed-start", type=int, default=61000
+    )
+    maintenance_calibration.add_argument("--horizon", type=int, default=10)
+    maintenance_calibration.add_argument(
+        "--maintenance-probability", type=float, default=0.05
+    )
+    maintenance_calibration.set_defaults(func=cmd_maintenance_calibration)
 
     fault_benchmark = subparsers.add_parser(
         "fault-benchmark",

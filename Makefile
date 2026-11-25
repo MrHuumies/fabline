@@ -1,6 +1,6 @@
 PY ?= .venv/bin/python
 
-.PHONY: test lint smoke dataset benchmark suite shared-suite benchmark-v02 benchmark-v02-check wizard planning-transition crew-decentralized-compact crew-decentralized-ctde render-install render play demo human-bc fault-benchmark fault-recovery fault-power power-benchmark power-allocation power-allocation-stochastic perf
+.PHONY: test lint smoke dataset benchmark suite shared-suite benchmark-v02 benchmark-v02-check wizard planning-transition maintenance-calibration crew-decentralized-compact crew-decentralized-ctde render-install render play demo human-bc fault-benchmark fault-recovery fault-power power-benchmark power-allocation power-allocation-stochastic perf
 
 test:
 	$(PY) -m pytest -q
@@ -35,6 +35,9 @@ wizard:
 
 planning-transition:
 	$(PY) -m fabline planning-transition --out results/planning-transition --seeds 49000,49001,49002,49003,49004 --train-seeds 8 --eval-seeds 2 --max-sequences 256
+
+maintenance-calibration:
+	$(PY) -m fabline maintenance-calibration --out results/maintenance-calibration --episodes 60 --seed-start 61000 --horizon 10 --maintenance-probability 0.05
 
 crew-decentralized-compact:
 	$(PY) -m fabline crew-decentralized-compact --out results/crew-decentralized-compact --seeds 56000,56001,56002,56003,56004 --q-seeds 0,1,2 --train-episodes 1000 --train-seed-start 60000

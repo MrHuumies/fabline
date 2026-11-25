@@ -34,6 +34,7 @@ decentralized reliability gate, not add another calibration or planning sweep.
 | 0081 | Compact decentralized Q | compact 616/0.40 vs old 616/0.40 | negative representation/ensemble |
 | 0082 | CTDE | 248/0.00 vs local greedy 532/0.20 | negative; local-policy line retired |
 | 0083 | Transition planning | one-step MSE 0.0182 vs copy 0.0695; CEM 162/0.20 | negative: rollout error |
+| 0084 | Maintenance calibration | diagnostics GBDT ECE 0.0054; full view 0.0929 | mixed; H2 fails on full view |
 | — | `factory-v0.2` | 10 tasks, 159 core episodes | frozen |
 | — | Wizard | stdlib command runner + summary | shipped |
 
@@ -62,6 +63,9 @@ the pilots.
   useful probability model.
 - The top-4 entity sensor view is skilled and calibrated on fault onset. The
   benchmark seeds reproduce the ordering with balanced 0.923 and ECE 0.0118.
+- Maintenance-risk calibration is mixed: the diagnostics view is skilled and
+  calibrated (GBDT ECE 0.0054), but adding maintenance state features makes
+  GBDT miscalibrated (ECE 0.0929). The registered full-view H2 gate fails.
 - Fault prediction at 50 ticks is saturated and remains a diagnostic, not a
   frozen task.
 
@@ -114,8 +118,9 @@ the pilots.
 2. **Transition world models.** True planning works; the first ridge transition
    model (0083) fails in rollout. Multi-step training or uncertainty is a new
    pre-registration, not a fix to 0083.
-3. **Maintenance calibration.** The 0.3.0 RFC named fault and maintenance
-   calibration; only fault onset was delivered.
+3. **Maintenance calibration.** Delivered as a mixed result (0084): the
+   diagnostics view is calibrated, the full maintenance view is not. The
+   calibration line is closed; do not add another view.
 4. **Generative layout/recipe.** Optional pilot did not run.
 5. **Deep/offline RL.** Still absent as baseline families.
 6. **Efficiency table.** Cost is reported per experiment but not as a public
@@ -125,23 +130,29 @@ the pilots.
 
 ## Recommended next slice
 
-**Maintenance calibration.** The decentralized local-policy line is closed
-(0081 compact Q 616/0.40; 0082 CTDE 248/0.00), and the first transition model is
-negative in rollout (0083 CEM 162/0.20 vs true 454/1.00). The cheap remaining
-gap is calibration on the existing preventive-maintenance task:
+**Choose one of two remaining research gaps.** The decentralized line is closed
+(0081 compact Q 616/0.40; 0082 CTDE 248/0.00), the first transition model is
+negative in rollout (0083 CEM 162/0.20 vs true 454/1.00), and maintenance
+calibration is mixed (0084: diagnostics ECE 0.0054, full view 0.0929). The
+calibration line is closed.
 
-- add Brier, NLL, and ECE to the preventive-maintenance benchmark;
-- check whether the model has discrimination skill before reading calibration;
-- gate: ECE ≤ 0.05 on a skilled view, with the base-view caveat reported.
+Options:
 
-If maintenance calibration is saturated or near majority, report it as a
-negative/ceiling result. Do not add another decentralized variant or tune the
-0083 ridge model.
+1. **Multi-step transition model.** A new pre-registration with multi-step
+   training or uncertainty, not a tune of 0083. This is the cleanest
+   world-model follow-up.
+2. **Generative layout/recipe pilot.** The optional 0.3.0 stretch, with a
+   validity/diversity gate and no new dependency.
+
+Deep/offline RL and a public efficiency table remain open but are larger or
+less diagnostic. Do not add another calibration view, decentralized variant, or
+one-step ridge model.
 
 ## What not to do next
 
 - another compact-state Q or CTDE variant on this task;
 - tuning the 0083 ridge transition model after its rollout failure;
+- another maintenance-calibration view or horizon;
 - another Q variant trained only on `factory-v0.2` seeds;
 - another visibility radius or report-budget sweep;
 - another fault/power calibration threshold;

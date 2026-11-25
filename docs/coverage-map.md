@@ -279,7 +279,9 @@ and decentralized/generative are deferred. The
 relative-geometry Q plus an ensemble (0081, negative: 616/0.40) and tabular CTDE
 (0082, negative: 248/0.00); the local-policy line is retired. Transition-model
 planning (0083) is negative in rollout (one-step MSE 0.0182, CEM 162/0.20 vs
-true 454/1.00); maintenance calibration is the next slice.
+true 454/1.00). Maintenance calibration (0084) is mixed: diagnostics ECE
+0.0054, full view 0.0929. The calibration line is closed; a multi-step
+transition model or generative pilot is next.
 
 ### P0 progress
 

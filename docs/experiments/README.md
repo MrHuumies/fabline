@@ -129,5 +129,7 @@ The current frozen benchmark is documented separately in
 
 - [0083 — Transition-model planning](0083-transition-planning/summary.md) — negative; one-step MSE 0.0182, CEM 162/0.20 vs true 454/1.00.
 
+- [0084 — Maintenance-risk calibration](0084-maintenance-calibration/summary.md) — mixed; diagnostics GBDT ECE 0.0054, full view 0.0929.
+
 The `factory-v0.2` freeze review is in
 [`benchmarks/factory-v0.2/freeze-review.md`](../../benchmarks/factory-v0.2/freeze-review.md).

@@ -18,6 +18,10 @@ are pinned separately; see [`benchmarks/factory-v0.2/card.md`](benchmarks/factor
   transitions (MSE 0.0182 vs copy 0.0695) but fails in rollout: CEM 162/0.20
   vs true CEM 454/1.00 (0083).
 
+- Add maintenance-risk calibration. It is mixed: diagnostics GBDT ECE 0.0054,
+  but the full maintenance view is miscalibrated at ECE 0.0929 (0084). The
+  calibration line is closed.
+
 ## [0.3.0] — 2026-11-24
 
 0.3.0 adds the planning, calibration, and causal decision surfaces, freezes

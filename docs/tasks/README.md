@@ -77,6 +77,8 @@ Current tasks:
   tests compact relative-geometry Q and an ensemble.
 - [Fault calibration](fault-calibration.md) — `factory-v0.2`; top-4 GBDT ECE
   0.008, base views at majority.
+- [Maintenance calibration](maintenance-calibration.md) — diagnostics view
+  calibrated; full maintenance view miscalibrated for GBDT.
 - [Counterfactual removal](causal-removal.md) — `factory-v0.2`; target GBDT
   R² 0.910 vs type-only −0.300.
 - [View arrival](view-arrival.md) — generic multiview contract and
