@@ -22,6 +22,10 @@ are pinned separately; see [`benchmarks/factory-v0.2/card.md`](benchmarks/factor
   but the full maintenance view is miscalibrated at ECE 0.0929 (0084). The
   calibration line is closed.
 
+- Add an uncertainty-aware transition ensemble. Ensemble disagreement is
+  informative (Spearman 0.320) and improves CEM from 166/0.20 to 184/0.40, but
+  remains far below true CEM 442/1.00 (0085).
+
 ## [0.3.0] — 2026-11-24
 
 0.3.0 adds the planning, calibration, and causal decision surfaces, freezes

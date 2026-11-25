@@ -118,6 +118,37 @@ H1 passes; H2/H3/H4 fail. One-step accuracy does not survive the three-step
 rollout. See
 [`experiments/0083-transition-planning/summary.md`](../experiments/0083-transition-planning/summary.md).
 
+## Follow-up (0085)
+
+Experiment 0085 preregisters an uncertainty-aware transition ensemble:
+
+- 8 bootstrap ridge delta models;
+- CEM objective `mean − 1.0 × std` over member terminal scores;
+- same task, train/eval data, and formal seeds as 0083;
+- gates: uncertainty Spearman > 0.20, ensemble CEM ≥ single CEM + 10,
+  ensemble CEM ≥ true CEM − 10, success ≥ 0.60.
+
+See
+[`experiments/0085-transition-ensemble/preregistration.md`](../experiments/0085-transition-ensemble/preregistration.md).
+
+### Results (0085)
+
+8 bootstrap members, beta 1.0:
+
+| policy | mean score | success |
+|---|---:|---:|
+| CEM single model | 166 | 0.20 |
+| CEM ensemble | 184 | 0.40 |
+| CEM true | 442 | 1.00 |
+| oracle | 454 | 1.00 |
+
+One-step MSE 0.0191; uncertainty Spearman 0.320. H3 passes (+18 over single),
+but H4/H5 fail: the ensemble is still far below true CEM and success 0.60.
+See
+[`experiments/0085-transition-ensemble/summary.md`](../experiments/0085-transition-ensemble/summary.md).
+
+## Changelog
+
 - 2026-11-24 — task card created; planning baselines and gates defined.
 - 2026-11-24 — formal run: CEM true 454 = oracle; learned value model 166
   (negative).

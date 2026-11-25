@@ -275,6 +275,155 @@ def _done_accuracy(
     return float(np.mean(predicted == actual))
 
 
+@dataclass(frozen=True)
+class TransitionEnsembleConfig(TransitionPlanningConfig):
+    members: int = 8
+    beta: float = 1.0
+    ensemble_seed: int = 20261125
+
+    def __post_init__(self) -> None:
+        super().__post_init__()
+        if self.members <= 0:
+            raise ValueError("members must be positive")
+        if self.beta < 0.0:
+            raise ValueError("beta must be non-negative")
+
+
+class EnsembleTransitionModel:
+    """Bootstrap ensemble of ridge delta transition models."""
+
+    def __init__(self, models: list[DeltaTransitionModel]) -> None:
+        if not models:
+            raise ValueError("an ensemble needs at least one model")
+        self.models = models
+
+    @classmethod
+    def fit(
+        cls,
+        x: np.ndarray,
+        y: np.ndarray,
+        *,
+        members: int,
+        ridge: float,
+        seed: int,
+    ) -> EnsembleTransitionModel:
+        rng = np.random.default_rng(seed)
+        models: list[DeltaTransitionModel] = []
+        for _ in range(members):
+            indices = rng.integers(0, len(x), len(x))
+            model = DeltaTransitionModel(ridge=ridge)
+            model.fit(x[indices], y[indices])
+            models.append(model)
+        return cls(models)
+
+    def score_stats(
+        self,
+        state: np.ndarray,
+        actions: list[int],
+    ) -> tuple[float, float]:
+        scores = [model.score(state, actions) for model in self.models]
+        return float(np.mean(scores)), float(np.std(scores))
+
+    def mean_mse(self, x: np.ndarray, y: np.ndarray) -> float:
+        return float(
+            np.mean(
+                [
+                    np.mean(
+                        (
+                            model.predict_delta(x)[:, :STATE_DIM]
+                            - y[:, :STATE_DIM]
+                        )
+                        ** 2
+                    )
+                    for model in self.models
+                ]
+            )
+        )
+
+    def mean_done_accuracy(self, x: np.ndarray, y: np.ndarray) -> float:
+        return float(
+            np.mean(
+                [
+                    _done_accuracy(model, x, y)
+                    for model in self.models
+                ]
+            )
+        )
+
+
+def _spearman(left: list[float], right: list[float]) -> float:
+    if len(left) != len(right) or len(left) < 2:
+        return 0.0
+
+    def ranks(values: list[float]) -> np.ndarray:
+        order = np.argsort(np.argsort(np.asarray(values)))
+        return np.asarray(order, dtype=np.float64)
+
+    a = ranks(left)
+    b = ranks(right)
+    a -= a.mean()
+    b -= b.mean()
+    denominator = float(np.sqrt(np.sum(a**2) * np.sum(b**2)))
+    if denominator <= 0.0:
+        return 0.0
+    return float(np.sum(a * b) / denominator)
+
+
+def _ensemble_cem(
+    env: CrewReplanEnv,
+    seed: int,
+    cfg: TriagePlanningConfig,
+    rng: random.Random,
+    model: EnsembleTransitionModel,
+    beta: float,
+) -> tuple[float, tuple[int, int, int], float]:
+    observation, _, _ = _advance_to_warning(env, seed)
+    start_state = observation.copy()
+    probabilities = [
+        np.ones(16) / 16.0,
+        np.ones(4) / 4.0,
+        np.ones(4) / 4.0,
+    ]
+    best_score = -1.0
+    best_sequence = (0, 0, 0)
+    start = time.perf_counter()
+    for _ in range(cfg.iterations):
+        population: list[tuple[float, tuple[int, int, int]]] = []
+        for _ in range(cfg.population):
+            initial = int(
+                rng.choices(range(16), weights=probabilities[0].tolist())[0]
+            )
+            first = int(
+                rng.choices(range(4), weights=probabilities[1].tolist())[0]
+            )
+            second = int(
+                rng.choices(range(4), weights=probabilities[2].tolist())[0]
+            )
+            sequence = (initial, REPLAN_ACTIONS[first], REPLAN_ACTIONS[second])
+            actions = [sequence[0], sequence[1], sequence[2]]
+            mean, std = model.score_stats(start_state, actions)
+            objective = mean - beta * std
+            population.append((objective, sequence))
+            if objective > best_score:
+                best_score = objective
+                best_sequence = sequence
+        population.sort(reverse=True, key=lambda item: item[0])
+        elites = population[: cfg.elites]
+        for variable, size in enumerate((16, 4, 4)):
+            counts = np.ones(size, dtype=np.float64)
+            for _, sequence in elites:
+                if variable == 0:
+                    choice = sequence[0]
+                elif variable == 1:
+                    choice = REPLAN_ACTIONS.index(sequence[1])
+                else:
+                    choice = REPLAN_ACTIONS.index(sequence[2])
+                counts[choice] += 1.0
+            probabilities[variable] = counts / counts.sum()
+    true_score, _ = _run_sequence(env, best_sequence, seed)
+    return true_score, best_sequence, time.perf_counter() - start
+
+
 def _transition_cem(
     env: CrewReplanEnv,
     seed: int,
@@ -465,6 +614,196 @@ def run_transition_planning(
         },
         "results": summary,
     }
+
+
+def run_transition_ensemble(
+    cfg: TransitionEnsembleConfig | None = None,
+) -> dict[str, Any]:
+    cfg = cfg or TransitionEnsembleConfig()
+    triage = cfg.triage()
+    env = CrewReplanEnv(_factory_config(), _replan_config())
+    train_x, train_y, _ = _collect_data(
+        env,
+        seed_start=cfg.train_seed_start,
+        episodes=cfg.train_seeds,
+        max_sequences=cfg.max_sequences,
+    )
+    single = DeltaTransitionModel(cfg.ridge)
+    single.fit(train_x, train_y)
+    ensemble = EnsembleTransitionModel.fit(
+        train_x,
+        train_y,
+        members=cfg.members,
+        ridge=cfg.ridge,
+        seed=cfg.ensemble_seed,
+    )
+    eval_x, eval_y, eval_rollouts = _collect_data(
+        env,
+        seed_start=cfg.eval_seed_start,
+        episodes=cfg.eval_seeds,
+        max_sequences=cfg.max_sequences,
+    )
+    one_step_mse = ensemble.mean_mse(eval_x, eval_y)
+    copy_mse = _copy_mse(eval_x, eval_y)
+    done_accuracy = ensemble.mean_done_accuracy(eval_x, eval_y)
+    ensemble_means: list[float] = []
+    ensemble_stds: list[float] = []
+    absolute_errors: list[float] = []
+    for state, actions, score in eval_rollouts:
+        mean, std = ensemble.score_stats(state, actions)
+        ensemble_means.append(mean)
+        ensemble_stds.append(std)
+        absolute_errors.append(abs(mean - score))
+    rollout_mse = float(
+        np.mean(
+            [
+                (mean - score) ** 2
+                for mean, (_, _, score) in zip(
+                    ensemble_means, eval_rollouts, strict=True
+                )
+            ]
+        )
+    )
+    uncertainty_spearman = _spearman(ensemble_stds, absolute_errors)
+
+    results: dict[str, dict[str, Any]] = {
+        "scripted_greedy": {"scores": [], "sequences": [], "seconds": []},
+        "scripted_aware": {"scores": [], "sequences": [], "seconds": []},
+        "random_shooting_true": {
+            "scores": [],
+            "sequences": [],
+            "seconds": [],
+        },
+        "cem_true": {"scores": [], "sequences": [], "seconds": []},
+        "cem_single": {"scores": [], "sequences": [], "seconds": []},
+        "cem_ensemble": {"scores": [], "sequences": [], "seconds": []},
+        "oracle": {"scores": [], "sequences": [], "seconds": []},
+    }
+    rng = random.Random(20261125)
+    for seed in cfg.planning_seeds:
+        for name, policy in (
+            ("scripted_greedy", ParallelGreedyPolicy()),
+            ("scripted_aware", RecallAwarePolicy()),
+        ):
+            start = time.perf_counter()
+            metrics = evaluate_policy(env, policy, episodes=1, seed=seed)
+            results[name]["scores"].append(metrics.mean_score)
+            results[name]["sequences"].append([])
+            results[name]["seconds"].append(time.perf_counter() - start)
+
+        score, sequence, seconds = _random_shooting(env, seed, triage, rng)
+        results["random_shooting_true"]["scores"].append(score)
+        results["random_shooting_true"]["sequences"].append(list(sequence))
+        results["random_shooting_true"]["seconds"].append(seconds)
+
+        score, sequence, seconds = _cem(env, seed, triage, rng, None)
+        results["cem_true"]["scores"].append(score)
+        results["cem_true"]["sequences"].append(list(sequence))
+        results["cem_true"]["seconds"].append(seconds)
+
+        score, sequence, seconds = _transition_cem(
+            env, seed, triage, rng, single
+        )
+        results["cem_single"]["scores"].append(score)
+        results["cem_single"]["sequences"].append(list(sequence))
+        results["cem_single"]["seconds"].append(seconds)
+
+        score, sequence, seconds = _ensemble_cem(
+            env, seed, triage, rng, ensemble, cfg.beta
+        )
+        results["cem_ensemble"]["scores"].append(score)
+        results["cem_ensemble"]["sequences"].append(list(sequence))
+        results["cem_ensemble"]["seconds"].append(seconds)
+
+        start = time.perf_counter()
+        score, sequence = _oracle(env, seed)
+        results["oracle"]["scores"].append(score)
+        results["oracle"]["sequences"].append(list(sequence))
+        results["oracle"]["seconds"].append(time.perf_counter() - start)
+
+    summary = {
+        name: _summary([float(value) for value in payload["scores"]])
+        for name, payload in results.items()
+    }
+    for name, payload in results.items():
+        summary[name]["sequences"] = payload["sequences"]
+        summary[name]["mean_seconds"] = float(np.mean(payload["seconds"]))
+    return {
+        "task": "factory.planning.triage.v1",
+        "model": {
+            "type": "ridge_delta_ensemble",
+            "ridge": cfg.ridge,
+            "members": cfg.members,
+            "beta": cfg.beta,
+            "ensemble_seed": cfg.ensemble_seed,
+            "train_transitions": int(len(train_x)),
+            "eval_transitions": int(len(eval_x)),
+            "one_step_mse": one_step_mse,
+            "copy_mse": copy_mse,
+            "done_accuracy": done_accuracy,
+            "rollout_mse": rollout_mse,
+            "uncertainty_spearman": uncertainty_spearman,
+            "observation_features": STATE_DIM,
+        },
+        "config": {
+            "population": cfg.population,
+            "elites": cfg.elites,
+            "iterations": cfg.iterations,
+            "random_samples": cfg.random_samples,
+            "train_seeds": cfg.train_seeds,
+            "eval_seeds": cfg.eval_seeds,
+            "train_seed_start": cfg.train_seed_start,
+            "eval_seed_start": cfg.eval_seed_start,
+            "max_sequences": cfg.max_sequences,
+            "planning_seeds": list(cfg.planning_seeds),
+        },
+        "results": summary,
+    }
+
+
+def write_transition_ensemble_report(
+    out: str | Path,
+    report: dict[str, Any],
+) -> Path:
+    out = Path(out)
+    out.mkdir(parents=True, exist_ok=True)
+    (out / "transition_ensemble_results.json").write_text(
+        json.dumps(report, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    model = report["model"]
+    lines = [
+        "# Transition ensemble — three-bridge triage",
+        "",
+        f"Members {model['members']}; beta {model['beta']}; one-step MSE "
+        f"{model['one_step_mse']:.6f}; copy MSE {model['copy_mse']:.6f}; "
+        f"done accuracy {model['done_accuracy']:.3f}; rollout MSE "
+        f"{model['rollout_mse']:.2f}; uncertainty Spearman "
+        f"{model['uncertainty_spearman']:.3f}.",
+        "",
+        "| policy | mean score | 95% CI | success | seconds |",
+        "|---|---:|---:|---:|---:|",
+    ]
+    for name, row in report["results"].items():
+        lines.append(
+            f"| {name} | {row['mean_score']:.2f} "
+            f"[{row['score_ci'][0]:.2f}, {row['score_ci'][1]:.2f}] | "
+            f"{row['success_rate']:.2f} | {row['mean_seconds']:.3f} |"
+        )
+    lines.extend(
+        [
+            "",
+            "CEM ensemble sequences: "
+            + ", ".join(
+                str(sequence)
+                for sequence in report["results"]["cem_ensemble"]["sequences"]
+            ),
+        ]
+    )
+    (out / "transition_ensemble_report.md").write_text(
+        "\n".join(lines), encoding="utf-8"
+    )
+    return out / "transition_ensemble_report.md"
 
 
 def write_transition_planning_report(

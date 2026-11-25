@@ -5,8 +5,10 @@ import numpy as np
 from fabline.env.crew_replan import CrewReplanEnv
 from fabline.harness.planning_transition import (
     DeltaTransitionModel,
+    EnsembleTransitionModel,
     _action_index,
     _encode,
+    _spearman,
     _trace_sequence,
 )
 from fabline.harness.planning_triage import _factory_config, _replan_config
@@ -40,6 +42,25 @@ def test_delta_transition_model_fits_and_clips() -> None:
     assert np.all(next_state <= 1.0)
     score = model.score(np.full(25, 0.5), [0, 0, 0])
     assert np.isfinite(score)
+
+
+def test_transition_ensemble_fits_and_scores() -> None:
+    rng = np.random.default_rng(1)
+    x = rng.normal(size=(64, 48))
+    y = np.zeros((64, 26))
+    y[:, :25] = 0.01 * x[:, :25]
+    ensemble = EnsembleTransitionModel.fit(
+        x,
+        y,
+        members=3,
+        ridge=1.0,
+        seed=0,
+    )
+    mean, std = ensemble.score_stats(np.full(25, 0.5), [0, 0, 0])
+    assert np.isfinite(mean)
+    assert std >= 0.0
+    assert ensemble.mean_mse(x, y) >= 0.0
+    assert _spearman([1.0, 2.0, 3.0], [1.0, 2.0, 3.0]) > 0.9
 
 
 def test_transition_trace_has_three_decisions() -> None:

@@ -131,5 +131,7 @@ The current frozen benchmark is documented separately in
 
 - [0084 — Maintenance-risk calibration](0084-maintenance-calibration/summary.md) — mixed; diagnostics GBDT ECE 0.0054, full view 0.0929.
 
+- [0085 — Uncertainty-aware transition ensemble](0085-transition-ensemble/summary.md) — mixed; single 166/0.20, ensemble 184/0.40, true CEM 442/1.00.
+
 The `factory-v0.2` freeze review is in
 [`benchmarks/factory-v0.2/freeze-review.md`](../../benchmarks/factory-v0.2/freeze-review.md).

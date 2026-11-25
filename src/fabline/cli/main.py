@@ -121,8 +121,11 @@ from fabline.harness.multi_crew import (
     write_multi_crew_report,
 )
 from fabline.harness.planning_transition import (
+    TransitionEnsembleConfig,
     TransitionPlanningConfig,
+    run_transition_ensemble,
     run_transition_planning,
+    write_transition_ensemble_report,
     write_transition_planning_report,
 )
 from fabline.harness.planning_triage import (
@@ -941,6 +944,50 @@ def cmd_planning_transition(args: argparse.Namespace) -> int:
     report = run_transition_planning(config)
     out = Path(args.out)
     write_transition_planning_report(out, report)
+    print(
+        json.dumps(
+            {
+                "task": report["task"],
+                "out": str(out),
+                "model": report["model"],
+                "results": {
+                    name: {
+                        "mean_score": row["mean_score"],
+                        "success_rate": row["success_rate"],
+                        "mean_seconds": row["mean_seconds"],
+                    }
+                    for name, row in report["results"].items()
+                },
+            },
+            indent=2,
+            sort_keys=True,
+        )
+    )
+    return 0
+
+
+def cmd_planning_transition_ensemble(args: argparse.Namespace) -> int:
+    config = TransitionEnsembleConfig(
+        population=args.population,
+        elites=args.elites,
+        iterations=args.iterations,
+        random_samples=args.random_samples,
+        train_seeds=args.train_seeds,
+        eval_seeds=args.eval_seeds,
+        ridge=args.ridge,
+        max_sequences=args.max_sequences,
+        train_seed_start=args.train_seed_start,
+        eval_seed_start=args.eval_seed_start,
+        planning_seeds=tuple(
+            int(value) for value in args.seeds.split(",")
+        ),
+        members=args.members,
+        beta=args.beta,
+        ensemble_seed=args.ensemble_seed,
+    )
+    report = run_transition_ensemble(config)
+    out = Path(args.out)
+    write_transition_ensemble_report(out, report)
     print(
         json.dumps(
             {
@@ -2693,6 +2740,53 @@ def build_parser() -> argparse.ArgumentParser:
         "--random-samples", type=int, default=128
     )
     planning_transition.set_defaults(func=cmd_planning_transition)
+
+    planning_transition_ensemble = subparsers.add_parser(
+        "planning-transition-ensemble",
+        help="run uncertainty-aware transition-ensemble CEM",
+    )
+    planning_transition_ensemble.add_argument(
+        "--out", type=str, default="results/planning-transition-ensemble"
+    )
+    planning_transition_ensemble.add_argument(
+        "--seeds", type=str, default="49000,49001,49002,49003,49004"
+    )
+    planning_transition_ensemble.add_argument(
+        "--train-seed-start", type=int, default=52000
+    )
+    planning_transition_ensemble.add_argument(
+        "--eval-seed-start", type=int, default=53000
+    )
+    planning_transition_ensemble.add_argument(
+        "--train-seeds", type=int, default=8
+    )
+    planning_transition_ensemble.add_argument(
+        "--eval-seeds", type=int, default=2
+    )
+    planning_transition_ensemble.add_argument("--ridge", type=float, default=1.0)
+    planning_transition_ensemble.add_argument(
+        "--max-sequences", type=int, default=256
+    )
+    planning_transition_ensemble.add_argument(
+        "--members", type=int, default=8
+    )
+    planning_transition_ensemble.add_argument("--beta", type=float, default=1.0)
+    planning_transition_ensemble.add_argument(
+        "--ensemble-seed", type=int, default=20261125
+    )
+    planning_transition_ensemble.add_argument(
+        "--population", type=int, default=32
+    )
+    planning_transition_ensemble.add_argument("--elites", type=int, default=8)
+    planning_transition_ensemble.add_argument(
+        "--iterations", type=int, default=6
+    )
+    planning_transition_ensemble.add_argument(
+        "--random-samples", type=int, default=128
+    )
+    planning_transition_ensemble.set_defaults(
+        func=cmd_planning_transition_ensemble
+    )
 
     contract_board = subparsers.add_parser(
         "contract-board",
