@@ -92,6 +92,26 @@ def _encode(state: np.ndarray, phase: int, action: int) -> np.ndarray:
     return encoded
 
 
+PAIR_DIM = STATE_DIM + PHASE_DIM + ACTION_DIM * 2
+
+
+def _encode_pair(
+    state: np.ndarray,
+    phase: int,
+    action: int,
+    next_action: int,
+) -> np.ndarray:
+    encoded = np.zeros(PAIR_DIM, dtype=np.float64)
+    encoded[:STATE_DIM] = state
+    encoded[STATE_DIM + phase] = 1.0
+    encoded[STATE_DIM + PHASE_DIM + _action_index(phase, action)] = 1.0
+    encoded[
+        STATE_DIM + PHASE_DIM + ACTION_DIM
+        + _action_index(phase + 1, next_action)
+    ] = 1.0
+    return encoded
+
+
 def _advance_to_warning(
     env: CrewReplanEnv,
     seed: int,
@@ -189,6 +209,46 @@ def _collect_data(
         rollouts,
     )
 
+def _collect_pairs(
+    env: CrewReplanEnv,
+    *,
+    seed_start: int,
+    episodes: int,
+    max_sequences: int = 256,
+) -> tuple[np.ndarray, np.ndarray, list[tuple[np.ndarray, list[int], float]]]:
+    x_rows: list[np.ndarray] = []
+    y_rows: list[np.ndarray] = []
+    rollouts: list[tuple[np.ndarray, list[int], float]] = []
+    sequences = _all_sequences()[:max_sequences]
+    for offset in range(episodes):
+        seed = seed_start + offset
+        for sequence in sequences:
+            score, states, actions, next_states, dones = _trace_sequence(
+                env, sequence, seed
+            )
+            if not states:
+                continue
+            for index in range(len(states) - 1):
+                delta = next_states[index + 1] - states[index]
+                target = np.concatenate(
+                    [
+                        delta,
+                        np.asarray([1.0 if dones[index + 1] else 0.0]),
+                    ]
+                )
+                x_rows.append(
+                    _encode_pair(
+                        states[index],
+                        index,
+                        actions[index],
+                        actions[index + 1],
+                    )
+                )
+                y_rows.append(target)
+            rollouts.append((states[0].copy(), list(actions), score))
+    return np.stack(x_rows), np.stack(y_rows), rollouts
+
+
 class DeltaTransitionModel:
     """Ridge model of the next decision state."""
 
@@ -248,6 +308,49 @@ class DeltaTransitionModel:
             current, done = self.predict_step(current, phase, action)
             if done:
                 break
+        return float(current[SCORE_INDEX] * 500.0)
+
+
+class TwoStepDeltaModel(DeltaTransitionModel):
+    """Ridge model of a two-decision transition."""
+
+    def predict_pair(
+        self,
+        state: np.ndarray,
+        phase: int,
+        action: int,
+        next_action: int,
+    ) -> tuple[np.ndarray, bool]:
+        encoded = _encode_pair(
+            state, phase, action, next_action
+        ).reshape(1, -1)
+        prediction = self.predict_delta(encoded)[0]
+        predicted = state + prediction[:STATE_DIM]
+        next_state = np.asarray(
+            np.clip(predicted, 0.0, 1.0), dtype=np.float64
+        )
+        return next_state, bool(prediction[-1] > 0.5)
+
+    def score_pair(
+        self,
+        state: np.ndarray,
+        actions: list[int],
+        one_step: DeltaTransitionModel,
+    ) -> float:
+        current = state
+        if len(actions) >= 2:
+            current, done = self.predict_pair(
+                current, 0, actions[0], actions[1]
+            )
+            if done or len(actions) == 2:
+                return float(current[SCORE_INDEX] * 500.0)
+            current = one_step.predict_step(
+                current, 2, actions[2]
+            )[0]
+        elif actions:
+            current = one_step.predict_step(
+                current, 0, actions[0]
+            )[0]
         return float(current[SCORE_INDEX] * 500.0)
 
 
@@ -422,6 +525,251 @@ def _ensemble_cem(
             probabilities[variable] = counts / counts.sum()
     true_score, _ = _run_sequence(env, best_sequence, seed)
     return true_score, best_sequence, time.perf_counter() - start
+
+
+def _two_step_cem(
+    env: CrewReplanEnv,
+    seed: int,
+    cfg: TriagePlanningConfig,
+    rng: random.Random,
+    two_step: TwoStepDeltaModel,
+    one_step: DeltaTransitionModel,
+) -> tuple[float, tuple[int, int, int], float]:
+    observation, _, _ = _advance_to_warning(env, seed)
+    start_state = observation.copy()
+    probabilities = [
+        np.ones(16) / 16.0,
+        np.ones(4) / 4.0,
+        np.ones(4) / 4.0,
+    ]
+    best_score = -1.0
+    best_sequence = (0, 0, 0)
+    start = time.perf_counter()
+    for _ in range(cfg.iterations):
+        population: list[tuple[float, tuple[int, int, int]]] = []
+        for _ in range(cfg.population):
+            initial = int(
+                rng.choices(range(16), weights=probabilities[0].tolist())[0]
+            )
+            first = int(
+                rng.choices(range(4), weights=probabilities[1].tolist())[0]
+            )
+            second = int(
+                rng.choices(range(4), weights=probabilities[2].tolist())[0]
+            )
+            sequence = (initial, REPLAN_ACTIONS[first], REPLAN_ACTIONS[second])
+            predicted = two_step.score_pair(
+                start_state,
+                [sequence[0], sequence[1], sequence[2]],
+                one_step,
+            )
+            population.append((predicted, sequence))
+            if predicted > best_score:
+                best_score = predicted
+                best_sequence = sequence
+        population.sort(reverse=True, key=lambda item: item[0])
+        elites = population[: cfg.elites]
+        for variable, size in enumerate((16, 4, 4)):
+            counts = np.ones(size, dtype=np.float64)
+            for _, sequence in elites:
+                if variable == 0:
+                    choice = sequence[0]
+                elif variable == 1:
+                    choice = REPLAN_ACTIONS.index(sequence[1])
+                else:
+                    choice = REPLAN_ACTIONS.index(sequence[2])
+                counts[choice] += 1.0
+            probabilities[variable] = counts / counts.sum()
+    true_score, _ = _run_sequence(env, best_sequence, seed)
+    return true_score, best_sequence, time.perf_counter() - start
+
+
+def run_transition_two_step(
+    cfg: TransitionPlanningConfig | None = None,
+) -> dict[str, Any]:
+    cfg = cfg or TransitionPlanningConfig()
+    triage = cfg.triage()
+    env = CrewReplanEnv(_factory_config(), _replan_config())
+    train_x, train_y, _ = _collect_data(
+        env,
+        seed_start=cfg.train_seed_start,
+        episodes=cfg.train_seeds,
+        max_sequences=cfg.max_sequences,
+    )
+    pair_x, pair_y, _ = _collect_pairs(
+        env,
+        seed_start=cfg.train_seed_start,
+        episodes=cfg.train_seeds,
+        max_sequences=cfg.max_sequences,
+    )
+    one_step = DeltaTransitionModel(cfg.ridge)
+    one_step.fit(train_x, train_y)
+    two_step = TwoStepDeltaModel(cfg.ridge)
+    two_step.fit(pair_x, pair_y)
+    eval_x, eval_y, eval_rollouts = _collect_data(
+        env,
+        seed_start=cfg.eval_seed_start,
+        episodes=cfg.eval_seeds,
+        max_sequences=cfg.max_sequences,
+    )
+    eval_pair_x, eval_pair_y, eval_pair_rollouts = _collect_pairs(
+        env,
+        seed_start=cfg.eval_seed_start,
+        episodes=cfg.eval_seeds,
+        max_sequences=cfg.max_sequences,
+    )
+    one_step_mse = _transition_mse(one_step, eval_x, eval_y)
+    pair_mse = _transition_mse(two_step, eval_pair_x, eval_pair_y)
+    pair_copy_mse = _copy_mse(eval_pair_x, eval_pair_y)
+    pair_done_accuracy = _done_accuracy(two_step, eval_pair_x, eval_pair_y)
+    rollout_mse = float(
+        np.mean(
+            [
+                (
+                    two_step.score_pair(state, actions, one_step) - score
+                )
+                ** 2
+                for state, actions, score in eval_pair_rollouts
+            ]
+        )
+    )
+
+    results: dict[str, dict[str, Any]] = {
+        "scripted_greedy": {"scores": [], "sequences": [], "seconds": []},
+        "scripted_aware": {"scores": [], "sequences": [], "seconds": []},
+        "random_shooting_true": {
+            "scores": [],
+            "sequences": [],
+            "seconds": [],
+        },
+        "cem_true": {"scores": [], "sequences": [], "seconds": []},
+        "cem_single": {"scores": [], "sequences": [], "seconds": []},
+        "cem_two_step": {"scores": [], "sequences": [], "seconds": []},
+        "oracle": {"scores": [], "sequences": [], "seconds": []},
+    }
+    rng = random.Random(20261126)
+    for seed in cfg.planning_seeds:
+        for name, policy in (
+            ("scripted_greedy", ParallelGreedyPolicy()),
+            ("scripted_aware", RecallAwarePolicy()),
+        ):
+            start = time.perf_counter()
+            metrics = evaluate_policy(env, policy, episodes=1, seed=seed)
+            results[name]["scores"].append(metrics.mean_score)
+            results[name]["sequences"].append([])
+            results[name]["seconds"].append(time.perf_counter() - start)
+
+        score, sequence, seconds = _random_shooting(env, seed, triage, rng)
+        results["random_shooting_true"]["scores"].append(score)
+        results["random_shooting_true"]["sequences"].append(list(sequence))
+        results["random_shooting_true"]["seconds"].append(seconds)
+
+        score, sequence, seconds = _cem(env, seed, triage, rng, None)
+        results["cem_true"]["scores"].append(score)
+        results["cem_true"]["sequences"].append(list(sequence))
+        results["cem_true"]["seconds"].append(seconds)
+
+        score, sequence, seconds = _transition_cem(
+            env, seed, triage, rng, one_step
+        )
+        results["cem_single"]["scores"].append(score)
+        results["cem_single"]["sequences"].append(list(sequence))
+        results["cem_single"]["seconds"].append(seconds)
+
+        score, sequence, seconds = _two_step_cem(
+            env, seed, triage, rng, two_step, one_step
+        )
+        results["cem_two_step"]["scores"].append(score)
+        results["cem_two_step"]["sequences"].append(list(sequence))
+        results["cem_two_step"]["seconds"].append(seconds)
+
+        start = time.perf_counter()
+        score, sequence = _oracle(env, seed)
+        results["oracle"]["scores"].append(score)
+        results["oracle"]["sequences"].append(list(sequence))
+        results["oracle"]["seconds"].append(time.perf_counter() - start)
+
+    summary = {
+        name: _summary([float(value) for value in payload["scores"]])
+        for name, payload in results.items()
+    }
+    for name, payload in results.items():
+        summary[name]["sequences"] = payload["sequences"]
+        summary[name]["mean_seconds"] = float(np.mean(payload["seconds"]))
+    return {
+        "task": "factory.planning.triage.v1",
+        "model": {
+            "type": "ridge_delta_two_step",
+            "ridge": cfg.ridge,
+            "train_transitions": int(len(train_x)),
+            "train_pairs": int(len(pair_x)),
+            "eval_transitions": int(len(eval_x)),
+            "eval_pairs": int(len(eval_pair_x)),
+            "one_step_mse": one_step_mse,
+            "pair_mse": pair_mse,
+            "pair_copy_mse": pair_copy_mse,
+            "pair_done_accuracy": pair_done_accuracy,
+            "rollout_mse": rollout_mse,
+            "observation_features": STATE_DIM,
+        },
+        "config": {
+            "population": cfg.population,
+            "elites": cfg.elites,
+            "iterations": cfg.iterations,
+            "random_samples": cfg.random_samples,
+            "train_seeds": cfg.train_seeds,
+            "eval_seeds": cfg.eval_seeds,
+            "train_seed_start": cfg.train_seed_start,
+            "eval_seed_start": cfg.eval_seed_start,
+            "max_sequences": cfg.max_sequences,
+            "planning_seeds": list(cfg.planning_seeds),
+        },
+        "results": summary,
+    }
+
+
+def write_transition_two_step_report(
+    out: str | Path,
+    report: dict[str, Any],
+) -> Path:
+    out = Path(out)
+    out.mkdir(parents=True, exist_ok=True)
+    (out / "transition_two_step_results.json").write_text(
+        json.dumps(report, indent=2, sort_keys=True) + "\n",
+        encoding="utf-8",
+    )
+    model = report["model"]
+    lines = [
+        "# Two-step transition planning — three-bridge triage",
+        "",
+        f"One-step MSE {model['one_step_mse']:.6f}; pair MSE "
+        f"{model['pair_mse']:.6f} vs pair copy {model['pair_copy_mse']:.6f}; "
+        f"pair done accuracy {model['pair_done_accuracy']:.3f}; rollout MSE "
+        f"{model['rollout_mse']:.2f}.",
+        "",
+        "| policy | mean score | 95% CI | success | seconds |",
+        "|---|---:|---:|---:|---:|",
+    ]
+    for name, row in report["results"].items():
+        lines.append(
+            f"| {name} | {row['mean_score']:.2f} "
+            f"[{row['score_ci'][0]:.2f}, {row['score_ci'][1]:.2f}] | "
+            f"{row['success_rate']:.2f} | {row['mean_seconds']:.3f} |"
+        )
+    lines.extend(
+        [
+            "",
+            "CEM two-step sequences: "
+            + ", ".join(
+                str(sequence)
+                for sequence in report["results"]["cem_two_step"]["sequences"]
+            ),
+        ]
+    )
+    (out / "transition_two_step_report.md").write_text(
+        "\n".join(lines), encoding="utf-8"
+    )
+    return out / "transition_two_step_report.md"
 
 
 def _transition_cem(

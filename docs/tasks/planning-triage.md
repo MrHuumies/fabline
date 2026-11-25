@@ -147,6 +147,32 @@ but H4/H5 fail: the ensemble is still far below true CEM and success 0.60.
 See
 [`experiments/0085-transition-ensemble/summary.md`](../experiments/0085-transition-ensemble/summary.md).
 
+## Follow-up (0086)
+
+Experiment 0086 preregisters a two-step transition model:
+
+- two-step ridge model over state + phase + first/second action;
+- one-step model handles the final action;
+- same data and formal seeds as 0083/0085;
+- gates: pair MSE < 0.5 × copy, two-step CEM ≥ single + 10, within 10 of true
+  CEM, success ≥ 0.60.
+
+See
+[`experiments/0086-transition-two-step/preregistration.md`](../experiments/0086-transition-two-step/preregistration.md).
+
+### Results (0086)
+
+| policy | mean score | success |
+|---|---:|---:|
+| CEM single model | 162 | 0.20 |
+| CEM two-step | 188 | 0.40 |
+| CEM true | 442 | 1.00 |
+| oracle | 454 | 1.00 |
+
+Pair MSE 0.0556 vs pair copy 0.1228. H1/H2 pass; H3/H4 fail. Two-step and the
+0085 ensemble converge at 0.40 success, suggesting a linear-model ceiling. See
+[`experiments/0086-transition-two-step/summary.md`](../experiments/0086-transition-two-step/summary.md).
+
 ## Changelog
 
 - 2026-11-24 — task card created; planning baselines and gates defined.

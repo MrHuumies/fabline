@@ -6,8 +6,10 @@ from fabline.env.crew_replan import CrewReplanEnv
 from fabline.harness.planning_transition import (
     DeltaTransitionModel,
     EnsembleTransitionModel,
+    TwoStepDeltaModel,
     _action_index,
     _encode,
+    _encode_pair,
     _spearman,
     _trace_sequence,
 )
@@ -22,6 +24,32 @@ def test_transition_encoding_layout() -> None:
     assert encoded[28 + 5] == 1.0
     assert _action_index(1, 4) == 17
     assert _action_index(2, 12) == 19
+
+
+def test_pair_encoding_layout() -> None:
+    encoded = _encode_pair(np.zeros(25), phase=0, action=5, next_action=4)
+    assert encoded.shape == (68,)
+    assert encoded[25] == 1.0
+    assert encoded[28 + 5] == 1.0
+    assert encoded[48 + 17] == 1.0
+
+
+def test_two_step_model_fits_and_scores() -> None:
+    rng = np.random.default_rng(2)
+    x = rng.normal(size=(64, 68))
+    y = np.zeros((64, 26))
+    y[:, :25] = 0.01 * x[:, :25]
+    two_step = TwoStepDeltaModel(ridge=1.0)
+    two_step.fit(x, y)
+    state, done = two_step.predict_pair(np.full(25, 0.5), 0, 0, 0)
+    assert state.shape == (25,)
+    assert isinstance(done, bool)
+    one_step = DeltaTransitionModel(ridge=1.0)
+    one_step.fit(x[:, :48], y)
+    score = two_step.score_pair(
+        np.full(25, 0.5), [0, 0, 0], one_step
+    )
+    assert np.isfinite(score)
 
 
 def test_delta_transition_model_fits_and_clips() -> None:

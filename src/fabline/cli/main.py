@@ -125,8 +125,10 @@ from fabline.harness.planning_transition import (
     TransitionPlanningConfig,
     run_transition_ensemble,
     run_transition_planning,
+    run_transition_two_step,
     write_transition_ensemble_report,
     write_transition_planning_report,
+    write_transition_two_step_report,
 )
 from fabline.harness.planning_triage import (
     TriagePlanningConfig,
@@ -988,6 +990,47 @@ def cmd_planning_transition_ensemble(args: argparse.Namespace) -> int:
     report = run_transition_ensemble(config)
     out = Path(args.out)
     write_transition_ensemble_report(out, report)
+    print(
+        json.dumps(
+            {
+                "task": report["task"],
+                "out": str(out),
+                "model": report["model"],
+                "results": {
+                    name: {
+                        "mean_score": row["mean_score"],
+                        "success_rate": row["success_rate"],
+                        "mean_seconds": row["mean_seconds"],
+                    }
+                    for name, row in report["results"].items()
+                },
+            },
+            indent=2,
+            sort_keys=True,
+        )
+    )
+    return 0
+
+
+def cmd_planning_transition_two_step(args: argparse.Namespace) -> int:
+    config = TransitionPlanningConfig(
+        population=args.population,
+        elites=args.elites,
+        iterations=args.iterations,
+        random_samples=args.random_samples,
+        train_seeds=args.train_seeds,
+        eval_seeds=args.eval_seeds,
+        ridge=args.ridge,
+        max_sequences=args.max_sequences,
+        train_seed_start=args.train_seed_start,
+        eval_seed_start=args.eval_seed_start,
+        planning_seeds=tuple(
+            int(value) for value in args.seeds.split(",")
+        ),
+    )
+    report = run_transition_two_step(config)
+    out = Path(args.out)
+    write_transition_two_step_report(out, report)
     print(
         json.dumps(
             {
@@ -2786,6 +2829,48 @@ def build_parser() -> argparse.ArgumentParser:
     )
     planning_transition_ensemble.set_defaults(
         func=cmd_planning_transition_ensemble
+    )
+
+    planning_transition_two_step = subparsers.add_parser(
+        "planning-transition-two-step",
+        help="run two-step transition CEM on three-bridge triage",
+    )
+    planning_transition_two_step.add_argument(
+        "--out", type=str, default="results/planning-transition-two-step"
+    )
+    planning_transition_two_step.add_argument(
+        "--seeds", type=str, default="49000,49001,49002,49003,49004"
+    )
+    planning_transition_two_step.add_argument(
+        "--train-seed-start", type=int, default=52000
+    )
+    planning_transition_two_step.add_argument(
+        "--eval-seed-start", type=int, default=53000
+    )
+    planning_transition_two_step.add_argument(
+        "--train-seeds", type=int, default=8
+    )
+    planning_transition_two_step.add_argument(
+        "--eval-seeds", type=int, default=2
+    )
+    planning_transition_two_step.add_argument(
+        "--ridge", type=float, default=1.0
+    )
+    planning_transition_two_step.add_argument(
+        "--max-sequences", type=int, default=256
+    )
+    planning_transition_two_step.add_argument(
+        "--population", type=int, default=32
+    )
+    planning_transition_two_step.add_argument("--elites", type=int, default=8)
+    planning_transition_two_step.add_argument(
+        "--iterations", type=int, default=6
+    )
+    planning_transition_two_step.add_argument(
+        "--random-samples", type=int, default=128
+    )
+    planning_transition_two_step.set_defaults(
+        func=cmd_planning_transition_two_step
     )
 
     contract_board = subparsers.add_parser(

@@ -133,5 +133,7 @@ The current frozen benchmark is documented separately in
 
 - [0085 — Uncertainty-aware transition ensemble](0085-transition-ensemble/summary.md) — mixed; single 166/0.20, ensemble 184/0.40, true CEM 442/1.00.
 
+- [0086 — Two-step transition planning](0086-transition-two-step/summary.md) — mixed; two-step 188/0.40 vs single 162/0.20, true CEM 442/1.00.
+
 The `factory-v0.2` freeze review is in
 [`benchmarks/factory-v0.2/freeze-review.md`](../../benchmarks/factory-v0.2/freeze-review.md).

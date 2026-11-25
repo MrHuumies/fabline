@@ -26,6 +26,10 @@ are pinned separately; see [`benchmarks/factory-v0.2/card.md`](benchmarks/factor
   informative (Spearman 0.320) and improves CEM from 166/0.20 to 184/0.40, but
   remains far below true CEM 442/1.00 (0085).
 
+- Add a two-step transition model. It improves CEM from 162/0.20 to 188/0.40,
+  but still misses true CEM 442/1.00 (0086). The linear transition line is
+  closed.
+
 ## [0.3.0] — 2026-11-24
 
 0.3.0 adds the planning, calibration, and causal decision surfaces, freezes

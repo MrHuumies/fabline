@@ -36,6 +36,7 @@ decentralized reliability gate, not add another calibration or planning sweep.
 | 0083 | Transition planning | one-step MSE 0.0182 vs copy 0.0695; CEM 162/0.20 | negative: rollout error |
 | 0084 | Maintenance calibration | diagnostics GBDT ECE 0.0054; full view 0.0929 | mixed; H2 fails on full view |
 | 0085 | Transition ensemble | single 166/0.20; ensemble 184/0.40; true 442 | mixed; improvement, gate miss |
+| 0086 | Two-step transition | single 162/0.20; two-step 188/0.40; true 442 | mixed; linear ceiling |
 | — | `factory-v0.2` | 10 tasks, 159 core episodes | frozen |
 | — | Wizard | stdlib command runner + summary | shipped |
 
@@ -58,6 +59,9 @@ the pilots.
   (Spearman 0.320) and improves pessimistic CEM from 166/0.20 to 184/0.40, but
   remains far below true CEM 442/1.00. Pessimism helps; it does not solve
   rollout error.
+- A two-step transition model also improves CEM from 162/0.20 to 188/0.40, but
+  still misses true CEM 442/1.00. Two different fixes converge at 0.40 success;
+  the linear transition family is at its practical ceiling.
 - Build planning (0075) was too sparse under the current reward; removing it
   was correct.
 
@@ -120,10 +124,10 @@ the pilots.
 
 1. **Decentralized reliability.** Compact Q and tabular CTDE are both negative;
    the local-policy line is retired. Keep the task as oracle/scripted-only.
-2. **Transition world models.** True planning works. The ridge model (0083)
-   fails in rollout; an uncertainty ensemble (0085) improves but still misses
-   the gate. A multi-step or nonlinear model is the next new pre-registration,
-   not a tune of 0083/0085.
+2. **Transition world models.** True planning works. The linear family is
+   closed: one-step 162/0.20, uncertainty ensemble 184/0.40, two-step 188/0.40,
+   true CEM 442/1.00. A nonlinear model is a new pre-registration, not a tune
+   of 0083/0085/0086.
 3. **Maintenance calibration.** Delivered as a mixed result (0084): the
    diagnostics view is calibrated, the full maintenance view is not. The
    calibration line is closed; do not add another view.
@@ -136,29 +140,28 @@ the pilots.
 
 ## Recommended next slice
 
-**Choose the next research or release slice.** The decentralized line is closed
-(0081 compact Q 616/0.40; 0082 CTDE 248/0.00), the ridge transition model is
-negative in rollout (0083 CEM 162/0.20 vs true 454/1.00), maintenance
-calibration is mixed (0084: diagnostics ECE 0.0054, full view 0.0929), and the
-uncertainty ensemble improves but misses the gate (0085 CEM 184/0.40 vs true
-442/1.00). The calibration and ensemble-tuning lines are closed.
+**Generative pilot or release-quality work.** The decentralized line is closed
+(0081 compact Q 616/0.40; 0082 CTDE 248/0.00), maintenance calibration is mixed
+(0084: diagnostics ECE 0.0054, full view 0.0929), and the linear transition
+family has converged at 0.40 success (0083 162, 0085 184, 0086 188, true 442).
 
 Options:
 
-1. **Multi-step or nonlinear transition model.** A new pre-registration, not a
-   tune of 0083/0085. This is the cleanest world-model follow-up.
-2. **Generative layout/recipe pilot.** The optional 0.3.0 stretch, with a
-   validity/diversity gate and no new dependency.
-3. **Efficiency table and viewer QoL.** Release-quality work, not a new research
+1. **Generative layout/recipe pilot.** The optional 0.3.0 stretch, with a
+   validity/diversity gate and no new dependency. This is the remaining
+   research gap.
+2. **Efficiency table and viewer QoL.** Release-quality work, not a new research
    claim.
+3. **Nonlinear transition model.** Only as a new pre-registration; do not tune
+   the linear family.
 
 Deep/offline RL remains open but is larger. Do not add another calibration
-view, decentralized variant, one-step ridge model, or beta/K sweep.
+view, decentralized variant, linear transition model, or beta/K sweep.
 
 ## What not to do next
 
 - another compact-state Q or CTDE variant on this task;
-- tuning the 0083 ridge transition model or the 0085 beta/K ensemble;
+- tuning the 0083 ridge model, 0085 beta/K ensemble, or 0086 pair window;
 - another maintenance-calibration view or horizon;
 - another Q variant trained only on `factory-v0.2` seeds;
 - another visibility radius or report-budget sweep;
