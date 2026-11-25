@@ -33,6 +33,7 @@ decentralized reliability gate, not add another calibration or planning sweep.
 | 0079 | Causal removal | target GBDT R² 0.910 vs type-only −0.300 | positive intervention signal |
 | 0081 | Compact decentralized Q | compact 616/0.40 vs old 616/0.40 | negative representation/ensemble |
 | 0082 | CTDE | 248/0.00 vs local greedy 532/0.20 | negative; local-policy line retired |
+| 0083 | Transition planning | one-step MSE 0.0182 vs copy 0.0695; CEM 162/0.20 | negative: rollout error |
 | — | `factory-v0.2` | 10 tasks, 159 core episodes | frozen |
 | — | Wizard | stdlib command runner + summary | shipped |
 
@@ -47,8 +48,10 @@ the pilots.
 
 - A finite triage plan with a true simulator is a real planning task: CEM
   reaches the exhaustive oracle, and scripted/random policies are below it.
-- A ridge **value** model is not a world model. It is far below true CEM; the
-  world-model gap remains open.
+- A ridge **value** model is not a world model. It is far below true CEM.
+- A ridge **delta transition** model fits one-step transitions well (MSE 0.0182
+  vs copy 0.0695, done accuracy 1.000) but fails in rollout: CEM transition
+  162/0.20 vs true 454/1.00. Compounding error is the binding problem.
 - Build planning (0075) was too sparse under the current reward; removing it
   was correct.
 
@@ -108,8 +111,9 @@ the pilots.
 
 1. **Decentralized reliability.** Compact Q and tabular CTDE are both negative;
    the local-policy line is retired. Keep the task as oracle/scripted-only.
-2. **Transition world models.** True planning works; learning
-   `(state, action) -> next state` and rolling it out is still open.
+2. **Transition world models.** True planning works; the first ridge transition
+   model (0083) fails in rollout. Multi-step training or uncertainty is a new
+   pre-registration, not a fix to 0083.
 3. **Maintenance calibration.** The 0.3.0 RFC named fault and maintenance
    calibration; only fault onset was delivered.
 4. **Generative layout/recipe.** Optional pilot did not run.
@@ -121,24 +125,23 @@ the pilots.
 
 ## Recommended next slice
 
-**Transition-model planning on triage, or maintenance calibration.** The
-decentralized local-policy line is closed: compact Q is 616/0.40
-([0081](experiments/0081-decentralized-compact-q/summary.md)), and tabular CTDE
-is 248/0.00 ([0082](experiments/0082-decentralized-ctde/summary.md)), both
-against oracle 764/1.00. Keep the task as an oracle/scripted debug surface.
+**Maintenance calibration.** The decentralized local-policy line is closed
+(0081 compact Q 616/0.40; 0082 CTDE 248/0.00), and the first transition model is
+negative in rollout (0083 CEM 162/0.20 vs true 454/1.00). The cheap remaining
+gap is calibration on the existing preventive-maintenance task:
 
-The next slice should be one of:
+- add Brier, NLL, and ECE to the preventive-maintenance benchmark;
+- check whether the model has discrimination skill before reading calibration;
+- gate: ECE ≤ 0.05 on a skilled view, with the base-view caveat reported.
 
-- **transition-model planning:** learn `(state, action) -> next state`, roll out,
-  and compare with true CEM; or
-- **maintenance calibration:** add Brier/NLL/ECE to the existing preventive
-  maintenance task.
-
-Do not add another decentralized representation or critic variant.
+If maintenance calibration is saturated or near majority, report it as a
+negative/ceiling result. Do not add another decentralized variant or tune the
+0083 ridge model.
 
 ## What not to do next
 
 - another compact-state Q or CTDE variant on this task;
+- tuning the 0083 ridge transition model after its rollout failure;
 - another Q variant trained only on `factory-v0.2` seeds;
 - another visibility radius or report-budget sweep;
 - another fault/power calibration threshold;

@@ -127,5 +127,7 @@ The current frozen benchmark is documented separately in
 
 - [0082 — Centralized critic, decentralized actors](0082-decentralized-ctde/summary.md) — negative; CTDE 248/0.00 vs local greedy 532/0.20; local-policy line retired.
 
+- [0083 — Transition-model planning](0083-transition-planning/summary.md) — negative; one-step MSE 0.0182, CEM 162/0.20 vs true 454/1.00.
+
 The `factory-v0.2` freeze review is in
 [`benchmarks/factory-v0.2/freeze-review.md`](../../benchmarks/factory-v0.2/freeze-review.md).

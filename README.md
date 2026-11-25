@@ -67,6 +67,8 @@ make render-install
   `--dry-run`.
 - **Decentralized triage (debug):** private per-crew views and tabular Q
   baselines; the task is not in the frozen benchmark.
+- **Planning (debug):** true-simulator CEM and a learned transition-model CEM
+  on the three-bridge triage task.
 
 Every mechanic is opt-in. The frozen `factory-v0.1` benchmark remains available
 for provenance; `factory-v0.2` is the current benchmark.

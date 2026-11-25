@@ -277,8 +277,9 @@ removal; fault prediction, stochastic power, and next-state are diagnostics,
 and decentralized/generative are deferred. The
 [0.3.0 coverage review](coverage-review-0.3.0.md) tested compact
 relative-geometry Q plus an ensemble (0081, negative: 616/0.40) and tabular CTDE
-(0082, negative: 248/0.00); the local-policy line is retired. A transition world
-model or maintenance calibration is the next gap.
+(0082, negative: 248/0.00); the local-policy line is retired. Transition-model
+planning (0083) is negative in rollout (one-step MSE 0.0182, CEM 162/0.20 vs
+true 454/1.00); maintenance calibration is the next slice.
 
 ### P0 progress
 

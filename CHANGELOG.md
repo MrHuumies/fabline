@@ -14,6 +14,10 @@ are pinned separately; see [`benchmarks/factory-v0.2/card.md`](benchmarks/factor
   local-policy line is retired; the task remains an oracle/scripted debug
   surface.
 
+- Add a ridge delta transition model for triage planning. It fits one-step
+  transitions (MSE 0.0182 vs copy 0.0695) but fails in rollout: CEM 162/0.20
+  vs true CEM 454/1.00 (0083).
+
 ## [0.3.0] — 2026-11-24
 
 0.3.0 adds the planning, calibration, and causal decision surfaces, freezes
