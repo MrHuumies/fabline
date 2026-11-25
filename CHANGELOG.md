@@ -7,8 +7,12 @@ are pinned separately; see [`benchmarks/factory-v0.2/card.md`](benchmarks/factor
 
 - Add a compact relative-geometry Q baseline for decentralized triage. It is
   negative: compact Q, the old state, and the ensemble all score 616/0.40
-  against oracle 764/1.00 (0081). Next is centralized training with
-  decentralized execution.
+  against oracle 764/1.00 (0081).
+
+- Add a tabular centralized-critic, decentralized-actor baseline. It is also
+  negative: CTDE scores 248/0.00, below local greedy 532/0.20 (0082). The
+  local-policy line is retired; the task remains an oracle/scripted debug
+  surface.
 
 ## [0.3.0] — 2026-11-24
 

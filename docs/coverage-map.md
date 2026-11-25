@@ -276,10 +276,9 @@ tasks on 159 core episodes plus planning, fault calibration, and causal
 removal; fault prediction, stochastic power, and next-state are diagnostics,
 and decentralized/generative are deferred. The
 [0.3.0 coverage review](coverage-review-0.3.0.md) tested compact
-relative-geometry Q plus an ensemble for the decentralized reliability gate
-(0081, negative: 616/0.40, equal to the old state); the next step is centralized
-training with decentralized execution. A transition world model and maintenance
-calibration remain the next gaps.
+relative-geometry Q plus an ensemble (0081, negative: 616/0.40) and tabular CTDE
+(0082, negative: 248/0.00); the local-policy line is retired. A transition world
+model or maintenance calibration is the next gap.
 
 ### P0 progress
 

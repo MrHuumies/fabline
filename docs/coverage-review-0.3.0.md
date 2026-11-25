@@ -32,6 +32,7 @@ decentralized reliability gate, not add another calibration or planning sweep.
 | 0078 | Fault calibration | top-4 GBDT balanced 0.950, ECE 0.008 | positive on a skilled view |
 | 0079 | Causal removal | target GBDT R² 0.910 vs type-only −0.300 | positive intervention signal |
 | 0081 | Compact decentralized Q | compact 616/0.40 vs old 616/0.40 | negative representation/ensemble |
+| 0082 | CTDE | 248/0.00 vs local greedy 532/0.20 | negative; local-policy line retired |
 | — | `factory-v0.2` | 10 tasks, 159 core episodes | frozen |
 | — | Wizard | stdlib command runner + summary | shipped |
 
@@ -76,9 +77,12 @@ the pilots.
 - Compact relative-geometry Q and a three-policy ensemble do not change the
   learned policy: both score 616 with success 0.40, exactly matching the old
   state at equal budget.
+- A tabular centralized critic with count-based decentralized actors collapses
+  to noop-like behavior: 248/0.00, below local greedy. The local-policy line is
+  retired.
 - The local scripted success gate also fails (0.20–0.40), so the task is hard
   for both scripted and learned local policies.
-- The task is a valid debug task, but it is not freeze-ready.
+- The task is a valid debug oracle/scripted surface, but it is not freeze-ready.
 
 ### Benchmark and tooling
 
@@ -102,8 +106,8 @@ the pilots.
 
 ## Remaining gaps
 
-1. **Decentralized reliability.** Compact state is negative; centralized
-   training with decentralized execution is the next credible fix.
+1. **Decentralized reliability.** Compact Q and tabular CTDE are both negative;
+   the local-policy line is retired. Keep the task as oracle/scripted-only.
 2. **Transition world models.** True planning works; learning
    `(state, action) -> next state` and rolling it out is still open.
 3. **Maintenance calibration.** The 0.3.0 RFC named fault and maintenance
@@ -117,23 +121,24 @@ the pilots.
 
 ## Recommended next slice
 
-**Centralized training with decentralized execution on decentralized triage.**
-Compact Q is negative: [0081](experiments/0081-decentralized-compact-q/summary.md)
-scored 616/0.40 for compact Q, the old state, and the ensemble, against oracle
-764/1.00.
+**Transition-model planning on triage, or maintenance calibration.** The
+decentralized local-policy line is closed: compact Q is 616/0.40
+([0081](experiments/0081-decentralized-compact-q/summary.md)), and tabular CTDE
+is 248/0.00 ([0082](experiments/0082-decentralized-ctde/summary.md)), both
+against oracle 764/1.00. Keep the task as an oracle/scripted debug surface.
 
-- Keep the task, radius, seeds, and action space.
-- Train a centralized critic with the full state; execute per crew with the
-  private view.
-- Compare against local greedy, old private Q, compact Q, and the oracle.
-- Gate: success ≥ 0.60 and mean ≥ best local scripted + 10.
+The next slice should be one of:
 
-If CTDE also misses 0.60, retire the current local-policy line and report the
-task as oracle/scripted-only rather than adding another representation variant.
+- **transition-model planning:** learn `(state, action) -> next state`, roll out,
+  and compare with true CEM; or
+- **maintenance calibration:** add Brier/NLL/ECE to the existing preventive
+  maintenance task.
+
+Do not add another decentralized representation or critic variant.
 
 ## What not to do next
 
-- another compact-state Q variant on this task;
+- another compact-state Q or CTDE variant on this task;
 - another Q variant trained only on `factory-v0.2` seeds;
 - another visibility radius or report-budget sweep;
 - another fault/power calibration threshold;

@@ -125,5 +125,7 @@ The current frozen benchmark is documented separately in
 [`benchmarks/factory-v0.2/card.md`](../../benchmarks/factory-v0.2/card.md);
 `factory-v0.1` remains available for provenance.
 
+- [0082 — Centralized critic, decentralized actors](0082-decentralized-ctde/summary.md) — negative; CTDE 248/0.00 vs local greedy 532/0.20; local-policy line retired.
+
 The `factory-v0.2` freeze review is in
 [`benchmarks/factory-v0.2/freeze-review.md`](../../benchmarks/factory-v0.2/freeze-review.md).

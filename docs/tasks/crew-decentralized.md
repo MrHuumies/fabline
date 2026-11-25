@@ -3,8 +3,8 @@
 - **Task ID:** `factory.multiagent.decentralized.v1`
 - **Version:** 0.1.0
 - **Status:** P3 multi-agent task; formal local/global positive; Q mean positive;
-  success gate fails; compact-Q follow-up negative; deferred from
-  `factory-v0.2`
+  success gate fails; compact-Q and CTDE follow-ups negative; local-policy line
+  retired; deferred from `factory-v0.2`
 - **World:** factory-0.1.0, 48×24 spread layout, wired power
 - **Owner:** FABLINE
 - **Date:** 2026-11-24
@@ -111,6 +111,37 @@ H1/H2 pass; H3/H4 fail. The compact state and ensemble did not change the
 learned policy. The next slice is centralized training with decentralized
 execution, not another compact-state variant. See
 [`experiments/0081-decentralized-compact-q/summary.md`](../experiments/0081-decentralized-compact-q/summary.md).
+
+## Follow-up (0082)
+
+Experiment 0082 preregisters a centralized tabular critic with decentralized
+per-crew actors:
+
+- critic sees the compact full state during training;
+- actors use the 0081 compact private state at execution;
+- actor targets use the marginal critic value over the other crew's policy;
+- 1,000 training episodes per seed, Q seeds 0–2, formal seeds 56,000–56,004;
+- gates: CTDE success ≥ 0.60, mean ≥ best local scripted + 10, and mean ≥
+  independent Q + 10.
+
+See
+[`experiments/0082-decentralized-ctde/preregistration.md`](../experiments/0082-decentralized-ctde/preregistration.md).
+
+### Results (0082)
+
+Formal seeds 56,000–56,004; 1,000 training episodes per Q seed:
+
+| policy | mean score | success |
+|---|---:|---:|
+| local greedy | 532 | 0.20 |
+| private Q (0081) | 616 | 0.40 |
+| compact Q (0081) | 616 | 0.40 |
+| CTDE | 248 | 0.00 |
+| global oracle | 764 | 1.00 |
+
+CTDE collapsed to noop-like behavior; H2/H3/H4 fail. The local-policy line is
+retired. See
+[`experiments/0082-decentralized-ctde/summary.md`](../experiments/0082-decentralized-ctde/summary.md).
 
 ## Changelog
 

@@ -6,9 +6,13 @@ from fabline.env.crew_decentralized import DecentralizedVisibilityEnv
 from fabline.env.crew_replan import CrewReplanConfig
 from fabline.harness.crew_decentralized import (
     CompactIndependentQPolicy,
+    CTDEActor,
     IndependentQEnsemblePolicy,
     LocalGreedyPolicy,
+    central_global_key,
+    compact_private_key,
     evaluate_crew_policy,
+    train_ctde_actors,
 )
 from fabline.worlds.factory.config import FactoryConfig
 from fabline.worlds.factory.power import PowerConfig
@@ -110,3 +114,34 @@ def test_compact_q_ensemble_acts() -> None:
             env.agent_mask(crew, info),
         )
         assert 0 <= action < 4
+
+
+def test_ctde_global_key_and_actor() -> None:
+    env = DecentralizedVisibilityEnv(_config(), _replan(), radius=16)
+    info = env.reset(0)
+    global_key = central_global_key(env.base._info())
+    assert len(global_key) == 22
+    assert global_key[0] == 0
+
+    private_key = compact_private_key("a", env.agent_info("a", info))
+    actor = CTDEActor()
+    mask = env.agent_mask("a", info)
+    probs = actor.probabilities(private_key, mask)
+    assert np.isclose(probs.sum(), 1.0)
+    assert probs[~mask].sum() == 0.0
+    assert 0 <= actor.act(private_key, mask) < 4
+
+
+def test_ctde_trains_and_acts() -> None:
+    env = DecentralizedVisibilityEnv(_config(), _replan(), radius=16)
+    policy, critic = train_ctde_actors(
+        env,
+        episodes=2,
+        seed=0,
+        train_seed_start=60000,
+        warmup_episodes=0,
+    )
+    assert critic
+    metrics = evaluate_crew_policy(env, policy, seed=0)
+    assert np.isfinite(metrics.mean_score)
+    assert 0.0 <= metrics.success_rate <= 1.0

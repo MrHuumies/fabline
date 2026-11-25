@@ -36,7 +36,9 @@ from fabline.harness.crew_budget import (
 from fabline.harness.crew_decentralized import (
     run_decentralized,
     run_decentralized_compact,
+    run_decentralized_ctde,
     write_decentralized_compact_report,
+    write_decentralized_ctde_report,
     write_decentralized_report,
 )
 from fabline.harness.crew_layout_ensemble import (
@@ -812,6 +814,44 @@ def cmd_benchmark_v02(args: argparse.Namespace) -> int:
 
 def cmd_wizard(args: argparse.Namespace) -> int:
     return run_wizard(dry_run=args.dry_run)
+
+
+def cmd_crew_decentralized_ctde(args: argparse.Namespace) -> int:
+    config, replan = _decentralized_task()
+    seeds = tuple(int(value) for value in args.seeds.split(","))
+    q_seeds = tuple(int(value) for value in args.q_seeds.split(","))
+    results = run_decentralized_ctde(
+        config,
+        replan,
+        seeds=seeds,
+        q_seeds=q_seeds,
+        train_episodes=args.train_episodes,
+        train_seed_start=args.train_seed_start,
+        warmup_episodes=args.warmup_episodes,
+    )
+    report = write_decentralized_ctde_report(
+        args.out,
+        results,
+        config={
+            "width": config.width,
+            "height": config.height,
+            "radius": 16,
+            "seeds": list(seeds),
+            "q_seeds": list(q_seeds),
+            "train_episodes": args.train_episodes,
+            "train_seed_start": args.train_seed_start,
+            "warmup_episodes": args.warmup_episodes,
+            "success_score": replan.success_score,
+        },
+    )
+    print(
+        json.dumps(
+            {"report": str(report), "results": results},
+            indent=2,
+            sort_keys=True,
+        )
+    )
+    return 0
 
 
 def cmd_planning_triage(args: argparse.Namespace) -> int:
@@ -2722,6 +2762,30 @@ def build_parser() -> argparse.ArgumentParser:
     crew_decentralized_compact.set_defaults(
         func=cmd_crew_decentralized_compact
     )
+
+    crew_decentralized_ctde = subparsers.add_parser(
+        "crew-decentralized-ctde",
+        help="run centralized training with decentralized actors on triage",
+    )
+    crew_decentralized_ctde.add_argument(
+        "--out", type=str, default="results/crew-decentralized-ctde"
+    )
+    crew_decentralized_ctde.add_argument(
+        "--seeds", type=str, default="56000,56001,56002,56003,56004"
+    )
+    crew_decentralized_ctde.add_argument(
+        "--q-seeds", type=str, default="0,1,2"
+    )
+    crew_decentralized_ctde.add_argument(
+        "--train-episodes", type=int, default=1000
+    )
+    crew_decentralized_ctde.add_argument(
+        "--train-seed-start", type=int, default=60000
+    )
+    crew_decentralized_ctde.add_argument(
+        "--warmup-episodes", type=int, default=50
+    )
+    crew_decentralized_ctde.set_defaults(func=cmd_crew_decentralized_ctde)
 
     crew_visibility = subparsers.add_parser(
         "crew-visibility",
