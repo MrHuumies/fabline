@@ -107,6 +107,7 @@ class Entity:
     powered: bool = False
     brownout_ticks: int = 0
     byproduct: int = 0
+    recipe: int = 0
 
     def total_input(self) -> int:
         return sum(self.input_buffer.values())
@@ -139,6 +140,7 @@ class Entity:
             or self.powered
             or self.brownout_ticks
             or self.byproduct
+            or self.recipe
         ):
             result["wear"] = self.wear
             result["faulted"] = self.faulted
@@ -150,6 +152,7 @@ class Entity:
             result["powered"] = self.powered
             result["brownout_ticks"] = self.brownout_ticks
             result["byproduct"] = self.byproduct
+            result["recipe"] = self.recipe
         return result
 
 

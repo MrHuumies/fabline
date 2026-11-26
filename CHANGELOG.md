@@ -5,7 +5,9 @@ are pinned separately; see [`benchmarks/factory-v0.3/card.md`](benchmarks/factor
 
 ## [Unreleased]
 
-- No unreleased changes.
+- Add the opt-in assembly-edge production tree: per-assembler recipe state,
+  component logistics, and `INGOT + COMPONENT -> GEAR`. The mechanic and unit
+  tests are in; the task wrapper and benchmark are pending.
 
 ## [0.4.0] — 2026-11-26
 

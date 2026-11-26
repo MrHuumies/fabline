@@ -406,7 +406,33 @@ class FactoryWorld:
                 )
             elif entity.type is EntityType.ASSEMBLER:
                 byproduct = None
-                if (
+                tree = (
+                    self.production is not None
+                    and self.production.enabled
+                    and self.production.assembly_enabled
+                )
+                if tree:
+                    assert self.production is not None
+                    if entity.recipe == 2:
+                        inputs = {
+                            Item.INGOT: self.production.assembly_ingot_cost,
+                            Item.COMPONENT: (
+                                self.production.assembly_component_cost
+                            ),
+                        }
+                        craft_ticks = self.production.assembly_ticks
+                    elif entity.recipe == 1:
+                        inputs = {
+                            Item.INGOT: self.production.component_ingot_cost
+                        }
+                        craft_ticks = self.production.component_ticks
+                    else:
+                        inputs = {Item.INGOT: self.config.assembler_ingot_cost}
+                        craft_ticks = self.config.assembler_ticks
+                    output = (
+                        Item.COMPONENT if entity.recipe == 1 else Item.GEAR
+                    )
+                elif (
                     self.production is not None
                     and self.production.enabled
                     and self.state.production_recipe
@@ -428,14 +454,10 @@ class FactoryWorld:
                             self.recipe.byproduct_per_slow,
                             self.recipe.byproduct_capacity,
                         )
+                    output = Item.GEAR
                 else:
                     inputs = {Item.INGOT: self.config.assembler_ingot_cost}
                     craft_ticks = self.config.assembler_ticks
-                if not (
-                    self.production is not None
-                    and self.production.enabled
-                    and self.state.production_recipe
-                ):
                     output = Item.GEAR
                 self._advance_machine(
                     entity,
@@ -538,10 +560,17 @@ class FactoryWorld:
                         < self.config.furnace_input_capacity
                     )
             elif receiver.type is EntityType.ASSEMBLER:
-                if item is Item.INGOT:
-                    already = reserved.get(receiver.id, {}).get(Item.INGOT, 0)
+                tree = (
+                    self.production is not None
+                    and self.production.enabled
+                    and self.production.assembly_enabled
+                )
+                if item is Item.INGOT or (
+                    item is Item.COMPONENT and tree and receiver.recipe == 2
+                ):
+                    already = reserved.get(receiver.id, {}).get(item, 0)
                     accept = (
-                        receiver.input_buffer.get(Item.INGOT, 0) + already
+                        receiver.input_buffer.get(item, 0) + already
                         < self.config.assembler_input_capacity
                     )
             elif receiver.type is EntityType.DEPOT:

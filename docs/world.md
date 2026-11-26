@@ -297,6 +297,33 @@ gears.
 
 Buildable generators, wires, fuel, and batteries are deferred.
 
+## Production tree (opt-in)
+
+Production is disabled by default; the frozen single-gear recipe is unchanged.
+A separate `ProductionConfig` enables a small multi-item tree:
+
+```text
+ORE -> INGOT
+INGOT -> GEAR              (assembler recipe 0, existing)
+INGOT -> COMPONENT         (assembler recipe 1)
+INGOT + COMPONENT -> GEAR  (assembler recipe 2, assembly edge)
+```
+
+Rules:
+
+- `Entity.recipe` is per assembler (0 gear, 1 component, 2 assembly); it is
+  included in the state hash only when nonzero, so default hashes stay
+  identical;
+- component is a logistics item carried by belts and accepted by depots when
+  production is enabled;
+- an assembler accepts component only when the assembly tree is enabled and its
+  recipe is 2;
+- assembly consumes one ingot and one component and outputs gear;
+- the linear starter line sends component toward the depot, so an assembly task
+  needs a second feed or a routing/splitter layout.
+
+See RFC 0031 and the assembly-edge task card.
+
 ## Deferred mechanics
 
 Do not add these before the MVP is measured:
