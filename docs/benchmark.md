@@ -15,10 +15,10 @@ partial-throughput, and wired-cascade tasks plus public structured baselines.
 Run it with `python -m fabline coverage-suite --out results/factory-v0.4-coverage`;
 see [`benchmarks/factory-v0.4/spec.md`](../benchmarks/factory-v0.4/spec.md).
 
-Run the current benchmark with:
+Run the current frozen benchmark with:
 
 ```bash
-.venv/bin/python -m fabline benchmark-v02 --out results/factory-v0.2
+.venv/bin/python -m fabline benchmark-v03 --out results/factory-v0.3
 ```
 
 ## Goals
@@ -35,14 +35,18 @@ A benchmark release is a set of tasks with pinned versions:
 ```text
 benchmark: factory-v0.3
 tasks:
-  - factory.throughput.predict.v1
-  - factory.bottleneck.classify.v1
-  - factory.build.control.v1
-  - factory.planning.triage.v1
-  - factory.fault.calibration.v1
-  - factory.causal.remove.v1
-  - factory.orders.control.v1
-  - factory.orders.plan.v1
+  - throughput-vector
+  - throughput-grid
+  - throughput-entities
+  - masked-grid
+  - bottleneck
+  - expand-control
+  - control-dynamics
+  - planning-triage
+  - fault-calibration
+  - causal-removal
+  - order-control
+  - order-planning
 splits: train / val / test / shift, plus decision-block seeds
 seeds: fixed per task; see benchmark.toml
 budgets: per task
