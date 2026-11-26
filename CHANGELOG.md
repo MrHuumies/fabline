@@ -5,7 +5,10 @@ are pinned separately; see [`benchmarks/factory-v0.3/card.md`](benchmarks/factor
 
 ## [Unreleased]
 
-- No unreleased changes.
+- Add the opt-in assembly-edge production tree: per-assembler recipe state,
+  component logistics, and `INGOT + COMPONENT -> GEAR` (2 gears in the task).
+  Add a two-feed assembly cell and `factory.assembly.control.v1`; the formal
+  pilot is positive (Q 460 vs random 429, always gear 260).
 
 ## [0.4.0] — 2026-11-26
 
