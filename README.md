@@ -73,6 +73,10 @@ make render-install
   on the three-bridge triage task.
 - **Orders (0.4.0):** opt-in gear/component production mix, seeded orders with
   deadlines/values, order control, and five-block order planning.
+- **Assembly edge (0.6.0 slice):** opt-in per-assembler recipe tree
+  (`INGOT + COMPONENT -> 2 GEAR`), component logistics, a fixed two-feed
+  assembly cell, and an assembly-control task. This is an incremental code
+  slice, not a frozen benchmark.
 
 Every mechanic is opt-in. `factory-v0.1` and `factory-v0.2` remain frozen for
 provenance; `factory-v0.3` is the current benchmark.
