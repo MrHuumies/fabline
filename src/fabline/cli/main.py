@@ -40,6 +40,10 @@ from fabline.harness.causal_intervention import (
     write_causal_report,
 )
 from fabline.harness.contract_board import run_contract_board, write_board_report
+from fabline.harness.coverage_suite import (
+    CoverageSuiteConfig,
+    run_coverage_suite,
+)
 from fabline.harness.crew_budget import (
     run_crew_budget,
     write_crew_budget_report,
@@ -981,6 +985,22 @@ def cmd_power_allocation(args: argparse.Namespace) -> int:
         },
     )
     print(json.dumps({"report": str(report), "results": results}, indent=2, sort_keys=True))
+    return 0
+
+
+def cmd_coverage_suite(args: argparse.Namespace) -> int:
+    report = run_coverage_suite(
+        args.out,
+        CoverageSuiteConfig(
+            fast=args.fast,
+            include_reliability=not args.skip_reliability,
+            include_wired=not args.skip_wired,
+            include_partial=not args.skip_partial,
+            include_mpnn=args.include_mpnn,
+            include_sequence=not args.skip_sequence,
+        ),
+    )
+    print(json.dumps(report["summary"], indent=2, sort_keys=True))
     return 0
 
 
@@ -3158,6 +3178,19 @@ def build_parser() -> argparse.ArgumentParser:
     power_allocation.add_argument("--capacity-jitter", type=int, default=0)
     power_allocation.add_argument("--variation-period", type=int, default=20)
     power_allocation.set_defaults(func=cmd_power_allocation)
+
+    coverage_suite = subparsers.add_parser(
+        "coverage-suite",
+        help="run the draft factory-v0.4 coverage suite",
+    )
+    coverage_suite.add_argument("--out", type=str, default="results/factory-v0.4-coverage")
+    coverage_suite.add_argument("--fast", action="store_true")
+    coverage_suite.add_argument("--skip-reliability", action="store_true")
+    coverage_suite.add_argument("--skip-wired", action="store_true")
+    coverage_suite.add_argument("--skip-partial", action="store_true")
+    coverage_suite.add_argument("--skip-sequence", action="store_true")
+    coverage_suite.add_argument("--include-mpnn", action="store_true")
+    coverage_suite.set_defaults(func=cmd_coverage_suite)
 
     partial_throughput = subparsers.add_parser(
         "partial-throughput",
