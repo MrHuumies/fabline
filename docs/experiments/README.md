@@ -139,5 +139,7 @@ The current frozen benchmark is documented separately in
 
 - [0088 — Efficiency table](0088-efficiency-table/summary.md) — public cross-task cost table; 45k ticks/s; descriptive.
 
+- [0089 — Production-mix pilot](0089-production-mix/summary.md) — mixed; component 186 vs gear 150; no schedule gap.
+
 The `factory-v0.2` freeze review is in
 [`benchmarks/factory-v0.2/freeze-review.md`](../../benchmarks/factory-v0.2/freeze-review.md).

@@ -15,6 +15,7 @@ from .config import FactoryConfig
 from .faults import FaultConfig
 from .generator import Scenario, generate_state
 from .power import PowerConfig
+from .production import ProductionConfig
 from .recipe import RecipeConfig
 from .state import Entity, EntityType, Item, WorldState
 from .wire import entity_connected, reachable_cells
@@ -33,20 +34,28 @@ class FactoryWorld:
         faults: FaultConfig | None = None,
         power: PowerConfig | None = None,
         recipe: RecipeConfig | None = None,
+        production: ProductionConfig | None = None,
     ) -> None:
         self.config = config or FactoryConfig()
         self.faults = faults or FaultConfig()
         self.power = power or PowerConfig()
         self.recipe = recipe
+        self.production = production
         self.state = generate_state(self.config, seed=0, power=self.power)
+        self._enable_production_state()
         self._tick_delivered: dict[Item, int] = {Item.INGOT: 0, Item.GEAR: 0}
         self._suppress_events = False
 
     def reset(self, seed: int, scenario: Scenario | None = None) -> WorldState:
         self.state = generate_state(self.config, seed, scenario, self.power)
+        self._enable_production_state()
         self._tick_delivered = {Item.INGOT: 0, Item.GEAR: 0}
         self._suppress_events = False
         return self.state
+
+    def _enable_production_state(self) -> None:
+        if self.production is not None and self.production.enabled:
+            self.state.delivered.setdefault(Item.COMPONENT, 0)
 
     @property
     def done(self) -> bool:
@@ -84,6 +93,7 @@ class FactoryWorld:
         clone.faults = self.faults
         clone.power = self.power
         clone.recipe = self.recipe
+        clone.production = self.production
         clone.state = self.state.clone(keep_events=keep_events)
         clone._tick_delivered = dict(self._tick_delivered)
         clone._suppress_events = not keep_events
@@ -397,6 +407,16 @@ class FactoryWorld:
             elif entity.type is EntityType.ASSEMBLER:
                 byproduct = None
                 if (
+                    self.production is not None
+                    and self.production.enabled
+                    and self.state.production_recipe
+                ):
+                    inputs = {
+                        Item.INGOT: self.production.component_ingot_cost
+                    }
+                    craft_ticks = self.production.component_ticks
+                    output = Item.COMPONENT
+                elif (
                     self.recipe is not None
                     and self.recipe.enabled
                     and self.state.recipe_index
@@ -411,10 +431,16 @@ class FactoryWorld:
                 else:
                     inputs = {Item.INGOT: self.config.assembler_ingot_cost}
                     craft_ticks = self.config.assembler_ticks
+                if not (
+                    self.production is not None
+                    and self.production.enabled
+                    and self.state.production_recipe
+                ):
+                    output = Item.GEAR
                 self._advance_machine(
                     entity,
                     inputs=inputs,
-                    output=Item.GEAR,
+                    output=output,
                     craft_ticks=craft_ticks,
                     input_capacity=self.config.assembler_input_capacity,
                     output_capacity=self.config.assembler_output_capacity,
@@ -520,6 +546,12 @@ class FactoryWorld:
                     )
             elif receiver.type is EntityType.DEPOT:
                 accept = item in (Item.INGOT, Item.GEAR)
+                if (
+                    item is Item.COMPONENT
+                    and self.production is not None
+                    and self.production.enabled
+                ):
+                    accept = True
 
             if not accept:
                 self._block(entity, item, "receiver_full")
@@ -610,6 +642,12 @@ class FactoryWorld:
             return self.config.depot_ingot_score
         if item is Item.GEAR:
             return self.config.depot_gear_score
+        if (
+            item is Item.COMPONENT
+            and self.production is not None
+            and self.production.enabled
+        ):
+            return self.production.component_score
         return 0
 
     def _emit(self, kind: str, data: dict[str, Any]) -> None:

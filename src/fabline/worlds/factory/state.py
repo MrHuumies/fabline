@@ -51,6 +51,7 @@ class Item(IntEnum):
     ORE = 0
     INGOT = 1
     GEAR = 2
+    COMPONENT = 3
 
 
 @dataclass(frozen=True)
@@ -172,6 +173,7 @@ class WorldState:
     power_capacity_factors: list[int] = field(default_factory=list)
     power_priority: int = 0
     recipe_index: int = 0
+    production_recipe: int = 0
 
     def in_bounds(self, x: int, y: int) -> bool:
         return 0 <= x < self.width and 0 <= y < self.height
@@ -243,6 +245,8 @@ class WorldState:
             result["power_priority"] = self.power_priority
         if self.recipe_index:
             result["recipe_index"] = self.recipe_index
+        if self.production_recipe:
+            result["production_recipe"] = self.production_recipe
         return result
 
     def state_hash(self) -> str:
@@ -259,9 +263,9 @@ def inventory_counts(state: WorldState) -> dict[Item, int]:
     counts = empty_delivered()
     for entity in state.entities.values():
         for item, count in entity.input_buffer.items():
-            counts[item] += count
+            counts[item] = counts.get(item, 0) + count
         for item, count in entity.output_buffer.items():
-            counts[item] += count
+            counts[item] = counts.get(item, 0) + count
     return counts
 
 

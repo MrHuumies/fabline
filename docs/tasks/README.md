@@ -81,6 +81,9 @@ Current tasks:
   calibrated; full maintenance view miscalibrated for GBDT.
 - [Counterfactual removal](causal-removal.md) — `factory-v0.2`; target GBDT
   R² 0.910 vs type-only −0.300.
+- [Production mix](production-mix.md) — draft 0.4.0 production-mix pilot.
+- [Order planning](order-planning.md) — draft 0.4.0 order-planning candidate.
+- [Order control](order-control.md) — draft 0.4.0 order-control candidate.
 - [View arrival](view-arrival.md) — generic multiview contract and
   episode-grouped view-arrival task.
 - [Power allocation](power-allocation.md) — three-action priority scheduling

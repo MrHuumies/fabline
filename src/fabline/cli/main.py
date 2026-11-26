@@ -29,6 +29,7 @@ from fabline.env.power_allocation import PowerAllocationConfig
 from fabline.env.preventive_fault import PreventiveFaultConfig
 from fabline.env.preventive_threshold import ThresholdConfig
 from fabline.env.preventive_wire import PreventiveWireConfig
+from fabline.env.production_mix import ProductionMixConfig
 from fabline.env.recipe import RecipeEnvConfig
 from fabline.env.three_crew_replan import ThreeCrewReplanConfig
 from fabline.env.wire_repair import WireRepairConfig
@@ -170,6 +171,10 @@ from fabline.harness.preventive_threshold import (
 from fabline.harness.preventive_wire import (
     run_preventive_wire,
     write_preventive_wire_report,
+)
+from fabline.harness.production_mix import (
+    run_production_mix,
+    write_production_mix_report,
 )
 from fabline.harness.recipe import run_recipe_choice, write_recipe_report
 from fabline.harness.runner import run_throughput_benchmark
@@ -438,6 +443,46 @@ def cmd_efficiency(args: argparse.Namespace) -> int:
             sort_keys=True,
         )
     )
+    return 0
+
+
+def cmd_production_mix(args: argparse.Namespace) -> int:
+    config = FactoryConfig(
+        width=16,
+        height=8,
+        ticks_per_episode=300,
+        decision_interval=10,
+        entity_budget=32,
+        rock_density=0.0,
+        ore_patches=1,
+        starter_line=True,
+        emit_events=True,
+    )
+    mix = ProductionMixConfig(
+        episode_ticks=300,
+        decision_interval=10,
+        success_score=args.success_score,
+    )
+    seeds = tuple(int(value) for value in args.seeds.split(","))
+    results = run_production_mix(
+        config,
+        mix,
+        seeds=seeds,
+        episodes=args.episodes,
+        q_episodes=args.q_episodes,
+    )
+    report = write_production_mix_report(
+        args.out,
+        results,
+        config={
+            "width": config.width,
+            "height": config.height,
+            "seeds": list(seeds),
+            "success_score": mix.success_score,
+            "component_score": mix.production.component_score,
+        },
+    )
+    print(json.dumps({"report": str(report), "results": results}, indent=2, sort_keys=True))
     return 0
 
 
@@ -2633,6 +2678,21 @@ def build_parser() -> argparse.ArgumentParser:
     human_bc.add_argument("--episodes", type=int, default=5)
     human_bc.add_argument("--seed", type=int, default=0)
     human_bc.set_defaults(func=cmd_human_bc)
+
+    production_mix = subparsers.add_parser(
+        "production-mix",
+        help="run the opt-in gear/component production-mix pilot",
+    )
+    production_mix.add_argument(
+        "--out", type=str, default="results/production-mix"
+    )
+    production_mix.add_argument(
+        "--seeds", type=str, default="70000,70001,70002,70003,70004"
+    )
+    production_mix.add_argument("--episodes", type=int, default=5)
+    production_mix.add_argument("--q-episodes", type=int, default=50)
+    production_mix.add_argument("--success-score", type=int, default=200)
+    production_mix.set_defaults(func=cmd_production_mix)
 
     replay_browser = subparsers.add_parser(
         "replay-browser",

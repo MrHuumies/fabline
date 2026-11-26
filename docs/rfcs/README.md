@@ -31,3 +31,4 @@ One RFC per new mechanic or major world change. Use
 - [0027 — Byproduct queue on recipe choice](0027-recipe-byproduct.md)
 - [0028 — Gear-contract board](0028-contract-board.md)
 - [0029 — 0.3.0 expansion scope](0029-0.3.0-scope.md)
+- [0030 — 0.4.0 scope: demand-driven production](0030-0.4.0-scope.md) — proposed; pending owner review.

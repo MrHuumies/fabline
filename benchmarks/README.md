@@ -29,3 +29,6 @@ fault-calibration, and causal-removal blocks. Its expected summary is in
 `factory-v0.2/expected/summary.json`; the [freeze review](factory-v0.2/freeze-review.md)
 records the scope cuts (no layout split; decentralized/generative deferred;
 fault/power/next-state are diagnostics).
+
+The 0.4.0 benchmark candidate is [`factory-v0.3`](factory-v0.3/spec.md);
+it is a draft and not frozen.

@@ -41,6 +41,10 @@ are pinned separately; see [`benchmarks/factory-v0.2/card.md`](benchmarks/factor
 - Add headless viewer QoL: `fabline replay-browser` and `fabline task-cards`,
   plus both paths in `fabline wizard`. Read-only and no new dependency.
 
+- Start the 0.4.0 demand-driven production scope. The opt-in production mix
+  produces gear or component; the pilot is mixed (component 186 vs gear 150,
+  no schedule gap), so the order stream is next (0089).
+
 ## [0.3.0] — 2026-11-24
 
 0.3.0 adds the planning, calibration, and causal decision surfaces, freezes
