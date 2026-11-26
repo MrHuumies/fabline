@@ -217,6 +217,11 @@ from fabline.harness.wire_repair import (
     run_wire_repair,
     write_wire_repair_report,
 )
+from fabline.harness.wired_cascade import (
+    WiredCascadeConfig,
+    run_wired_cascade,
+    write_wired_cascade_report,
+)
 from fabline.obs.base import build_observation
 from fabline.record.replay import validate_replay
 from fabline.record.writer import write_dataset
@@ -1080,6 +1085,21 @@ def cmd_wire_repair(args: argparse.Namespace) -> int:
             sort_keys=True,
         )
     )
+    return 0
+
+
+def cmd_wired_cascade(args: argparse.Namespace) -> int:
+    config = WiredCascadeConfig(
+        layouts=args.layouts,
+        seed_start=args.seed_start,
+        max_faults_per_layout=args.max_faults,
+        mpnn_epochs=args.mpnn_epochs,
+        mpnn_hidden=args.mpnn_hidden,
+        mpnn_layers=args.mpnn_layers,
+    )
+    report = run_wired_cascade(config, include_mpnn=not args.skip_mpnn)
+    path = write_wired_cascade_report(args.out, report)
+    print(json.dumps({"report": str(path), "dataset": report["dataset"]}, indent=2, sort_keys=True))
     return 0
 
 
@@ -3187,6 +3207,20 @@ def build_parser() -> argparse.ArgumentParser:
     wire_repair.add_argument("--success-score", type=int, default=150)
     wire_repair.add_argument("--capacity", type=int, default=12)
     wire_repair.set_defaults(func=cmd_wire_repair)
+
+    wired_cascade = subparsers.add_parser(
+        "wired-cascade",
+        help="run the wired-power cascade-size prediction benchmark",
+    )
+    wired_cascade.add_argument("--out", type=str, default="results/wired-cascade")
+    wired_cascade.add_argument("--layouts", type=int, default=200)
+    wired_cascade.add_argument("--seed-start", type=int, default=500)
+    wired_cascade.add_argument("--max-faults", type=int, default=10)
+    wired_cascade.add_argument("--mpnn-epochs", type=int, default=50)
+    wired_cascade.add_argument("--mpnn-hidden", type=int, default=32)
+    wired_cascade.add_argument("--mpnn-layers", type=int, default=2)
+    wired_cascade.add_argument("--skip-mpnn", action="store_true")
+    wired_cascade.set_defaults(func=cmd_wired_cascade)
 
     multi_crew = subparsers.add_parser(
         "multi-crew",

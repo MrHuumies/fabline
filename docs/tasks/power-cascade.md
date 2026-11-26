@@ -72,6 +72,19 @@ Paired layout-bootstrap difference (`graph_mp` − vector): +0.167 [0.048, 0.309
 H1, H3, and H4 pass; see
 [`experiments/0032-wired-cascade`](../experiments/0032-wired-cascade/summary.md).
 
+## Public reproduction (2026-11-26)
+
+- Public harness: `src/fabline/harness/wired_cascade.py`; run with
+  `python -m fabline wired-cascade --out results/wired-cascade`.
+- 199 valid layouts, 1,990 samples, 52.6% zero-size loop faults.
+- Test R²: vector linear 0.107, vector MLP 0.100, vector GBDT −0.034,
+  `graph_mp` **0.124**, MPNN 0.037 (10 epochs/16 hidden diagnostic).
+- `graph_mp` beats the best non-graph by only **+0.018**, below the +0.05 H1
+  gate. This is a **public reproduction gap**, not a task failure: the private
+  0032 feature encoding is not in the public tree, and the public wire-line
+  graph encoding is weaker. Keep the task diagnostic until a stronger graph
+  encoding or GNN closes the gap; do not lower the gate.
+
 ## Pilot note
 
 The original per-entity label was too hard for local models at graph diameter
@@ -100,3 +113,5 @@ amended before formal data generation.
 - 2026-11-21 — card created; mechanic and experiment preregistered.
 - 2026-11-21 — primary label amended to cascade size after the per-entity pilot.
 - 2026-11-21 — formal cascade-size run: graph_mp +0.167 R² over vector.
+- 2026-11-26 — public harness and CLI added; public graph gain is +0.018 R²,
+  below the +0.05 gate; task remains diagnostic pending a stronger encoding.
