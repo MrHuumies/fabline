@@ -40,6 +40,10 @@ from fabline.harness.causal_intervention import (
     write_causal_report,
 )
 from fabline.harness.contract_board import run_contract_board, write_board_report
+from fabline.harness.coverage_suite import (
+    CoverageSuiteConfig,
+    run_coverage_suite,
+)
 from fabline.harness.crew_budget import (
     run_crew_budget,
     write_crew_budget_report,
@@ -163,6 +167,11 @@ from fabline.harness.order_rl import (
     run_order_rl,
     write_order_rl_report,
 )
+from fabline.harness.partial_throughput import (
+    PartialThroughputConfig,
+    run_partial_throughput,
+    write_partial_throughput_report,
+)
 from fabline.harness.planning_transition import (
     TransitionEnsembleConfig,
     TransitionPlanningConfig,
@@ -200,12 +209,22 @@ from fabline.harness.production_mix import (
     write_production_mix_report,
 )
 from fabline.harness.recipe import run_recipe_choice, write_recipe_report
+from fabline.harness.reliability_contract import (
+    ReliabilityContractConfig,
+    run_reliability_contract,
+    write_reliability_contract_report,
+)
 from fabline.harness.runner import run_throughput_benchmark
 from fabline.harness.shared_suite import SharedSuiteConfig, run_shared_suite
 from fabline.harness.suite import SuiteConfig, run_suite
 from fabline.harness.wire_repair import (
     run_wire_repair,
     write_wire_repair_report,
+)
+from fabline.harness.wired_cascade import (
+    WiredCascadeConfig,
+    run_wired_cascade,
+    write_wired_cascade_report,
 )
 from fabline.obs.base import build_observation
 from fabline.record.replay import validate_replay
@@ -969,6 +988,62 @@ def cmd_power_allocation(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_coverage_suite(args: argparse.Namespace) -> int:
+    report = run_coverage_suite(
+        args.out,
+        CoverageSuiteConfig(
+            fast=args.fast,
+            include_reliability=not args.skip_reliability,
+            include_wired=not args.skip_wired,
+            include_partial=not args.skip_partial,
+            include_mpnn=args.include_mpnn,
+            include_sequence=not args.skip_sequence,
+        ),
+    )
+    print(json.dumps(report["summary"], indent=2, sort_keys=True))
+    return 0
+
+
+def cmd_partial_throughput(args: argparse.Namespace) -> int:
+    config = PartialThroughputConfig(
+        episodes=args.episodes,
+        warmup_ticks=args.warmup_ticks,
+        episode_ticks=args.episode_ticks,
+        sample_interval=args.sample_interval,
+        horizon=args.horizon,
+        dropout=args.dropout,
+        window=args.window,
+        sequence_epochs=args.sequence_epochs,
+        sequence_hidden=args.sequence_hidden,
+        sequence_layers=args.sequence_layers,
+    )
+    report = run_partial_throughput(
+        config, include_sequence=not args.skip_sequence
+    )
+    path = write_partial_throughput_report(args.out, report)
+    print(json.dumps({"report": str(path), "dataset": report["dataset"]}, indent=2, sort_keys=True))
+    return 0
+
+
+def cmd_reliability_contract(args: argparse.Namespace) -> int:
+    train_blocks = tuple(
+        range(args.train_block_start, args.train_block_end + 1, 2)
+    )
+    test_blocks = tuple(
+        range(args.test_block_start, args.test_block_end + 1, 2)
+    )
+    config = ReliabilityContractConfig(
+        train_blocks=train_blocks,
+        test_blocks=test_blocks,
+        episodes_per_block=args.episodes_per_block,
+        bootstrap_samples=args.bootstrap_samples,
+    )
+    report = run_reliability_contract(config)
+    path = write_reliability_contract_report(args.out, report)
+    print(json.dumps({"report": str(path), "summary": report["summary"]}, indent=2, sort_keys=True))
+    return 0
+
+
 def cmd_wire_repair(args: argparse.Namespace) -> int:
     config = FactoryConfig(
         width=16,
@@ -1030,6 +1105,21 @@ def cmd_wire_repair(args: argparse.Namespace) -> int:
             sort_keys=True,
         )
     )
+    return 0
+
+
+def cmd_wired_cascade(args: argparse.Namespace) -> int:
+    config = WiredCascadeConfig(
+        layouts=args.layouts,
+        seed_start=args.seed_start,
+        max_faults_per_layout=args.max_faults,
+        mpnn_epochs=args.mpnn_epochs,
+        mpnn_hidden=args.mpnn_hidden,
+        mpnn_layers=args.mpnn_layers,
+    )
+    report = run_wired_cascade(config, include_mpnn=not args.skip_mpnn)
+    path = write_wired_cascade_report(args.out, report)
+    print(json.dumps({"report": str(path), "dataset": report["dataset"]}, indent=2, sort_keys=True))
     return 0
 
 
@@ -3089,6 +3179,52 @@ def build_parser() -> argparse.ArgumentParser:
     power_allocation.add_argument("--variation-period", type=int, default=20)
     power_allocation.set_defaults(func=cmd_power_allocation)
 
+    coverage_suite = subparsers.add_parser(
+        "coverage-suite",
+        help="run the draft factory-v0.4 coverage suite",
+    )
+    coverage_suite.add_argument("--out", type=str, default="results/factory-v0.4-coverage")
+    coverage_suite.add_argument("--fast", action="store_true")
+    coverage_suite.add_argument("--skip-reliability", action="store_true")
+    coverage_suite.add_argument("--skip-wired", action="store_true")
+    coverage_suite.add_argument("--skip-partial", action="store_true")
+    coverage_suite.add_argument("--skip-sequence", action="store_true")
+    coverage_suite.add_argument("--include-mpnn", action="store_true")
+    coverage_suite.set_defaults(func=cmd_coverage_suite)
+
+    partial_throughput = subparsers.add_parser(
+        "partial-throughput",
+        help="run the masked-window throughput benchmark",
+    )
+    partial_throughput.add_argument("--out", type=str, default="results/partial-throughput")
+    partial_throughput.add_argument("--episodes", type=int, default=100)
+    partial_throughput.add_argument("--warmup-ticks", type=int, default=150)
+    partial_throughput.add_argument("--episode-ticks", type=int, default=300)
+    partial_throughput.add_argument("--sample-interval", type=int, default=10)
+    partial_throughput.add_argument("--horizon", type=int, default=50)
+    partial_throughput.add_argument("--dropout", type=float, default=0.6)
+    partial_throughput.add_argument("--window", type=int, default=4)
+    partial_throughput.add_argument("--sequence-epochs", type=int, default=30)
+    partial_throughput.add_argument("--sequence-hidden", type=int, default=16)
+    partial_throughput.add_argument("--sequence-layers", type=int, default=1)
+    partial_throughput.add_argument("--skip-sequence", action="store_true")
+    partial_throughput.set_defaults(func=cmd_partial_throughput)
+
+    reliability_contract = subparsers.add_parser(
+        "reliability-contract",
+        help="run the risk-sensitive reliability-contract selection task",
+    )
+    reliability_contract.add_argument(
+        "--out", type=str, default="results/reliability-contract"
+    )
+    reliability_contract.add_argument("--episodes-per-block", type=int, default=10)
+    reliability_contract.add_argument("--train-block-start", type=int, default=600)
+    reliability_contract.add_argument("--train-block-end", type=int, default=998)
+    reliability_contract.add_argument("--test-block-start", type=int, default=601)
+    reliability_contract.add_argument("--test-block-end", type=int, default=999)
+    reliability_contract.add_argument("--bootstrap-samples", type=int, default=2000)
+    reliability_contract.set_defaults(func=cmd_reliability_contract)
+
     wire_repair = subparsers.add_parser(
         "wire-repair",
         help="run the wired-power wire-repair control benchmark",
@@ -3104,6 +3240,20 @@ def build_parser() -> argparse.ArgumentParser:
     wire_repair.add_argument("--success-score", type=int, default=150)
     wire_repair.add_argument("--capacity", type=int, default=12)
     wire_repair.set_defaults(func=cmd_wire_repair)
+
+    wired_cascade = subparsers.add_parser(
+        "wired-cascade",
+        help="run the wired-power cascade-size prediction benchmark",
+    )
+    wired_cascade.add_argument("--out", type=str, default="results/wired-cascade")
+    wired_cascade.add_argument("--layouts", type=int, default=200)
+    wired_cascade.add_argument("--seed-start", type=int, default=500)
+    wired_cascade.add_argument("--max-faults", type=int, default=10)
+    wired_cascade.add_argument("--mpnn-epochs", type=int, default=50)
+    wired_cascade.add_argument("--mpnn-hidden", type=int, default=32)
+    wired_cascade.add_argument("--mpnn-layers", type=int, default=2)
+    wired_cascade.add_argument("--skip-mpnn", action="store_true")
+    wired_cascade.set_defaults(func=cmd_wired_cascade)
 
     multi_crew = subparsers.add_parser(
         "multi-crew",

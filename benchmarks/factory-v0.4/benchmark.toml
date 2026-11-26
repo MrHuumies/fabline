@@ -1,0 +1,62 @@
+# factory-v0.4 draft coverage specification.
+# This benchmark is not frozen; there is no expected summary yet.
+# The runner is `fabline coverage-suite`; the frozen v0.3 core is kept by
+# reference and is not modified.
+
+[benchmark]
+name = "factory-v0.4"
+status = "draft"
+version = "0.4.0-draft"
+date = "2026-11-26"
+world_version = "factory-0.1.0"
+plan = "coverage-v0.4"
+target_release = "0.5.0"
+command = "python -m fabline coverage-suite --out results/factory-v0.4-coverage"
+fast_command = "python -m fabline coverage-suite --out results/factory-v0.4-coverage-fast --fast"
+
+[core]
+# Kept by reference; v0.3 is frozen and unchanged.
+benchmark = "factory-v0.3"
+tasks = ["throughput-vector", "throughput-grid", "throughput-entities", "masked-grid", "bottleneck", "expand-control", "control-dynamics", "planning-triage", "fault-calibration", "causal-removal", "order-control", "order-planning"]
+
+[coverage]
+# Integrated in the draft runner.
+integrated = ["reliability-contract", "partial-throughput", "wired-cascade"]
+# Implemented in the repo, public runner integration pending.
+proposed = ["crew-schedule", "crew-triage", "preventive-wire", "recipe-choice", "maintenance-threshold"]
+
+[challenge]
+tasks = ["crew-layouts", "decentralized-triage", "crew-replacement", "crew-replan-layouts", "maintenance-calibration"]
+
+[reliability_contract]
+task = "factory.power.contract.v1"
+train_blocks = "600:998:2"
+test_blocks = "601:999:2"
+episodes_per_block = 10
+tiers = "80:150:5"
+cvar_alpha = 0.2
+bootstrap_samples = 2000
+
+[partial_throughput]
+task = "factory.throughput.partial.v1"
+episodes = 100
+warmup_ticks = 150
+episode_ticks = 300
+sample_interval = 10
+horizon = 50
+dropout = 0.6
+window = 4
+
+[wired_cascade]
+task = "factory.power.cascade.v1"
+layouts = 200
+seed_start = 500
+max_faults_per_layout = 10
+warmup_ticks = 50
+split = "70/20/10 by layout"
+status = "diagnostic; public graph gain below the +0.05 gate"
+
+[expected]
+# Not frozen yet.
+summary = "none"
+tolerance = "none"

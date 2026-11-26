@@ -54,6 +54,16 @@ Test R², with 95% bootstrap CIs over test rows.
 | GBDT | 1.000 | 0.593 | 0.883 |
 | MLP | 0.613 | −0.194 | 0.002 |
 
+## Public reproduction (2026-11-26)
+
+- Public harness: `src/fabline/harness/partial_throughput.py`; run with
+  `python -m fabline partial-throughput --out results/partial-throughput`.
+- 100 episodes, 1,100 samples; 60% feature dropout; 4-frame window.
+- Test R²: current linear 0.711, GBDT 1.000, MLP 0.617; single linear 0.178,
+  GBDT 0.622, MLP 0.158; window linear 0.559, GBDT 0.897, MLP 0.414.
+- H1 mask loss, H2 window recovery, and H3 no-leakage pass. The ordering matches
+  0024: masking hurts, and a short history recovers most of the gap.
+
 ## Sequence baseline
 
 On the same task, five seeds, 50 epochs:
@@ -92,3 +102,5 @@ remains strongest on this small, two-value, four-frame tabular task. See
 
 - 2026-11-21 — card created; P0 masked-window results added.
 - 2026-11-21 — sequence baseline comparison added.
+- 2026-11-26 — public harness and CLI added; 1,100-sample reproduction matches
+  the 0024 ordering, and H1/H2/H3 pass.
