@@ -91,6 +91,17 @@ The expected summary is in
 [`benchmarks/factory-v0.3/expected/summary.json`](benchmarks/factory-v0.3/expected/summary.json).
 The earlier [`factory-v0.2`](benchmarks/factory-v0.2/card.md) and
 [`factory-v0.1`](benchmarks/factory-v0.1/card.md) benchmarks remain immutable.
+
+A draft **0.5.0 coverage suite** is also available:
+
+```bash
+.venv/bin/python -m fabline coverage-suite --out results/factory-v0.4-coverage
+```
+
+It adds a coverage tier (`reliability-contract`, `partial-throughput`,
+`wired-cascade`), public structured baselines (CNN, MPNN, GRU, Transformer),
+and a challenge tier. It is **not frozen**; see
+[`benchmarks/factory-v0.4/spec.md`](benchmarks/factory-v0.4/spec.md).
 The current coverage map is in
 [`docs/coverage-map.md`](docs/coverage-map.md); the
 [0.4.0 review](docs/coverage-review-0.4.0.md) records the next slice. Cross-task

@@ -72,15 +72,33 @@ This document is a map, not a commitment to implement every row.
 - GBDT;
 - MLP;
 - `graph_mp` message-passing features;
+- public CNN, MPNN, GRU, and Transformer baselines (`harness/models`; optional
+  `train` extra);
 - scripted, random, tabular Q, behavior cloning, CEM;
 - scripted multi-agent assignment/triage, queue-aware recipe/contract policies,
   and deadline-aware order policies.
 
-**Representative families added in P0/P1:** CNN, end-to-end GNN/MPNN,
-Transformer, GRU/RNN, calibration, CVaR/risk selection, and bandits. Deep RL
-was attempted on order control (0092) and is negative at 10k steps; offline RL
-beyond behavior cloning, a learned world model, multi-agent RL beyond the
-centralized assignment, and generative models remain missing.
+**Representative families now public:** CNN, end-to-end MPNN, Transformer, and
+GRU/RNN baselines are in `harness/models`; calibration, CVaR/risk selection,
+and bandits remain in their task harnesses. Deep RL was attempted on order
+control (0092) and is negative at 10k steps; offline RL beyond behavior cloning,
+a learned world model, multi-agent RL beyond centralized assignment, and
+generative models remain missing.
+
+### 0.5.0 coverage release (draft)
+
+The first coverage release is merged on `main`; it is a draft `factory-v0.4`,
+not a frozen benchmark:
+
+| Task | Kind | Public result | Status |
+|---|---|---|---|
+| reliability-contract | risk selection | CVaR +17.62 [13.90, 21.68] | pass |
+| partial-throughput | regression | window GBDT R² 0.897 | pass |
+| wired-cascade | relational regression | graph_mp R² 0.124 (+0.018 vs vector) | diagnostic |
+
+Run with `python -m fabline coverage-suite --out results/factory-v0.4-coverage`.
+The wired cascade is a **public reproduction gap** versus the private 0032
+result; its +0.05 graph gate is unchanged, so it is not promoted.
 
 ### Current benchmark families
 

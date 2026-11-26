@@ -9,6 +9,12 @@ keeps the v0.2 core and adds order control and order planning, for 12 headline
 tasks. `factory-v0.1` and `factory-v0.2` remain frozen for provenance. Cross-task cost is reported separately in the
 [`efficiency table`](efficiency.md); it is descriptive, not a benchmark score.
 
+A draft `factory-v0.4` **coverage suite** now runs alongside the frozen v0.3
+benchmark. It is not frozen yet; it adds a coverage tier for reliability,
+partial-throughput, and wired-cascade tasks plus public structured baselines.
+Run it with `python -m fabline coverage-suite --out results/factory-v0.4-coverage`;
+see [`benchmarks/factory-v0.4/spec.md`](../benchmarks/factory-v0.4/spec.md).
+
 Run the current benchmark with:
 
 ```bash
