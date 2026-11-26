@@ -163,6 +163,11 @@ from fabline.harness.order_rl import (
     run_order_rl,
     write_order_rl_report,
 )
+from fabline.harness.partial_throughput import (
+    PartialThroughputConfig,
+    run_partial_throughput,
+    write_partial_throughput_report,
+)
 from fabline.harness.planning_transition import (
     TransitionEnsembleConfig,
     TransitionPlanningConfig,
@@ -966,6 +971,27 @@ def cmd_power_allocation(args: argparse.Namespace) -> int:
         },
     )
     print(json.dumps({"report": str(report), "results": results}, indent=2, sort_keys=True))
+    return 0
+
+
+def cmd_partial_throughput(args: argparse.Namespace) -> int:
+    config = PartialThroughputConfig(
+        episodes=args.episodes,
+        warmup_ticks=args.warmup_ticks,
+        episode_ticks=args.episode_ticks,
+        sample_interval=args.sample_interval,
+        horizon=args.horizon,
+        dropout=args.dropout,
+        window=args.window,
+        sequence_epochs=args.sequence_epochs,
+        sequence_hidden=args.sequence_hidden,
+        sequence_layers=args.sequence_layers,
+    )
+    report = run_partial_throughput(
+        config, include_sequence=not args.skip_sequence
+    )
+    path = write_partial_throughput_report(args.out, report)
+    print(json.dumps({"report": str(path), "dataset": report["dataset"]}, indent=2, sort_keys=True))
     return 0
 
 
@@ -3088,6 +3114,24 @@ def build_parser() -> argparse.ArgumentParser:
     power_allocation.add_argument("--capacity-jitter", type=int, default=0)
     power_allocation.add_argument("--variation-period", type=int, default=20)
     power_allocation.set_defaults(func=cmd_power_allocation)
+
+    partial_throughput = subparsers.add_parser(
+        "partial-throughput",
+        help="run the masked-window throughput benchmark",
+    )
+    partial_throughput.add_argument("--out", type=str, default="results/partial-throughput")
+    partial_throughput.add_argument("--episodes", type=int, default=100)
+    partial_throughput.add_argument("--warmup-ticks", type=int, default=150)
+    partial_throughput.add_argument("--episode-ticks", type=int, default=300)
+    partial_throughput.add_argument("--sample-interval", type=int, default=10)
+    partial_throughput.add_argument("--horizon", type=int, default=50)
+    partial_throughput.add_argument("--dropout", type=float, default=0.6)
+    partial_throughput.add_argument("--window", type=int, default=4)
+    partial_throughput.add_argument("--sequence-epochs", type=int, default=30)
+    partial_throughput.add_argument("--sequence-hidden", type=int, default=16)
+    partial_throughput.add_argument("--sequence-layers", type=int, default=1)
+    partial_throughput.add_argument("--skip-sequence", action="store_true")
+    partial_throughput.set_defaults(func=cmd_partial_throughput)
 
     wire_repair = subparsers.add_parser(
         "wire-repair",
