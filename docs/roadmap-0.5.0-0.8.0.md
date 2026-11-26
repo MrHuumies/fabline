@@ -59,17 +59,21 @@ The generative line is conditional: it follows the grammar, not the calendar.
 
 | Work item | Branch | Status |
 |---|---|---|
-| Public baselines | `feat/0.5.0-public-baselines` | CNN/MPNN/GRU/Transformer implemented, tests pass |
-| Reliability contract | `feat/0.5.0-reliability-contract` | public harness; CVaR +17.62 [13.90, 21.68]; gates pass |
-| Partial throughput | `feat/0.5.0-partial-throughput` | public harness; window GBDT R² 0.897; H1/H2/H3 pass |
-| Wired cascade | `feat/0.5.0-wired-cascade` | public harness; graph_mp R² 0.124, +0.018 < +0.05; diagnostic |
-| Coverage suite | `feat/0.5.0-coverage-suite` | draft `factory-v0.4`; full run 2 pass / 1 diagnostic |
-| Assembly edge | `feat/0.6.0-assembly-edge` | mechanic + assembly cell + control task; Q 460 vs random 429, always gear 260; gates pass |
-| 0.7.0 design | `feat/0.7.0-uncertain-repair-design` | RFC 0032 and task cards; design only |
+| Public baselines | `feat/0.5.0-public-baselines` | merged to main; CNN/MPNN/GRU/Transformer tests pass |
+| Reliability contract | `feat/0.5.0-reliability-contract` | merged; full suite CVaR +17.62 [13.90, 21.68] |
+| Partial throughput | `feat/0.5.0-partial-throughput` | merged; full suite window GBDT R² 0.897 |
+| Wired cascade | `feat/0.5.0-wired-cascade` | merged; graph_mp R² 0.124, +0.018 < +0.05; diagnostic |
+| Coverage suite | `feat/0.5.0-coverage-suite` | merged; draft `factory-v0.4` full run 2 pass / 1 diagnostic |
+| Assembly edge | `feat/0.6.0-assembly-edge` | branch ready; Q 460 vs random 429, always gear 260; gates pass |
+| 0.7.0 design | `feat/0.7.0-uncertain-repair-design` | branch ready; RFC 0032 and task cards; design only |
 
-The next step is to merge/review the 0.5.0 coverage branches, then choose one of:
-extend the coverage suite with the remaining crew/recipe/preventive tasks, or
-start the 0.7.0 sequential-crew implementation.
+0.5.0 coverage merged to `main` at `11af12c`; the full coverage-suite run on
+`main` is **2 pass / 1 diagnostic** (reliability +17.62 CVaR, partial 0.897,
+wired diagnostic). The assembly and 0.7.0 design branches remain separate.
+
+The next step is to choose one of: review/merge the assembly branch, extend the
+coverage suite with the remaining crew/recipe/preventive tasks, or start the
+0.7.0 sequential-crew implementation.
 
 ### 1.2 How this plan uses the analysis
 
