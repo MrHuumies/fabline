@@ -50,7 +50,7 @@ class OrderRLConfig:
 @lru_cache(maxsize=1)
 def _torch() -> Any:
     try:
-        import torch
+        import torch  # type: ignore[import-not-found,unused-ignore]
 
         torch.set_num_threads(1)
         return torch
@@ -160,7 +160,7 @@ def train_ppo(
     torch = _torch()
     from torch import nn
 
-    class ActorCritic(nn.Module):
+    class ActorCritic(nn.Module):  # type: ignore[misc,unused-ignore]
         def __init__(self) -> None:
             super().__init__()
             self.body = nn.Sequential(
