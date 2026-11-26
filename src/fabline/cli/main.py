@@ -200,6 +200,11 @@ from fabline.harness.production_mix import (
     write_production_mix_report,
 )
 from fabline.harness.recipe import run_recipe_choice, write_recipe_report
+from fabline.harness.reliability_contract import (
+    ReliabilityContractConfig,
+    run_reliability_contract,
+    write_reliability_contract_report,
+)
 from fabline.harness.runner import run_throughput_benchmark
 from fabline.harness.shared_suite import SharedSuiteConfig, run_shared_suite
 from fabline.harness.suite import SuiteConfig, run_suite
@@ -966,6 +971,25 @@ def cmd_power_allocation(args: argparse.Namespace) -> int:
         },
     )
     print(json.dumps({"report": str(report), "results": results}, indent=2, sort_keys=True))
+    return 0
+
+
+def cmd_reliability_contract(args: argparse.Namespace) -> int:
+    train_blocks = tuple(
+        range(args.train_block_start, args.train_block_end + 1, 2)
+    )
+    test_blocks = tuple(
+        range(args.test_block_start, args.test_block_end + 1, 2)
+    )
+    config = ReliabilityContractConfig(
+        train_blocks=train_blocks,
+        test_blocks=test_blocks,
+        episodes_per_block=args.episodes_per_block,
+        bootstrap_samples=args.bootstrap_samples,
+    )
+    report = run_reliability_contract(config)
+    path = write_reliability_contract_report(args.out, report)
+    print(json.dumps({"report": str(path), "summary": report["summary"]}, indent=2, sort_keys=True))
     return 0
 
 
@@ -3088,6 +3112,21 @@ def build_parser() -> argparse.ArgumentParser:
     power_allocation.add_argument("--capacity-jitter", type=int, default=0)
     power_allocation.add_argument("--variation-period", type=int, default=20)
     power_allocation.set_defaults(func=cmd_power_allocation)
+
+    reliability_contract = subparsers.add_parser(
+        "reliability-contract",
+        help="run the risk-sensitive reliability-contract selection task",
+    )
+    reliability_contract.add_argument(
+        "--out", type=str, default="results/reliability-contract"
+    )
+    reliability_contract.add_argument("--episodes-per-block", type=int, default=10)
+    reliability_contract.add_argument("--train-block-start", type=int, default=600)
+    reliability_contract.add_argument("--train-block-end", type=int, default=998)
+    reliability_contract.add_argument("--test-block-start", type=int, default=601)
+    reliability_contract.add_argument("--test-block-end", type=int, default=999)
+    reliability_contract.add_argument("--bootstrap-samples", type=int, default=2000)
+    reliability_contract.set_defaults(func=cmd_reliability_contract)
 
     wire_repair = subparsers.add_parser(
         "wire-repair",
