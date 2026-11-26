@@ -74,6 +74,21 @@ Seeds 72,000–72,004; five episodes per seed:
 H1/H2/H3/H4 pass. Q is +53.8 over random and succeeds on every formal episode.
 See [`experiments/0090-order-control`](../experiments/0090-order-control/summary.md).
 
+## Deep/offline RL (0092)
+
+Seeds 77,000–77,004; 10k PPO steps, 100 BC episodes:
+
+| policy | value | success |
+|---|---:|---:|
+| scripted value | 272.5 | 1.00 |
+| tabular Q | 259.5 | 1.00 |
+| BC | 249.8 | 0.80 |
+| PPO | 169.0 | 0.44 |
+
+BC is +6.6 over random, below the +10 gate; PPO is below random. The deep/offline
+RL baseline track is negative at this budget; do not tune it. See
+[`experiments/0092-order-rl`](../experiments/0092-order-rl/summary.md).
+
 ## Changelog
 
 - 2026-11-26 — draft card created; Phase 3 pending.

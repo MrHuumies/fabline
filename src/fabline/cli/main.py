@@ -150,6 +150,11 @@ from fabline.harness.order_planning import (
     run_order_planning,
     write_order_planning_report,
 )
+from fabline.harness.order_rl import (
+    OrderRLConfig,
+    run_order_rl,
+    write_order_rl_report,
+)
 from fabline.harness.planning_transition import (
     TransitionEnsembleConfig,
     TransitionPlanningConfig,
@@ -453,6 +458,38 @@ def cmd_efficiency(args: argparse.Namespace) -> int:
             sort_keys=True,
         )
     )
+    return 0
+
+
+def cmd_order_rl(args: argparse.Namespace) -> int:
+    config = FactoryConfig(
+        width=16,
+        height=8,
+        ticks_per_episode=300,
+        decision_interval=10,
+        entity_budget=32,
+        rock_density=0.0,
+        ore_patches=1,
+        starter_line=True,
+        emit_events=True,
+    )
+    orders = OrderControlConfig(
+        episode_ticks=300,
+        decision_interval=10,
+        success_value=args.success_value,
+        orders=OrderConfig(enabled=True),
+    )
+    rl = OrderRLConfig(
+        eval_seeds=tuple(int(value) for value in args.seeds.split(",")),
+        ppo_seeds=tuple(
+            int(value) for value in args.ppo_seeds.split(",")
+        ),
+        ppo_steps=args.ppo_steps,
+        bc_episodes=args.bc_episodes,
+    )
+    report = run_order_rl(config, orders, rl)
+    path = write_order_rl_report(args.out, report)
+    print(json.dumps({"report": str(path), **report}, indent=2, sort_keys=True))
     return 0
 
 
@@ -2775,6 +2812,22 @@ def build_parser() -> argparse.ArgumentParser:
     order_planning.add_argument("--random-samples", type=int, default=32)
     order_planning.add_argument("--success-value", type=int, default=160)
     order_planning.set_defaults(func=cmd_order_planning)
+
+    order_rl = subparsers.add_parser(
+        "order-rl",
+        help="run BC/PPO baselines on order control",
+    )
+    order_rl.add_argument(
+        "--out", type=str, default="results/order-rl"
+    )
+    order_rl.add_argument(
+        "--seeds", type=str, default="76000,76001,76002,76003,76004"
+    )
+    order_rl.add_argument("--ppo-seeds", type=str, default="0,1,2")
+    order_rl.add_argument("--ppo-steps", type=int, default=10000)
+    order_rl.add_argument("--bc-episodes", type=int, default=100)
+    order_rl.add_argument("--success-value", type=int, default=160)
+    order_rl.set_defaults(func=cmd_order_rl)
 
     order_control = subparsers.add_parser(
         "order-control",

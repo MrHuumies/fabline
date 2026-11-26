@@ -51,6 +51,10 @@ are pinned separately; see [`benchmarks/factory-v0.2/card.md`](benchmarks/factor
 - Add order planning: CEM matches the oracle at 292.4, EDF 263.8; all gates
   pass on fresh seeds (0091).
 
+- Add BC/PPO baselines on order control: negative at 10k steps (BC 249.8,
+  PPO 169.0 vs random 243.2); scripted value 272.5 and Q 259.5 remain stronger
+  (0092).
+
 ## [0.3.0] — 2026-11-24
 
 0.3.0 adds the planning, calibration, and causal decision surfaces, freezes
