@@ -55,6 +55,10 @@ are pinned separately; see [`benchmarks/factory-v0.2/card.md`](benchmarks/factor
   PPO 169.0 vs random 243.2); scripted value 272.5 and Q 259.5 remain stronger
   (0092).
 
+- Draft the `factory-v0.3` freeze review: 12 proposed headline tasks (v0.2 core
+  plus order control and order planning); production mix and RL are diagnostics.
+  The benchmark is not frozen.
+
 ## [0.3.0] — 2026-11-24
 
 0.3.0 adds the planning, calibration, and causal decision surfaces, freezes

@@ -8,7 +8,7 @@
 - **World:** `factory-0.1.0` + opt-in production/order configs (expected; version
   bump only if canonical defaults change)
 - **Predecessor:** [`factory-v0.2`](../factory-v0.2/card.md) remains immutable
-- **Related:** RFC 0030, ADR 0042
+- **Related:** RFC 0030, ADR 0042, [freeze review](freeze-review.md)
 
 ## Purpose
 
