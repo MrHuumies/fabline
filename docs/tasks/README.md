@@ -83,6 +83,10 @@ Current tasks:
   R² 0.910 vs type-only −0.300.
 - [Production mix](production-mix.md) — draft 0.4.0 production-mix pilot.
 - [Order planning](order-planning.md) — draft 0.4.0 order-planning candidate.
+- [Sequential crew repair](crew-sequential.md) — 0.7.0 design; per-crew movement,
+  repair, and communication.
+- [POMDP maintenance](pomdp-maintenance.md) — 0.7.0 design; hidden wear, noisy
+  sensors, inspect/repair/continue.
 - [Order control](order-control.md) — draft 0.4.0 order-control candidate.
 - [View arrival](view-arrival.md) — generic multiview contract and
   episode-grouped view-arrival task.
