@@ -27,7 +27,7 @@ check exist. The full run matches the expected summary with zero mismatches.
 |---|---|---|---|
 | v0.2 core | frozen, stable | 10 tasks, 159 episodes | keep |
 | production mix (0089) | schedule gap ≥10 | component 186 vs gear 150; no schedule gain | diagnostic only |
-| order control (0090) | best scripted ≥ always-gear +10; Q ≥ random +10; Q success ≥0.60 | value 272.5, Q 259.5, random 243.2; all pass | freeze |
+| order control (0090) | best scripted ≥ always-gear +10; Q ≥ random +10; Q success ≥0.60 | value 289.8, Q 280.2, random 226.4; all pass | freeze |
 | order planning (0091) | oracle ≥ scripted +10; CEM ≥ random +10; CEM within 10 of oracle; success ≥0.60 | CEM = oracle 292.4; EDF 263.8; all pass | freeze |
 | order RL (0092) | BC/PPO ≥ random +10 | BC 249.8 (+6.6), PPO 169.0 (−74.3) | baseline only; no task |
 | demand calibration | skill + ECE gate | not run | defer |

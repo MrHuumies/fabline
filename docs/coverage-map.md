@@ -61,7 +61,7 @@ This document is a map, not a commitment to implement every row.
 | fault calibration | calibration/detection | context + sensors | top-4 GBDT ECE 0.008 |
 | causal removal | prediction | state + intervention | target GBDT R² 0.910 vs type-only −0.300 |
 | production mix | control | production | component 186 vs gear 150; no schedule gap |
-| order control | control | production + orders | value 272.5; Q 259.5; random 243.2 |
+| order control | control | production + orders | value 289.8; Q 280.2; random 226.4 |
 | order planning | planning | order set | CEM = oracle 292.4; EDF 263.8 |
 
 ### Current baselines

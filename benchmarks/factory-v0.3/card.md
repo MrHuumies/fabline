@@ -41,12 +41,13 @@ Demand calibration/causal and generative tasks are deferred.
 ## Formal evidence
 
 - Core: 159 episodes, 20 test / 20 shift.
-- Order control (0090): value 272.5, Q 259.5, random 243.2; value policy 1.00,
+- Order control (0090): value 289.8, Q 280.2, random 226.4; value policy 1.00,
   Q 1.00 success. Success is saturated at the 160 threshold; value is the
   headline.
 - Order planning (0091): CEM = oracle 292.4, EDF 263.8; all planning gates pass.
 - Production mix (0089): component 186 vs gear 150; no schedule gap. Diagnostic.
-- Order RL (0092): BC 249.8, PPO 169.0 vs random 243.2. Negative baseline.
+- Order RL (0092): BC 249.8, PPO 169.0 vs random 243.2 on its own comparison
+  block; scripted value 272.5. Negative baseline.
 
 ## Freeze status
 
