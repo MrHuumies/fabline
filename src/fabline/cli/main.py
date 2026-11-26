@@ -25,6 +25,7 @@ from fabline.env.crew_schedule import CrewScheduleConfig
 from fabline.env.fault_power import FaultPowerConfig
 from fabline.env.fault_recovery import FaultRecoveryConfig
 from fabline.env.multi_crew import MultiCrewConfig
+from fabline.env.orders import OrderConfig, OrderControlConfig
 from fabline.env.power_allocation import PowerAllocationConfig
 from fabline.env.preventive_fault import PreventiveFaultConfig
 from fabline.env.preventive_threshold import ThresholdConfig
@@ -139,6 +140,10 @@ from fabline.harness.multi_crew import (
     run_multi_crew,
     write_crew_robustness_report,
     write_multi_crew_report,
+)
+from fabline.harness.order_control import (
+    run_order_control,
+    write_order_control_report,
 )
 from fabline.harness.planning_transition import (
     TransitionEnsembleConfig,
@@ -443,6 +448,46 @@ def cmd_efficiency(args: argparse.Namespace) -> int:
             sort_keys=True,
         )
     )
+    return 0
+
+
+def cmd_order_control(args: argparse.Namespace) -> int:
+    config = FactoryConfig(
+        width=16,
+        height=8,
+        ticks_per_episode=300,
+        decision_interval=10,
+        entity_budget=32,
+        rock_density=0.0,
+        ore_patches=1,
+        starter_line=True,
+        emit_events=True,
+    )
+    orders = OrderControlConfig(
+        episode_ticks=300,
+        decision_interval=10,
+        success_value=args.success_value,
+        orders=OrderConfig(enabled=True),
+    )
+    seeds = tuple(int(value) for value in args.seeds.split(","))
+    results = run_order_control(
+        config,
+        orders,
+        seeds=seeds,
+        episodes=args.episodes,
+        q_episodes=args.q_episodes,
+    )
+    report = write_order_control_report(
+        args.out,
+        results,
+        config={
+            "width": config.width,
+            "height": config.height,
+            "seeds": list(seeds),
+            "success_value": orders.success_value,
+        },
+    )
+    print(json.dumps({"report": str(report), "results": results}, indent=2, sort_keys=True))
     return 0
 
 
@@ -2678,6 +2723,21 @@ def build_parser() -> argparse.ArgumentParser:
     human_bc.add_argument("--episodes", type=int, default=5)
     human_bc.add_argument("--seed", type=int, default=0)
     human_bc.set_defaults(func=cmd_human_bc)
+
+    order_control = subparsers.add_parser(
+        "order-control",
+        help="run the seeded order-control pilot",
+    )
+    order_control.add_argument(
+        "--out", type=str, default="results/order-control"
+    )
+    order_control.add_argument(
+        "--seeds", type=str, default="71000,71001,71002,71003,71004"
+    )
+    order_control.add_argument("--episodes", type=int, default=5)
+    order_control.add_argument("--q-episodes", type=int, default=100)
+    order_control.add_argument("--success-value", type=int, default=160)
+    order_control.set_defaults(func=cmd_order_control)
 
     production_mix = subparsers.add_parser(
         "production-mix",

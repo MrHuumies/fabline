@@ -141,5 +141,7 @@ The current frozen benchmark is documented separately in
 
 - [0089 — Production-mix pilot](0089-production-mix/summary.md) — mixed; component 186 vs gear 150; no schedule gap.
 
+- [0090 — Order control](0090-order-control/summary.md) — positive; value 289.8, Q 280.2, random 226.4; all gates pass.
+
 The `factory-v0.2` freeze review is in
 [`benchmarks/factory-v0.2/freeze-review.md`](../../benchmarks/factory-v0.2/freeze-review.md).

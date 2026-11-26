@@ -45,6 +45,9 @@ are pinned separately; see [`benchmarks/factory-v0.2/card.md`](benchmarks/factor
   produces gear or component; the pilot is mixed (component 186 vs gear 150,
   no schedule gap), so the order stream is next (0089).
 
+- Add seeded order control: value 289.8, tabular Q 280.2, random 226.4; all
+  gates pass on fresh seeds (0090).
+
 ## [0.3.0] — 2026-11-24
 
 0.3.0 adds the planning, calibration, and causal decision surfaces, freezes
