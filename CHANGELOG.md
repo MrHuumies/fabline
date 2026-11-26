@@ -1,9 +1,16 @@
 # Changelog
 
 All notable changes to FABLINE are recorded here. World and benchmark versions
-are pinned separately; see [`benchmarks/factory-v0.2/card.md`](benchmarks/factory-v0.2/card.md).
+are pinned separately; see [`benchmarks/factory-v0.3/card.md`](benchmarks/factory-v0.3/card.md).
 
 ## [Unreleased]
+
+- No unreleased changes.
+
+## [0.4.0] — 2026-11-26
+
+0.4.0 adds demand-driven production, seeded orders, order control/planning,
+and freezes `factory-v0.3`. `factory-v0.2` remains immutable.
 
 - Add a compact relative-geometry Q baseline for decentralized triage. It is
   negative: compact Q, the old state, and the ensemble all score 616/0.40
