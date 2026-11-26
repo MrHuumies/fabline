@@ -46,6 +46,21 @@ The player reconstructs the world from the replay seed and scenario and runs it
 at the requested speed. The factory-v0.1 dataset manifest carries the world
 config, so `--config` is optional.
 
+## Headless viewer QoL
+
+Browse replay files and task cards without Pygame:
+
+```bash
+.venv/bin/python -m fabline replay-browser --root datasets --limit 20
+.venv/bin/python -m fabline replay-browser \
+  --show datasets/demo-control-v0.1/demos/scripted_0000/replay.json
+.venv/bin/python -m fabline task-cards
+.venv/bin/python -m fabline task-cards --show fault-calibration
+```
+
+The same actions are in `fabline wizard` under “browse replay files” and “view a
+task card.” These commands are read-only; they do not tick or mutate a world.
+
 ## Screenshot (headless)
 
 ```bash
@@ -106,3 +121,5 @@ The scripted demos are a pipeline check, not a human-data claim. Use
 - `tests/unit/test_human_demos.py` checks demo round-trips, replay validation,
   and behavior cloning.
 - `tests/integration/test_cli_m4.py` runs the demo and human-BC commands.
+- `tests/unit/test_browser.py` and `tests/unit/test_wizard.py` cover replay
+  listing, task-card lookup, and the wizard menu paths.

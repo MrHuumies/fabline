@@ -22,6 +22,8 @@ cd fabline
 .venv/bin/python -m fabline smoke --ticks 200
 .venv/bin/python -m fabline shared-suite --out results/factory-v0.1
 .venv/bin/python -m fabline wizard
+.venv/bin/python -m fabline replay-browser --root datasets --limit 20
+.venv/bin/python -m fabline task-cards
 ```
 
 Generate a small dataset and run the M1 benchmark:

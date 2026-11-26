@@ -139,24 +139,22 @@ the pilots.
 5. **Deep/offline RL.** Still absent as baseline families.
 6. **Efficiency table.** Delivered in [`efficiency.md`](efficiency.md); descriptive
    and machine-dependent, not a leaderboard.
-7. **Viewer QoL.** Result summary is in the wizard; a replay browser and task
-   card viewer are not.
+7. **Viewer QoL.** Complete: replay browser, task-card viewer, and result
+   summary are in the wizard and as standalone CLI commands.
 
 ## Recommended next slice
 
-**Viewer QoL or a new scope decision.** The research lines are closed for now:
-decentralized (0081/0082), calibration (0084), the linear transition family
-(0083/0085/0086), generative feasibility (0087), and the efficiency table
-(0088). The remaining release-quality work is viewer QoL: replay browser and
-task-card viewer. A nonlinear transition model or deep/offline RL is a new
-pre-registration and a larger scope.
+**A 0.4.0 scope decision.** All 0.3.0 research and release-quality lines are
+closed: decentralized (0081/0082), calibration (0084), linear transitions
+(0083/0085/0086), generative feasibility (0087), efficiency (0088), and viewer
+QoL (replay browser/task-card viewer). There is no remaining cheap pilot.
 
-Options:
+Options for 0.4.0:
 
-1. **Viewer QoL.** Replay browser/task-card viewer; headless tests, optional
-   Pygame.
-2. **Nonlinear transition model.** Only as a new pre-registration.
-3. **Deep/offline RL.** Larger baseline track; needs a new scope decision.
+1. **Nonlinear transition model.** A new pre-registration; the cleanest
+   world-model follow-up.
+2. **Deep/offline RL.** A larger baseline track; needs a new scope decision.
+3. **Richer generative grammar.** A new mechanic/RFC, not a model tweak.
 
 Do not add another calibration view, decentralized variant, linear transition
 model, beta/K sweep, or generative model on seven lines.

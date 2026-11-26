@@ -108,7 +108,7 @@ def test_wizard_check_expected() -> None:
 
 
 def test_wizard_invalid_choice_then_quit() -> None:
-    read, _ = _inputs(["nope", "7"])
+    read, _ = _inputs(["nope", "9"])
     lines: list[str] = []
     code = run_wizard(input_fn=read, output_fn=lines.append, dry_run=True)
     assert code == 0
@@ -122,3 +122,33 @@ def test_wizard_cancels_on_eof() -> None:
     code = run_wizard(input_fn=read, output_fn=lines.append, dry_run=True)
     assert code == 1
     assert lines[-1] == "cancelled"
+
+
+def test_wizard_replay_browser(tmp_path) -> None:
+    replay = tmp_path / "replay.json"
+    replay.write_text(
+        '{"seed": 3, "actions": [1, 2], "state_hashes": ["a", "b"], '
+        '"sample_ticks": [0, 10], "scenario": "gear"}',
+        encoding="utf-8",
+    )
+    read, _ = _inputs(["7", str(tmp_path), "1"])
+    lines: list[str] = []
+    code = run_wizard(input_fn=read, output_fn=lines.append, dry_run=True)
+    assert code == 0
+    assert any("replay" in line for line in lines)
+    assert any("gear" in line for line in lines)
+
+
+def test_wizard_task_card_viewer(tmp_path) -> None:
+    card = tmp_path / "example.md"
+    card.write_text(
+        "# Task card — example\n\n"
+        "- **Task ID:** `factory.example.v1`\n"
+        "- **Status:** test\n",
+        encoding="utf-8",
+    )
+    read, _ = _inputs(["8", str(tmp_path), "1"])
+    lines: list[str] = []
+    code = run_wizard(input_fn=read, output_fn=lines.append, dry_run=True)
+    assert code == 0
+    assert any("Task card — example" in line for line in lines)

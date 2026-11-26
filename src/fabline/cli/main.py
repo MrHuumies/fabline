@@ -8,6 +8,15 @@ import sys
 from pathlib import Path
 
 from fabline import __version__
+from fabline.cli.browser import (
+    find_replays,
+    find_task_cards,
+    format_replay_table,
+    format_task_card_table,
+    read_task_card,
+    resolve_task_card,
+    summarize_replay,
+)
 from fabline.cli.wizard import run_wizard
 from fabline.env.contract_board import ContractBoardConfig, ContractBoardEnv
 from fabline.env.control import ControlConfig
@@ -429,6 +438,36 @@ def cmd_efficiency(args: argparse.Namespace) -> int:
             sort_keys=True,
         )
     )
+    return 0
+
+
+def cmd_replay_browser(args: argparse.Namespace) -> int:
+    if args.show:
+        summary = summarize_replay(args.show)
+        print(format_replay_table([summary]))
+        return 0
+    paths = find_replays(args.root)
+    if not paths:
+        print(f"no replay.json files under {args.root}")
+        return 0
+    summaries = [summarize_replay(path) for path in paths]
+    print(format_replay_table(summaries, limit=args.limit))
+    return 0
+
+
+def cmd_task_cards(args: argparse.Namespace) -> int:
+    cards = find_task_cards(args.root)
+    if args.show:
+        card = resolve_task_card(cards, args.show)
+        if card is None:
+            print(f"task card not found: {args.show}")
+            return 1
+        print(read_task_card(card))
+        return 0
+    if not cards:
+        print(f"no task cards under {args.root}")
+        return 0
+    print(format_task_card_table(cards))
     return 0
 
 
@@ -2594,6 +2633,23 @@ def build_parser() -> argparse.ArgumentParser:
     human_bc.add_argument("--episodes", type=int, default=5)
     human_bc.add_argument("--seed", type=int, default=0)
     human_bc.set_defaults(func=cmd_human_bc)
+
+    replay_browser = subparsers.add_parser(
+        "replay-browser",
+        help="list or summarize replay.json files",
+    )
+    replay_browser.add_argument("--root", type=str, default="datasets")
+    replay_browser.add_argument("--show", type=str, default=None)
+    replay_browser.add_argument("--limit", type=int, default=50)
+    replay_browser.set_defaults(func=cmd_replay_browser)
+
+    task_cards = subparsers.add_parser(
+        "task-cards",
+        help="list or print task cards",
+    )
+    task_cards.add_argument("--root", type=str, default="docs/tasks")
+    task_cards.add_argument("--show", type=str, default=None)
+    task_cards.set_defaults(func=cmd_task_cards)
 
     efficiency = subparsers.add_parser(
         "efficiency",

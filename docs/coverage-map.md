@@ -285,7 +285,7 @@ true 454/1.00). Maintenance calibration (0084) is mixed: diagnostics ECE
 442/1.00. The generative feasibility audit (0087) is negative: only 7 unique
 line sequences, diversity 0.080. The efficiency table (0088) is public; the
 calibration, linear-transition, and generative lines are closed. Viewer QoL is
-the next release-quality slice.
+complete; the next decision is a 0.4.0 research scope.
 
 ### P0 progress
 

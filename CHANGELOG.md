@@ -38,6 +38,9 @@ are pinned separately; see [`benchmarks/factory-v0.2/card.md`](benchmarks/factor
   fit/predict time, artifact size, and peak memory for 10 model rows (0088).
   It is descriptive, not a leaderboard.
 
+- Add headless viewer QoL: `fabline replay-browser` and `fabline task-cards`,
+  plus both paths in `fabline wizard`. Read-only and no new dependency.
+
 ## [0.3.0] — 2026-11-24
 
 0.3.0 adds the planning, calibration, and causal decision surfaces, freezes
