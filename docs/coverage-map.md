@@ -1,12 +1,13 @@
 # Coverage map — model families, benchmarks, and mechanics
 
 - **Status:** living design document
-- **Date:** 2026-11-24
+- **Date:** 2026-11-26
 - **Purpose:** choose world mechanics and benchmarks because they expose a
   specific model weakness, not because they add content or serve one consumer.
 - **Related:** [`testbed.md`](testbed.md), [`research-axes.md`](research-axes.md),
   [`coverage-review-0.1.2.md`](coverage-review-0.1.2.md),
-  [`benchmarks/factory-v0.2/card.md`](../benchmarks/factory-v0.2/card.md)
+  [`coverage-review-0.4.0.md`](coverage-review-0.4.0.md),
+  [`benchmarks/factory-v0.3/card.md`](../benchmarks/factory-v0.3/card.md)
 
 ## How to use this map
 
@@ -71,13 +72,15 @@ This document is a map, not a commitment to implement every row.
 - GBDT;
 - MLP;
 - `graph_mp` message-passing features;
-- scripted, random, tabular Q, behavior cloning;
-- scripted multi-agent assignment/triage and queue-aware recipe/contract policies.
+- scripted, random, tabular Q, behavior cloning, CEM;
+- scripted multi-agent assignment/triage, queue-aware recipe/contract policies,
+  and deadline-aware order policies.
 
 **Representative families added in P0/P1:** CNN, end-to-end GNN/MPNN,
-Transformer, GRU/RNN, calibration, CVaR/risk selection, and bandits. Still
-missing: world model, deep RL, offline RL beyond behavior cloning, multi-agent
-RL beyond the centralized two-crew assignment, and generative models.
+Transformer, GRU/RNN, calibration, CVaR/risk selection, and bandits. Deep RL
+was attempted on order control (0092) and is negative at 10k steps; offline RL
+beyond behavior cloning, a learned world model, multi-agent RL beyond the
+centralized assignment, and generative models remain missing.
 
 ### Current benchmark families
 
@@ -88,9 +91,9 @@ RL beyond the centralized two-crew assignment, and generative models.
 | Relational | partial | graph_mp and end-to-end MPNN on debug tasks; no frozen graph benchmark |
 | Temporal / sequence | partial | next-state and control-dynamics; short horizons |
 | Event detection | partial | fault onset; aggregate views |
-| Control / RL | partial | small discrete tasks; no deep RL |
-| Offline / imitation | partial | scripted demos + BC; no offline RL or shift |
-| Planning / world models | absent | no planning or rollout benchmark |
+| Control / RL | partial | small discrete tasks; deep RL negative at 10k (0092) |
+| Offline / imitation | partial | scripted demos + BC; BC near random on orders; no offline RL |
+| Planning / world models | partial | true-simulator triage/order planning; learned transition models negative |
 | Causal / counterfactual | partial | bottleneck labels; no intervention benchmark |
 | Self-supervised | strong | next-state, masked-grid, control-dynamics |
 | Robustness / OOD | partial | scenario splits; stochastic power |
@@ -288,7 +291,21 @@ true 454/1.00). Maintenance calibration (0084) is mixed: diagnostics ECE
 442/1.00. The generative feasibility audit (0087) is negative: only 7 unique
 line sequences, diversity 0.080. The efficiency table (0088) is public; the
 calibration, linear-transition, and generative lines are closed. Viewer QoL is
-complete; the next decision is a 0.4.0 research scope.
+complete. The 0.4.0 demand-driven production line is reviewed below.
+
+### 0.4.0 — demand-driven production (complete)
+
+The [0.4.0 coverage review](coverage-review-0.4.0.md) consolidates 0089–0092.
+The production-mix pilot (0089) is mixed: component 186 vs gear 150, but the
+best schedule gains only 3.2 over best fixed, so the mix is a precondition, not
+a standalone task. The order stream supplies the decision: order control (0090)
+is positive (value 289.8/1.00, Q 280.2/1.00, random 226.4/0.88), and order
+planning (0091) is positive (CEM = oracle 292.4/1.00, EDF 263.8/1.00). The
+deep/offline RL baseline track (0092) is negative: BC 249.8/0.80 (+6.6 vs
+random) and PPO 169.0/0.44 (−74.3). `factory-v0.3` is frozen at 12 tasks: the
+v0.2 core plus order control and order planning. Production mix and BC/PPO are
+diagnostics, not headline tasks. The next decision is a 0.5.0 scope decision;
+the leading candidate is the Phase 1b assembly edge, not another order variant.
 
 ### P0 progress
 

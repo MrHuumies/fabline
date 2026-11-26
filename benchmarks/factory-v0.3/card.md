@@ -7,6 +7,7 @@
 - **Plan:** `compositional-v0.3`
 - **Spec:** [`benchmark.toml`](benchmark.toml)
 - **Freeze review:** [`freeze-review.md`](freeze-review.md)
+- **Coverage review:** [`docs/coverage-review-0.4.0.md`](../../docs/coverage-review-0.4.0.md)
 - **Expected summary:** [`expected/summary.json`](expected/summary.json)
 - **Reproduce:** `.venv/bin/python -m fabline benchmark-v03 --out results/factory-v0.3`
 - **Check:** `.venv/bin/python -m fabline benchmark-v03 --out results/factory-v0.3 --check-expected benchmarks/factory-v0.3/expected/summary.json`

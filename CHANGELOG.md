@@ -68,6 +68,10 @@ and freezes `factory-v0.3`. `factory-v0.2` remains immutable.
 - Freeze `factory-v0.3`: 12 headline tasks, full expected-summary check with zero
   mismatches. `factory-v0.2` remains immutable.
 
+- Add the 0.4.0 coverage review: orders supply the decision the recipe mix
+  lacked; standalone production mix and BC/PPO are diagnostics/negative. The
+  Phase 1b assembly edge is the leading 0.5.0 candidate.
+
 ## [0.3.0] — 2026-11-24
 
 0.3.0 adds the planning, calibration, and causal decision surfaces, freezes
