@@ -1,6 +1,6 @@
 PY ?= .venv/bin/python
 
-.PHONY: test lint smoke dataset benchmark suite shared-suite benchmark-v02 benchmark-v02-check wizard planning-transition planning-transition-ensemble planning-transition-two-step generative-audit efficiency production-mix order-planning order-control order-rl replay-browser task-cards maintenance-calibration crew-decentralized-compact crew-decentralized-ctde render-install render play demo human-bc fault-benchmark fault-recovery fault-power power-benchmark power-allocation power-allocation-stochastic perf
+.PHONY: test lint smoke dataset benchmark suite shared-suite benchmark-v02 benchmark-v02-check benchmark-v03 benchmark-v03-check wizard planning-transition planning-transition-ensemble planning-transition-two-step generative-audit efficiency production-mix order-planning order-control order-rl replay-browser task-cards maintenance-calibration crew-decentralized-compact crew-decentralized-ctde render-install render play demo human-bc fault-benchmark fault-recovery fault-power power-benchmark power-allocation power-allocation-stochastic perf
 
 test:
 	$(PY) -m pytest -q
@@ -29,6 +29,12 @@ benchmark-v02:
 
 benchmark-v02-check:
 	$(PY) -m fabline benchmark-v02 --out results/factory-v0.2 --check-expected benchmarks/factory-v0.2/expected/summary.json
+
+benchmark-v03:
+	$(PY) -m fabline benchmark-v03 --out results/factory-v0.3
+
+benchmark-v03-check:
+	$(PY) -m fabline benchmark-v03 --out results/factory-v0.3 --check-expected benchmarks/factory-v0.3/expected/summary.json
 
 wizard:
 	$(PY) -m fabline wizard

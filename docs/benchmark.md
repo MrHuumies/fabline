@@ -3,11 +3,10 @@
 This document defines how methods are compared on FABLINE. The benchmark is a
 contract: frozen tasks, frozen splits, fixed budgets, standard reports.
 
-**Current release:** `factory-v0.2` — see
-[`benchmarks/factory-v0.2/card.md`](../benchmarks/factory-v0.2/card.md). It is a
-research benchmark (159 core episodes, 2,948 samples, plus planning,
-calibration, and causal blocks), not a public leaderboard. `factory-v0.1`
-remains frozen for provenance. Cross-task cost is reported separately in the
+**Current release:** `factory-v0.3` — see
+[`benchmarks/factory-v0.3/card.md`](../benchmarks/factory-v0.3/card.md). It
+keeps the v0.2 core and adds order control and order planning, for 12 headline
+tasks. `factory-v0.1` and `factory-v0.2` remain frozen for provenance. Cross-task cost is reported separately in the
 [`efficiency table`](efficiency.md); it is descriptive, not a benchmark score.
 
 Run the current benchmark with:
@@ -28,7 +27,7 @@ Run the current benchmark with:
 A benchmark release is a set of tasks with pinned versions:
 
 ```text
-benchmark: factory-v0.2
+benchmark: factory-v0.3
 tasks:
   - factory.throughput.predict.v1
   - factory.bottleneck.classify.v1
@@ -36,6 +35,8 @@ tasks:
   - factory.planning.triage.v1
   - factory.fault.calibration.v1
   - factory.causal.remove.v1
+  - factory.orders.control.v1
+  - factory.orders.plan.v1
 splits: train / val / test / shift, plus decision-block seeds
 seeds: fixed per task; see benchmark.toml
 budgets: per task

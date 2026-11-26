@@ -71,24 +71,27 @@ make render-install
   baselines; the task is not in the frozen benchmark.
 - **Planning (debug):** true-simulator CEM and a learned transition-model CEM
   on the three-bridge triage task.
+- **Orders (0.4.0):** opt-in gear/component production mix, seeded orders with
+  deadlines/values, order control, and five-block order planning.
 
-Every mechanic is opt-in. The frozen `factory-v0.1` benchmark remains available
-for provenance; `factory-v0.2` is the current benchmark.
+Every mechanic is opt-in. `factory-v0.1` and `factory-v0.2` remain frozen for
+provenance; `factory-v0.3` is the current benchmark.
 
 ## Benchmark
 
-The current frozen benchmark is [`factory-v0.2`](benchmarks/factory-v0.2/card.md):
+The current frozen benchmark is [`factory-v0.3`](benchmarks/factory-v0.3/card.md):
 
-- 159 shared episodes, scenario-based train/val/test/shift splits, with 20 test
-  and 20 shift episodes;
-- the v0.1 core tasks plus triage planning, fault-onset calibration, and causal
-  entity removal;
+- 12 headline tasks: the v0.2 core plus order control and order planning;
+- 159 shared core episodes with 20 test and 20 shift episodes;
+- seeded gear/component orders, recipe-switching control, and a five-block
+  planning task;
 - baseline families with seeds, confidence intervals, and replay validation.
 
 The expected summary is in
-[`benchmarks/factory-v0.2/expected/summary.json`](benchmarks/factory-v0.2/expected/summary.json).
-The first frozen benchmark, [`factory-v0.1`](benchmarks/factory-v0.1/card.md),
-remains immutable. The current coverage map is in
+[`benchmarks/factory-v0.3/expected/summary.json`](benchmarks/factory-v0.3/expected/summary.json).
+The earlier [`factory-v0.2`](benchmarks/factory-v0.2/card.md) and
+[`factory-v0.1`](benchmarks/factory-v0.1/card.md) benchmarks remain immutable.
+The current coverage map is in
 [`docs/coverage-map.md`](docs/coverage-map.md); the
 [0.3.0 review](docs/coverage-review-0.3.0.md) records the next slice. Cross-task
 cost is in the [`efficiency table`](docs/efficiency.md).

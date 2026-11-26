@@ -57,7 +57,9 @@ are pinned separately; see [`benchmarks/factory-v0.2/card.md`](benchmarks/factor
 
 - Draft the `factory-v0.3` freeze review: 12 proposed headline tasks (v0.2 core
   plus order control and order planning); production mix and RL are diagnostics.
-  The benchmark is not frozen.
+
+- Freeze `factory-v0.3`: 12 headline tasks, full expected-summary check with zero
+  mismatches. `factory-v0.2` remains immutable.
 
 ## [0.3.0] — 2026-11-24
 

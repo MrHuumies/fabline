@@ -1,0 +1,46 @@
+# factory-v0.3 benchmark specification.
+# The runner is `fabline benchmark-v03`; this file is the human-readable contract.
+# Status is draft until the full expected-summary check passes.
+
+[benchmark]
+name = "factory-v0.3"
+status = "frozen"
+version = "0.3.0"
+date = "2026-11-26"
+world_version = "factory-0.1.0"
+plan = "compositional-v0.3"
+target_release = "0.4.0"
+command = ".venv/bin/python -m fabline benchmark-v03 --out results/factory-v0.3"
+expected = "benchmarks/factory-v0.3/expected/summary.json"
+
+[core]
+episodes = 159
+test_episodes = 20
+shift_episodes = 20
+tasks = ["throughput-vector", "throughput-grid", "throughput-entities", "masked-grid", "bottleneck", "expand-control", "control-dynamics", "planning-triage", "fault-calibration", "causal-removal"]
+
+[order_control]
+seeds = [72000, 72001, 72002, 72003, 72004]
+episodes = 5
+q_episodes = 100
+success_value = 160
+
+[order_planning]
+seeds = [74000, 74001, 74002, 74003, 74004]
+blocks = 5
+population = 16
+elites = 4
+iterations = 4
+random_samples = 32
+success_value = 160
+
+[diagnostics]
+production_seeds = [70000, 70001, 70002, 70003, 70004]
+production_episodes = 5
+production_q_episodes = 50
+order_rl = "negative baseline (0092), not run by the benchmark"
+
+[expected]
+rtol = 0.03
+atol = 0.02
+check = ".venv/bin/python -m fabline benchmark-v03 --out results/factory-v0.3 --check-expected benchmarks/factory-v0.3/expected/summary.json"

@@ -106,6 +106,14 @@ from fabline.harness.factory_v02 import (
     write_expected_summary,
     write_factory_v02_report,
 )
+from fabline.harness.factory_v03 import (
+    FactoryV03Config,
+    run_factory_v03,
+    write_factory_v03_report,
+)
+from fabline.harness.factory_v03 import (
+    build_expected_summary as build_v03_expected,
+)
 from fabline.harness.fault_calibration import (
     FaultCalibrationConfig,
     run_fault_calibration,
@@ -640,6 +648,63 @@ def cmd_generative_audit(args: argparse.Namespace) -> int:
     )
     path = write_generative_audit_report(args.out, report)
     print(json.dumps({"report": str(path), **report}, indent=2, sort_keys=True))
+    return 0
+
+
+def cmd_benchmark_v03(args: argparse.Namespace) -> int:
+    if args.expected and args.skip_v02_planning:
+        print(
+            "error: --expected requires the v0.2 planning block; remove "
+            "--skip-v02-planning",
+            file=sys.stderr,
+        )
+        return 2
+    report = run_factory_v03(
+        args.out,
+        FactoryV03Config(),
+        include_v02_planning=not args.skip_v02_planning,
+        include_diagnostics=not args.skip_diagnostics,
+        include_production_diagnostic=not args.skip_production,
+    )
+    path = write_factory_v03_report(args.out, report)
+    payload: dict[str, object] = {
+        "report": str(path),
+        "core_episodes": report["blocks"]["core"]["episodes"],
+        "core_hash": report["blocks"]["core"]["config_hash"],
+        "order_control": report["blocks"]["order_control"]["value"]["mean_value"],
+        "order_planning": report["blocks"]["order_planning"]["results"]["cem"]["mean_value"],
+    }
+    if args.expected:
+        summary = build_v03_expected(report)
+        expected_path = write_expected_summary(args.expected, summary)
+        payload["expected"] = str(expected_path)
+    if args.check_expected:
+        try:
+            expected = json.loads(
+                Path(args.check_expected).read_text(encoding="utf-8")
+            )
+        except (OSError, json.JSONDecodeError) as exc:
+            print(
+                f"error: could not read expected summary "
+                f"{args.check_expected}: {exc}",
+                file=sys.stderr,
+            )
+            return 2
+        actual = build_v03_expected(report)
+        sections = None
+        if args.skip_v02_planning:
+            sections = tuple(key for key in actual if key != "planning")
+        mismatches = compare_expected_summary(
+            expected, actual, sections=sections
+        )
+        payload["check"] = {
+            "ok": not mismatches,
+            "mismatches": mismatches[:50],
+            "mismatch_count": len(mismatches),
+        }
+        print(json.dumps(payload, indent=2, sort_keys=True))
+        return 0 if not mismatches else 1
+    print(json.dumps(payload, indent=2, sort_keys=True))
     return 0
 
 
@@ -2897,6 +2962,32 @@ def build_parser() -> argparse.ArgumentParser:
     generative_audit.add_argument("--seeds", type=int, default=100)
     generative_audit.add_argument("--seed-start", type=int, default=0)
     generative_audit.set_defaults(func=cmd_generative_audit)
+
+    benchmark_v03 = subparsers.add_parser(
+        "benchmark-v03",
+        help="run the factory-v0.3 benchmark candidate",
+    )
+    benchmark_v03.add_argument(
+        "--out", type=str, default="results/factory-v0.3"
+    )
+    benchmark_v03.add_argument("--expected", type=str, default=None)
+    benchmark_v03.add_argument("--check-expected", type=str, default=None)
+    benchmark_v03.add_argument(
+        "--skip-v02-planning",
+        action="store_true",
+        help="skip the expensive v0.2 planning block",
+    )
+    benchmark_v03.add_argument(
+        "--skip-diagnostics",
+        action="store_true",
+        help="skip fault/power diagnostics",
+    )
+    benchmark_v03.add_argument(
+        "--skip-production",
+        action="store_true",
+        help="skip the production-mix diagnostic",
+    )
+    benchmark_v03.set_defaults(func=cmd_benchmark_v03)
 
     fault_calibration = subparsers.add_parser(
         "fault-calibration",

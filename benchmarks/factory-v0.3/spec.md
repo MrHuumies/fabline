@@ -1,8 +1,6 @@
 # Benchmark specification — factory-v0.3 (draft)
 
-- **Status:** draft; **not frozen** (Phase 1 production mix pilot mixed; Phase 2
-  order control and order planning positive; deep/offline RL negative at 10k
-  steps)
+- **Status:** frozen (12 headline tasks; production mix/RL diagnostics)
 - **Date:** 2026-11-26
 - **Target release:** FABLINE 0.4.0
 - **World:** `factory-0.1.0` + opt-in production/order configs (expected; version
@@ -119,4 +117,5 @@ efficiency table.
 
 ## Changelog
 
-- 2026-11-26 — draft spec created; not frozen.
+- 2026-11-26 — draft spec created.
+- 2026-11-26 — frozen at 12 headline tasks; v0.2 core plus order control/planning.

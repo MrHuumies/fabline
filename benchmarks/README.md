@@ -30,6 +30,7 @@ fault-calibration, and causal-removal blocks. Its expected summary is in
 records the scope cuts (no layout split; decentralized/generative deferred;
 fault/power/next-state are diagnostics).
 
-The 0.4.0 benchmark candidate is [`factory-v0.3`](factory-v0.3/spec.md);
-it is a draft and not frozen. The [draft freeze review](factory-v0.3/freeze-review.md)
-proposes 12 headline tasks: the v0.2 core plus order control and order planning.
+The 0.4.0 benchmark is [`factory-v0.3`](factory-v0.3/spec.md), frozen on
+2026-11-26. It has 12 headline tasks: the v0.2 core plus order control and
+order planning. The [freeze review](factory-v0.3/freeze-review.md) records the
+scope cuts.

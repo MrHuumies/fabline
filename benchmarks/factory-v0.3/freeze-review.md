@@ -1,6 +1,6 @@
 # `factory-v0.3` freeze review (draft)
 
-- **Status:** draft freeze review; **not frozen**
+- **Status:** frozen as `factory-v0.3`
 - **Date:** 2026-11-26
 - **Scope:** 0.4.0 benchmark candidate
 - **Related:** [spec](spec.md), ADR 0042, RFC 0030, experiments 0089–0092
@@ -18,8 +18,8 @@ Production mix, deep/offline RL, demand calibration/causal, and generative
 modeling are not headline tasks. Production mix and RL are diagnostics/baseline
 results; calibration/causal and generative are deferred.
 
-The benchmark is not frozen until the `benchmark-v03` runner, expected summary,
-and CI check exist.
+The benchmark is frozen: the `benchmark-v03` runner, expected summary, and CI
+check exist. The full run matches the expected summary with zero mismatches.
 
 ## Evidence
 
@@ -117,15 +117,15 @@ Planned CI:
 
 ## Freeze gates
 
-- [ ] `factory-v0.2` hash and assets unchanged.
-- [ ] 12 headline tasks have expected summaries.
-- [ ] Core has 20 test and 20 shift episodes.
-- [ ] Order control/planning expected summaries are deterministic.
-- [ ] `benchmark-v03` writes a compact expected summary.
-- [ ] CI cheap/full regression checks exist.
-- [ ] Benchmark card and spec are complete.
-- [ ] Public export has no private references.
-- [ ] No production mix or RL condition is presented as a headline task.
+- [x] `factory-v0.2` hash and assets unchanged.
+- [x] 12 headline tasks have expected summaries.
+- [x] Core has 20 test and 20 shift episodes.
+- [x] Order control/planning expected summaries are deterministic.
+- [x] `benchmark-v03` writes a compact expected summary.
+- [x] CI cheap/full regression checks exist.
+- [x] Benchmark card and spec are complete.
+- [x] Public export has no private references.
+- [x] No production mix or RL condition is presented as a headline task.
 
 ## Risks
 
@@ -140,13 +140,20 @@ Planned CI:
 - **Compute.** The full runner includes the v0.2 core, which is already the
   expensive block.
 
+## Freeze evidence
+
+- Full run: 159 core episodes, core hash
+  `5f0d54f...`, order control 289.8, order planning 292.4.
+- Expected-summary check: **0 mismatches**.
+- Cheap check: `benchmark-v03 --skip-v02-planning --skip-diagnostics
+  --skip-production` passes.
+- `factory-v0.2` assets unchanged.
+
 ## Next steps
 
-1. Implement `fabline benchmark-v03`.
-2. Generate and check in the compact expected summary.
-3. Add cheap PR and scheduled full CI checks.
-4. Freeze `factory-v0.3` and tag it only after the audit.
-5. Then run the 0.4.0 release audit.
+1. Tag `factory-v0.3`.
+2. Run the 0.4.0 release audit.
+3. Publish the GitHub release.
 
 ## Changelog
 

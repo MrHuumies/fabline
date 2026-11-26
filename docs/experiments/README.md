@@ -147,5 +147,5 @@ The current frozen benchmark is documented separately in
 
 - [0092 — Order-control RL](0092-order-rl/summary.md) — negative; BC 249.8, PPO 169.0 vs random 243.2.
 
-The `factory-v0.2` freeze review is in
-[`benchmarks/factory-v0.2/freeze-review.md`](../../benchmarks/factory-v0.2/freeze-review.md).
+The `factory-v0.3` freeze review is in
+[`benchmarks/factory-v0.3/freeze-review.md`](../../benchmarks/factory-v0.3/freeze-review.md).
