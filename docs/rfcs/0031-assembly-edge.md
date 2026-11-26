@@ -95,6 +95,22 @@ The first task wrapper needs one of:
 
 Do not force the linear starter line to do assembly without one of these.
 
+## Economics problem
+
+The current recipe costs do not make assembly attractive: direct gear is
+2 ingots / 12 ticks, while component (1 ingot / 8 ticks) plus assembly
+(1 ingot + 1 component / 16 ticks) is 2 ingots / 24 ticks. Assembly is
+dominated unless the task adds one of:
+
+- a higher-value assembly output (a new item or a quality flag);
+- an output quantity greater than one (for example 2 gears per assembly);
+- a lower ingot cost for the assembly recipe;
+- a demand/contract that values assembly output differently.
+
+This must be fixed in the task pre-registration. Do not freeze an assembly task
+where always-gear is optimal. The mechanic slice deliberately leaves the
+economics open.
+
 ## Gates
 
 - Mechanic: opt-in; default v0.1/v0.2/v0.3 hashes unchanged; component and

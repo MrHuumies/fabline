@@ -63,6 +63,10 @@ demand without myopic switching.
 - **Small action space.** One assembler with three recipes is a sequential
   decision, not a hard control benchmark; multiple assemblers/routing are a
   later slice.
+- **Economics are not fixed.** At the current costs (2 ingots/12 ticks direct
+  vs 2 ingots/24 ticks through component plus assembly), assembly is dominated.
+  The task must add a higher-value output, output quantity, lower cost, or
+  demand premium; otherwise always-gear is optimal.
 - **Do not tune order distributions after the formal block.**
 
 ## Changelog
