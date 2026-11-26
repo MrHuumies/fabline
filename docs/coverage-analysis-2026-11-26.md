@@ -967,6 +967,11 @@ assignment without pretending they are solved, and without lowering gates.
 
 ### 5.2 Promotion ledger
 
+A "promote" row means the task is a good benchmark candidate. It does not mean
+the public repo can run it today: 0031, 0032, and 0024 have public cards/world
+support but their experiment harness is not in the public tree. The public
+reliability-contract harness is now started; the other two need W1 work.
+
 | Task / experiment | Gate result | Task valid? | Baseline issue? | Recommendation |
 |---|---|---|---|---|
 | Reliability contract (0031) | all pass; CVaR +17.05 | Yes | No | **Promote to coverage suite** |
@@ -1387,11 +1392,18 @@ milestone" and "publish before adding more content."
 | order-control | control | production+orders | fulfilled value |
 | order-planning | planning | order set | plan value |
 
-### B. Public positive tasks not in a frozen benchmark
+### B. Positive tasks not in a frozen benchmark
 
-- partial-throughput (0024)
-- reliability contract (0031)
-- wired cascade (0032)
+Some of these have public task cards and world support but their experiment
+harness lives under `experiments/...` and is not in the public tree. As of this
+analysis, that includes the reliability contract (0031), wired cascade (0032),
+and partial-throughput (0024) harnesses. Promotion requires a public
+reimplementation, not just a card. The reliability-contract public harness has
+since been started on `feat/0.5.0-reliability-contract`.
+
+- partial-throughput (0024; public harness pending)
+- reliability contract (0031; public harness started)
+- wired cascade (0032; public harness pending)
 - wire repair (0033)
 - preventive wire (0035)
 - maintenance threshold (0038)

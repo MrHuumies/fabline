@@ -189,6 +189,14 @@ so it does not violate "one mechanic per milestone."
 Promote from the positive backlog; do not re-run pilots unless a task lacks a
 stable expected summary.
 
+**Public-evidence caveat:** some backlog tasks have public task cards and world
+support, but their experiment harness lives under `experiments/...` and is not
+in the public tree. As of this plan, that includes the reliability contract
+(0031), wired cascade (0032), and partial-throughput (0024) harnesses. Promotion
+requires a public reimplementation with the same contract, not just a card.
+The reliability-contract public harness has now been started on
+`feat/0.5.0-reliability-contract`; the other two are still W1 work.
+
 | Task | Source | Family | Why it is here | Baseline gap to add |
 |---|---|---|---|---|
 | reliability-contract | 0031 | risk/uncertainty | mean/CVaR trade; risk-sensitive selection | CVaR/quantile baseline |
