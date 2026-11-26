@@ -1,6 +1,6 @@
 PY ?= .venv/bin/python
 
-.PHONY: test lint smoke dataset benchmark suite shared-suite benchmark-v02 benchmark-v02-check wizard planning-transition planning-transition-ensemble planning-transition-two-step maintenance-calibration crew-decentralized-compact crew-decentralized-ctde render-install render play demo human-bc fault-benchmark fault-recovery fault-power power-benchmark power-allocation power-allocation-stochastic perf
+.PHONY: test lint smoke dataset benchmark suite shared-suite benchmark-v02 benchmark-v02-check wizard planning-transition planning-transition-ensemble planning-transition-two-step generative-audit maintenance-calibration crew-decentralized-compact crew-decentralized-ctde render-install render play demo human-bc fault-benchmark fault-recovery fault-power power-benchmark power-allocation power-allocation-stochastic perf
 
 test:
 	$(PY) -m pytest -q
@@ -41,6 +41,9 @@ planning-transition-ensemble:
 
 planning-transition-two-step:
 	$(PY) -m fabline planning-transition-two-step --out results/planning-transition-two-step --seeds 49000,49001,49002,49003,49004 --train-seeds 8 --eval-seeds 2 --max-sequences 256
+
+generative-audit:
+	$(PY) -m fabline generative-audit --out results/generative-audit --seeds 100 --seed-start 1000
 
 maintenance-calibration:
 	$(PY) -m fabline maintenance-calibration --out results/maintenance-calibration --episodes 60 --seed-start 61000 --horizon 10 --maintenance-probability 0.05

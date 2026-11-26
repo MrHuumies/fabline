@@ -135,5 +135,7 @@ The current frozen benchmark is documented separately in
 
 - [0086 — Two-step transition planning](0086-transition-two-step/summary.md) — mixed; two-step 188/0.40 vs single 162/0.20, true CEM 442/1.00.
 
+- [0087 — Generative feasibility audit](0087-generative-audit/summary.md) — negative; 7 unique line sequences, diversity 0.080.
+
 The `factory-v0.2` freeze review is in
 [`benchmarks/factory-v0.2/freeze-review.md`](../../benchmarks/factory-v0.2/freeze-review.md).

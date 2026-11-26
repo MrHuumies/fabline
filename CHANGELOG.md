@@ -30,6 +30,10 @@ are pinned separately; see [`benchmarks/factory-v0.2/card.md`](benchmarks/factor
   but still misses true CEM 442/1.00 (0086). The linear transition line is
   closed.
 
+- Add a generative layout/recipe feasibility audit. It is negative: only 7
+  unique line sequences and diversity 0.080 across 1,300 lines (0087). The
+  current content cannot support a meaningful generative pilot.
+
 ## [0.3.0] — 2026-11-24
 
 0.3.0 adds the planning, calibration, and causal decision surfaces, freezes

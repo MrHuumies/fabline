@@ -282,8 +282,9 @@ planning (0083) is negative in rollout (one-step MSE 0.0182, CEM 162/0.20 vs
 true 454/1.00). Maintenance calibration (0084) is mixed: diagnostics ECE
 0.0054, full view 0.0929. The uncertainty ensemble (0085) improves CEM to
 184/0.40 and the two-step model (0086) reaches 188/0.40, both far below true CEM
-442/1.00. Calibration and linear-transition lines are closed; the generative
-pilot or release-quality work is next.
+442/1.00. The generative feasibility audit (0087) is negative: only 7 unique
+line sequences, diversity 0.080. Calibration, linear-transition, and
+generative lines are closed; the efficiency table and viewer QoL are next.
 
 ### P0 progress
 

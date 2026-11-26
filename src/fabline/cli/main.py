@@ -104,6 +104,11 @@ from fabline.harness.fault_recovery import (
     write_fault_recovery_report,
 )
 from fabline.harness.faults import run_fault_benchmark
+from fabline.harness.generative_audit import (
+    GenerativeAuditConfig,
+    run_generative_audit,
+    write_generative_audit_report,
+)
 from fabline.harness.human_demos import (
     make_scripted_demos,
     train_human_bc,
@@ -396,6 +401,17 @@ def cmd_human_bc(args: argparse.Namespace) -> int:
     )
     write_human_bc_report(args.out, results)
     print(json.dumps(results, indent=2, sort_keys=True))
+    return 0
+
+
+def cmd_generative_audit(args: argparse.Namespace) -> int:
+    report = run_generative_audit(
+        GenerativeAuditConfig(
+            seeds=args.seeds, seed_start=args.seed_start
+        )
+    )
+    path = write_generative_audit_report(args.out, report)
+    print(json.dumps({"report": str(path), **report}, indent=2, sort_keys=True))
     return 0
 
 
@@ -2550,6 +2566,17 @@ def build_parser() -> argparse.ArgumentParser:
     human_bc.add_argument("--episodes", type=int, default=5)
     human_bc.add_argument("--seed", type=int, default=0)
     human_bc.set_defaults(func=cmd_human_bc)
+
+    generative_audit = subparsers.add_parser(
+        "generative-audit",
+        help="audit structural diversity for a generative pilot",
+    )
+    generative_audit.add_argument(
+        "--out", type=str, default="results/generative-audit"
+    )
+    generative_audit.add_argument("--seeds", type=int, default=100)
+    generative_audit.add_argument("--seed-start", type=int, default=0)
+    generative_audit.set_defaults(func=cmd_generative_audit)
 
     fault_calibration = subparsers.add_parser(
         "fault-calibration",

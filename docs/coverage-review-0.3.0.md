@@ -37,6 +37,7 @@ decentralized reliability gate, not add another calibration or planning sweep.
 | 0084 | Maintenance calibration | diagnostics GBDT ECE 0.0054; full view 0.0929 | mixed; H2 fails on full view |
 | 0085 | Transition ensemble | single 166/0.20; ensemble 184/0.40; true 442 | mixed; improvement, gate miss |
 | 0086 | Two-step transition | single 162/0.20; two-step 188/0.40; true 442 | mixed; linear ceiling |
+| 0087 | Generative feasibility | 7 unique line sequences; diversity 0.080 | negative; content too constrained |
 | — | `factory-v0.2` | 10 tasks, 159 core episodes | frozen |
 | — | Wizard | stdlib command runner + summary | shipped |
 
@@ -131,7 +132,9 @@ the pilots.
 3. **Maintenance calibration.** Delivered as a mixed result (0084): the
    diagnostics view is calibrated, the full maintenance view is not. The
    calibration line is closed; do not add another view.
-4. **Generative layout/recipe.** Optional pilot did not run.
+4. **Generative layout/recipe.** Feasibility audit (0087) is negative: only 7
+   unique line sequences and diversity 0.080. The current content cannot
+   support a meaningful generative task; a richer grammar is a new mechanic.
 5. **Deep/offline RL.** Still absent as baseline families.
 6. **Efficiency table.** Cost is reported per experiment but not as a public
    cross-task table.
@@ -140,23 +143,25 @@ the pilots.
 
 ## Recommended next slice
 
-**Generative pilot or release-quality work.** The decentralized line is closed
-(0081 compact Q 616/0.40; 0082 CTDE 248/0.00), maintenance calibration is mixed
-(0084: diagnostics ECE 0.0054, full view 0.0929), and the linear transition
-family has converged at 0.40 success (0083 162, 0085 184, 0086 188, true 442).
+**Release-quality work.** The research lines are closed for now: decentralized
+(0081/0082), calibration (0084), the linear transition family (0083/0085/0086),
+and generative feasibility (0087: 7 unique lines, diversity 0.080). The
+remaining high-value work is the public efficiency table and viewer QoL
+(replay browser/task-card viewer). A nonlinear transition model or deep/offline
+RL is a new pre-registration and a larger scope.
 
 Options:
 
-1. **Generative layout/recipe pilot.** The optional 0.3.0 stretch, with a
-   validity/diversity gate and no new dependency. This is the remaining
-   research gap.
-2. **Efficiency table and viewer QoL.** Release-quality work, not a new research
+1. **Efficiency table.** One public cross-task cost report; no new research
    claim.
+2. **Viewer QoL.** Replay browser/task-card viewer; headless tests, optional
+   Pygame.
 3. **Nonlinear transition model.** Only as a new pre-registration; do not tune
    the linear family.
+4. **Deep/offline RL.** Larger baseline track; needs a new scope decision.
 
-Deep/offline RL remains open but is larger. Do not add another calibration
-view, decentralized variant, linear transition model, or beta/K sweep.
+Do not add another calibration view, decentralized variant, linear transition
+model, beta/K sweep, or generative model on seven lines.
 
 ## What not to do next
 
@@ -166,8 +171,8 @@ view, decentralized variant, linear transition model, or beta/K sweep.
 - another Q variant trained only on `factory-v0.2` seeds;
 - another visibility radius or report-budget sweep;
 - another fault/power calibration threshold;
-- a generative task without a concrete validity/diversity question;
-- a new world before the decentralized gate is resolved.
+- a generative model on the seven current line grammars;
+- a new world before the content/question is justified.
 
 ## Release state
 
