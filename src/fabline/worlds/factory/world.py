@@ -57,6 +57,14 @@ class FactoryWorld:
         if self.production is not None and self.production.enabled:
             self.state.delivered.setdefault(Item.COMPONENT, 0)
 
+    def set_state(self, state: WorldState) -> None:
+        """Install a pre-generated state and reset per-tick counters."""
+
+        self.state = state
+        self._enable_production_state()
+        self._tick_delivered = {Item.INGOT: 0, Item.GEAR: 0}
+        self._suppress_events = False
+
     @property
     def done(self) -> bool:
         return self.state.tick >= self.config.ticks_per_episode
@@ -406,6 +414,7 @@ class FactoryWorld:
                 )
             elif entity.type is EntityType.ASSEMBLER:
                 byproduct = None
+                output_quantity = 1
                 tree = (
                     self.production is not None
                     and self.production.enabled
@@ -421,6 +430,7 @@ class FactoryWorld:
                             ),
                         }
                         craft_ticks = self.production.assembly_ticks
+                        output_quantity = self.production.assembly_output
                     elif entity.recipe == 1:
                         inputs = {
                             Item.INGOT: self.production.component_ingot_cost
@@ -467,6 +477,7 @@ class FactoryWorld:
                     input_capacity=self.config.assembler_input_capacity,
                     output_capacity=self.config.assembler_output_capacity,
                     byproduct=byproduct,
+                    output_quantity=output_quantity,
                 )
 
     def _advance_machine(
@@ -479,6 +490,7 @@ class FactoryWorld:
         input_capacity: int,
         output_capacity: int,
         byproduct: tuple[int, int] | None = None,
+        output_quantity: int = 1,
     ) -> None:
         if self._fault_tick(entity):
             return
@@ -490,7 +502,7 @@ class FactoryWorld:
         if entity.craft_progress > 0:
             entity.craft_progress -= 1
             if entity.craft_progress == 0:
-                entity.output_buffer[output] = output_count + 1
+                entity.output_buffer[output] = output_count + output_quantity
                 if byproduct is not None:
                     entity.byproduct += byproduct[0]
                 self._wear(entity, self.faults.wear_per_craft)
@@ -500,7 +512,7 @@ class FactoryWorld:
                 )
             return
 
-        if output_count + 1 > output_capacity:
+        if output_count + output_quantity > output_capacity:
             return
         if byproduct is not None and entity.byproduct >= byproduct[1]:
             return
@@ -565,9 +577,7 @@ class FactoryWorld:
                     and self.production.enabled
                     and self.production.assembly_enabled
                 )
-                if item is Item.INGOT or (
-                    item is Item.COMPONENT and tree and receiver.recipe == 2
-                ):
+                if item is Item.INGOT or (item is Item.COMPONENT and tree):
                     already = reserved.get(receiver.id, {}).get(item, 0)
                     accept = (
                         receiver.input_buffer.get(item, 0) + already

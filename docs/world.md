@@ -316,11 +316,14 @@ Rules:
   identical;
 - component is a logistics item carried by belts and accepted by depots when
   production is enabled;
-- an assembler accepts component only when the assembly tree is enabled and its
-  recipe is 2;
-- assembly consumes one ingot and one component and outputs gear;
-- the linear starter line sends component toward the depot, so an assembly task
-  needs a second feed or a routing/splitter layout.
+- an assembler accepts component whenever the assembly tree is enabled, so the
+  input buffer can hold component while the assembler runs direct gear;
+- assembly consumes one ingot and one component and outputs **two gears** in the
+  public assembly task (task-specific economics: component 24 ticks, assembly
+  16 ticks);
+- the linear starter line sends component toward the depot, so the assembly
+  control task uses a fixed two-feed assembly cell
+  (`worlds/factory/assembly.py`).
 
 See RFC 0031 and the assembly-edge task card.
 

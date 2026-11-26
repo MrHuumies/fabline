@@ -18,6 +18,7 @@ from fabline.cli.browser import (
     summarize_replay,
 )
 from fabline.cli.wizard import run_wizard
+from fabline.env.assembly import AssemblyControlConfig
 from fabline.env.contract_board import ContractBoardConfig, ContractBoardEnv
 from fabline.env.control import ControlConfig
 from fabline.env.crew_replan import CrewReplanConfig
@@ -34,6 +35,10 @@ from fabline.env.production_mix import ProductionMixConfig
 from fabline.env.recipe import RecipeEnvConfig
 from fabline.env.three_crew_replan import ThreeCrewReplanConfig
 from fabline.env.wire_repair import WireRepairConfig
+from fabline.harness.assembly_control import (
+    run_assembly_control,
+    write_assembly_control_report,
+)
 from fabline.harness.causal_intervention import (
     CausalConfig,
     run_causal,
@@ -1359,6 +1364,40 @@ def cmd_planning_transition_two_step(args: argparse.Namespace) -> int:
             sort_keys=True,
         )
     )
+    return 0
+
+
+def cmd_assembly_control(args: argparse.Namespace) -> int:
+    config = FactoryConfig(
+        width=16,
+        height=8,
+        ticks_per_episode=500,
+        decision_interval=10,
+        entity_budget=32,
+        rock_density=0.0,
+        ore_patches=1,
+        starter_line=False,
+    )
+    assembly = AssemblyControlConfig(
+        episode_ticks=500,
+        decision_interval=10,
+        success_score=args.success_score,
+    )
+    results = run_assembly_control(
+        config,
+        assembly,
+        episodes=args.episodes,
+        q_episodes=args.q_episodes,
+    )
+    report = write_assembly_control_report(
+        args.out,
+        results,
+        config={
+            "success_score": args.success_score,
+            "seeds": [0, 1, 2, 3, 4],
+        },
+    )
+    print(json.dumps({"report": str(report), "results": results}, indent=2, sort_keys=True))
     return 0
 
 
@@ -3310,6 +3349,16 @@ def build_parser() -> argparse.ArgumentParser:
     planning_transition_two_step.set_defaults(
         func=cmd_planning_transition_two_step
     )
+
+    assembly_control = subparsers.add_parser(
+        "assembly-control",
+        help="run the assembly-edge production control benchmark",
+    )
+    assembly_control.add_argument("--out", type=str, default="results/assembly-control")
+    assembly_control.add_argument("--episodes", type=int, default=5)
+    assembly_control.add_argument("--q-episodes", type=int, default=500)
+    assembly_control.add_argument("--success-score", type=int, default=100)
+    assembly_control.set_defaults(func=cmd_assembly_control)
 
     contract_board = subparsers.add_parser(
         "contract-board",

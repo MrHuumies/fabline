@@ -73,6 +73,24 @@ def test_logistics_accepts_component_into_assembly_assembler() -> None:
     assert assembler.input_buffer.get(Item.COMPONENT, 0) == 1
 
 
+def test_logistics_buffers_component_while_making_direct_gear() -> None:
+    world = _world()
+    world.reset(0, SCENARIOS["gear"])
+    assembler = _assembler(world)
+    assembler.recipe = 0
+    belt = next(
+        entity
+        for entity in world.state.entities.values()
+        if entity.type is EntityType.BELT
+        and entity.x + 1 == assembler.x
+        and entity.y == assembler.y
+        and entity.direction.name == "EAST"
+    )
+    belt.output_buffer[Item.COMPONENT] = 1
+    world.tick()
+    assert assembler.input_buffer.get(Item.COMPONENT, 0) == 1
+
+
 def test_recipe_is_hashed_only_when_nonzero() -> None:
     world = _world()
     world.reset(0, SCENARIOS["gear"])

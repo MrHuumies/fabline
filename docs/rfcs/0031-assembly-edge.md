@@ -63,9 +63,9 @@ product mix is a global switch, not a production graph.
 
 - Belts already carry any item.
 - Depots accept component only when production is enabled (existing behavior).
-- An assembler accepts component only when the assembly tree is enabled and its
-  recipe is 2.
-- Component is conserved except at the depot/removal.
+- An assembler accepts component whenever the assembly tree is enabled, so the
+  input buffer can hold component while the assembler runs direct gear.
+- Component is conserved except at the depot/removal/assembly.
 
 ## Tasks
 
@@ -76,40 +76,48 @@ product mix is a global switch, not a production graph.
 | `bom-forecast` | regression | predict component starvation/gear output |
 | `recipe-intervention` | causal | counterfactual effect of a recipe switch/removal |
 
-The first task wrapper is not implemented in this RFC. The mechanic and unit
-tests are the first slice.
+The first task wrapper is implemented on `feat/0.6.0-assembly-edge`:
+`factory.assembly.control.v1`, `AssemblyControlEnv`, and
+`harness/assembly_control.py`.
 
-## Layout problem
+## Layout
 
-The starter line is linear: miner -> belt -> furnace -> belt -> assembler ->
-belt -> depot. Component produced by the assembler flows toward the depot, so
-the same assembler cannot consume it without a second feed or a routing change.
+The task uses a fixed **assembly cell** (`worlds/factory/assembly.py`) with two
+independent feeds into one assembly assembler:
 
-The first task wrapper needs one of:
+- component line: miner -> belt -> furnace -> belt -> component assembler ->
+  belts -> assembly assembler from the north;
+- ingot line: miner -> belt -> furnace -> belts -> assembly assembler from the
+  south;
+- assembly assembler -> belt -> depot.
 
-- a custom assembly-cell layout with two input belts (ingot and component) into
-  the assembly assembler;
-- a second assembler/furnace branch that feeds component into the assembly
-  assembler;
-- a splitter/merger (a later 0.8.0 mechanic).
+The linear starter line is not used for assembly; it cannot route component
+back to an assembler without a second feed or a splitter.
 
-Do not force the linear starter line to do assembly without one of these.
+## Economics
 
-## Economics problem
+The task sets:
 
-The current recipe costs do not make assembly attractive: direct gear is
-2 ingots / 12 ticks, while component (1 ingot / 8 ticks) plus assembly
-(1 ingot + 1 component / 16 ticks) is 2 ingots / 24 ticks. Assembly is
-dominated unless the task adds one of:
+- component: 1 ingot -> 1 component / 24 ticks;
+- direct gear: 2 ingots -> 1 gear / 12 ticks;
+- assembly: 1 ingot + 1 component -> **2 gears** / 16 ticks.
 
-- a higher-value assembly output (a new item or a quality flag);
-- an output quantity greater than one (for example 2 gears per assembly);
-- a lower ingot cost for the assembly recipe;
-- a demand/contract that values assembly output differently.
+Component is deliberately slow so direct gear is a useful fallback and the
+assembler must batch component before switching. Assembly outputs two gears so
+it is worth doing. These are task-specific costs, not generic world defaults.
 
-This must be fixed in the task pre-registration. Do not freeze an assembly task
-where always-gear is optimal. The mechanic slice deliberately leaves the
-economics open.
+The formal pilot (5 seeds x 5 episodes) is positive:
+
+| Policy | Score |
+|---|---:|
+| always gear | 260 |
+| always assembly | 360 |
+| buffer-aware | 420 |
+| random | 429.2 |
+| batch-aware | 440 |
+| tabular Q (500 train episodes) | **460** |
+
+The Q baseline beats random by 30.8 and succeeds 1.00; all control gates pass.
 
 ## Gates
 
@@ -129,8 +137,8 @@ economics open.
 
 ## Risks
 
-- **Routing.** The component must reach the assembly assembler; a linear line
-  cannot do it without a second feed.
+- **Routing.** The component must reach the assembly assembler; the public task
+  uses a fixed two-feed cell, not the linear starter line.
 - **Action-contract churn.** Per-assembler recipe is task-layer state; do not
   change the frozen grid action contract.
 - **Hash drift.** Default entity hashes must stay identical.
@@ -138,5 +146,7 @@ economics open.
 
 ## Decision
 
-Proposed. The first slice (state, recipes, logistics, tests) is implemented on
-`feat/0.6.0-assembly-edge`; the task wrapper and benchmark are pending.
+Proposed. The first slice (state, recipes, logistics, tests) and the
+`factory.assembly.control.v1` task wrapper are implemented on
+`feat/0.6.0-assembly-edge`. The formal pilot is positive and no frozen
+benchmark is changed. Planning/causal/forecast variants remain pending.
