@@ -107,7 +107,6 @@ def _compact_order_planning(report: dict[str, Any]) -> dict[str, Any]:
             "mean_value": row["mean_value"],
             "value_ci": row["value_ci"],
             "success_rate": row["success_rate"],
-            "mean_seconds": row["mean_seconds"],
         }
     return compact
 

@@ -935,7 +935,6 @@
   },
   "order_planning": {
     "always_component": {
-      "mean_seconds": 0.0044818587834015485,
       "mean_value": 203.0,
       "success_rate": 0.6,
       "value_ci": [
@@ -944,7 +943,6 @@
       ]
     },
     "always_gear": {
-      "mean_seconds": 0.004493518779054284,
       "mean_value": 111.4,
       "success_rate": 0.4,
       "value_ci": [
@@ -953,7 +951,6 @@
       ]
     },
     "cem": {
-      "mean_seconds": 0.2942189984023571,
       "mean_value": 292.4,
       "success_rate": 1.0,
       "value_ci": [
@@ -962,7 +959,6 @@
       ]
     },
     "edf_plan": {
-      "mean_seconds": 0.004423701367340982,
       "mean_value": 263.8,
       "success_rate": 1.0,
       "value_ci": [
@@ -971,7 +967,6 @@
       ]
     },
     "oracle": {
-      "mean_seconds": 0.14433136184234172,
       "mean_value": 292.4,
       "success_rate": 1.0,
       "value_ci": [
@@ -980,7 +975,6 @@
       ]
     },
     "random_plan": {
-      "mean_seconds": 0.004379182029515505,
       "mean_value": 168.4,
       "success_rate": 0.6,
       "value_ci": [
@@ -989,7 +983,6 @@
       ]
     },
     "value_plan": {
-      "mean_seconds": 0.004323567193932831,
       "mean_value": 232.0,
       "success_rate": 0.8,
       "value_ci": [
