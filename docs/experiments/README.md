@@ -143,5 +143,7 @@ The current frozen benchmark is documented separately in
 
 - [0090 — Order control](0090-order-control/summary.md) — positive; value 289.8, Q 280.2, random 226.4; all gates pass.
 
+- [0091 — Order planning](0091-order-planning/summary.md) — positive; CEM = oracle 292.4, EDF 263.8; all gates pass.
+
 The `factory-v0.2` freeze review is in
 [`benchmarks/factory-v0.2/freeze-review.md`](../../benchmarks/factory-v0.2/freeze-review.md).

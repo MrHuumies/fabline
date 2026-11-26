@@ -1,7 +1,7 @@
 # Benchmark specification — factory-v0.3 (draft)
 
 - **Status:** draft; **not frozen** (Phase 1 production mix pilot mixed; Phase 2
-  order control positive; order planning pending)
+  order control and order planning positive; deep/offline RL pending)
 - **Date:** 2026-11-26
 - **Target release:** FABLINE 0.4.0
 - **World:** `factory-0.1.0` + opt-in production/order configs (expected; version

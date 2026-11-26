@@ -1,6 +1,6 @@
 PY ?= .venv/bin/python
 
-.PHONY: test lint smoke dataset benchmark suite shared-suite benchmark-v02 benchmark-v02-check wizard planning-transition planning-transition-ensemble planning-transition-two-step generative-audit efficiency production-mix replay-browser task-cards maintenance-calibration crew-decentralized-compact crew-decentralized-ctde render-install render play demo human-bc fault-benchmark fault-recovery fault-power power-benchmark power-allocation power-allocation-stochastic perf
+.PHONY: test lint smoke dataset benchmark suite shared-suite benchmark-v02 benchmark-v02-check wizard planning-transition planning-transition-ensemble planning-transition-two-step generative-audit efficiency production-mix order-planning order-control replay-browser task-cards maintenance-calibration crew-decentralized-compact crew-decentralized-ctde render-install render play demo human-bc fault-benchmark fault-recovery fault-power power-benchmark power-allocation power-allocation-stochastic perf
 
 test:
 	$(PY) -m pytest -q
@@ -50,6 +50,12 @@ efficiency:
 
 production-mix:
 	$(PY) -m fabline production-mix --out results/production-mix --seeds 70000,70001,70002,70003,70004 --episodes 5 --q-episodes 50
+
+order-planning:
+	$(PY) -m fabline order-planning --out results/order-planning --seeds 74000,74001,74002,74003,74004
+
+order-control:
+	$(PY) -m fabline order-control --out results/order-control --seeds 72000,72001,72002,72003,72004 --episodes 5 --q-episodes 100
 
 replay-browser:
 	$(PY) -m fabline replay-browser --root datasets --limit 20

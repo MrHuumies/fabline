@@ -145,6 +145,11 @@ from fabline.harness.order_control import (
     run_order_control,
     write_order_control_report,
 )
+from fabline.harness.order_planning import (
+    OrderPlanningConfig,
+    run_order_planning,
+    write_order_planning_report,
+)
 from fabline.harness.planning_transition import (
     TransitionEnsembleConfig,
     TransitionPlanningConfig,
@@ -448,6 +453,35 @@ def cmd_efficiency(args: argparse.Namespace) -> int:
             sort_keys=True,
         )
     )
+    return 0
+
+
+def cmd_order_planning(args: argparse.Namespace) -> int:
+    config = FactoryConfig(
+        width=16,
+        height=8,
+        ticks_per_episode=300,
+        decision_interval=10,
+        entity_budget=32,
+        rock_density=0.0,
+        ore_patches=1,
+        starter_line=True,
+        emit_events=True,
+    )
+    planning = OrderPlanningConfig(
+        episode_ticks=300,
+        decision_interval=10,
+        success_value=args.success_value,
+        blocks=args.blocks,
+        population=args.population,
+        elites=args.elites,
+        iterations=args.iterations,
+        random_samples=args.random_samples,
+    )
+    seeds = tuple(int(value) for value in args.seeds.split(","))
+    report = run_order_planning(config, planning, seeds=seeds)
+    path = write_order_planning_report(args.out, report)
+    print(json.dumps({"report": str(path), **report}, indent=2, sort_keys=True))
     return 0
 
 
@@ -2723,6 +2757,24 @@ def build_parser() -> argparse.ArgumentParser:
     human_bc.add_argument("--episodes", type=int, default=5)
     human_bc.add_argument("--seed", type=int, default=0)
     human_bc.set_defaults(func=cmd_human_bc)
+
+    order_planning = subparsers.add_parser(
+        "order-planning",
+        help="run order planning over recipe blocks",
+    )
+    order_planning.add_argument(
+        "--out", type=str, default="results/order-planning"
+    )
+    order_planning.add_argument(
+        "--seeds", type=str, default="73000,73001,73002,73003,73004"
+    )
+    order_planning.add_argument("--blocks", type=int, default=5)
+    order_planning.add_argument("--population", type=int, default=16)
+    order_planning.add_argument("--elites", type=int, default=4)
+    order_planning.add_argument("--iterations", type=int, default=4)
+    order_planning.add_argument("--random-samples", type=int, default=32)
+    order_planning.add_argument("--success-value", type=int, default=160)
+    order_planning.set_defaults(func=cmd_order_planning)
 
     order_control = subparsers.add_parser(
         "order-control",

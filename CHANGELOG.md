@@ -48,6 +48,9 @@ are pinned separately; see [`benchmarks/factory-v0.2/card.md`](benchmarks/factor
 - Add seeded order control: value 289.8, tabular Q 280.2, random 226.4; all
   gates pass on fresh seeds (0090).
 
+- Add order planning: CEM matches the oracle at 292.4, EDF 263.8; all gates
+  pass on fresh seeds (0091).
+
 ## [0.3.0] — 2026-11-24
 
 0.3.0 adds the planning, calibration, and causal decision surfaces, freezes

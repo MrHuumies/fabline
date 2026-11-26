@@ -2,7 +2,7 @@
 
 - **Task ID:** `factory.orders.plan.v1`
 - **Version:** 0.1.0
-- **Status:** draft; Phase 2 candidate; not in any frozen benchmark
+- **Status:** Phase 2 formal positive; not in any frozen benchmark
 - **World:** factory-0.1.0 + opt-in production/order configs
 - **Owner:** FABLINE
 - **Date:** 2026-11-26
@@ -57,6 +57,24 @@ with a product mix and demand value, not another one-shot recipe rule.
 - Orders are a task layer; they must be opt-in.
 - Do not tune deadline/value distributions after the formal block.
 
+## Results (0091)
+
+Seeds 74,000–74,004; five-bit recipe plan:
+
+| policy | mean value | success |
+|---|---:|---:|
+| always gear | 111.4 | 0.40 |
+| always component | 203.0 | 0.60 |
+| value plan | 232.0 | 0.80 |
+| EDF plan | 263.8 | 1.00 |
+| random plan | 168.4 | 0.60 |
+| **CEM** | **292.4** | **1.00** |
+| **oracle** | **292.4** | **1.00** |
+
+H1–H5 pass; CEM matches the oracle. See
+[`experiments/0091-order-planning`](../experiments/0091-order-planning/summary.md).
+
 ## Changelog
 
 - 2026-11-26 — draft card created; Phase 2 pending.
+- 2026-11-26 — formal positive: CEM = oracle 292.4; EDF 263.8.
