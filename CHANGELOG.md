@@ -34,6 +34,10 @@ are pinned separately; see [`benchmarks/factory-v0.2/card.md`](benchmarks/factor
   unique line sequences and diversity 0.080 across 1,300 lines (0087). The
   current content cannot support a meaningful generative pilot.
 
+- Add a reproducible cross-task efficiency table: 45k world ticks/s, with
+  fit/predict time, artifact size, and peak memory for 10 model rows (0088).
+  It is descriptive, not a leaderboard.
+
 ## [0.3.0] — 2026-11-24
 
 0.3.0 adds the planning, calibration, and causal decision surfaces, freezes

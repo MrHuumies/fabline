@@ -38,6 +38,7 @@ decentralized reliability gate, not add another calibration or planning sweep.
 | 0085 | Transition ensemble | single 166/0.20; ensemble 184/0.40; true 442 | mixed; improvement, gate miss |
 | 0086 | Two-step transition | single 162/0.20; two-step 188/0.40; true 442 | mixed; linear ceiling |
 | 0087 | Generative feasibility | 7 unique line sequences; diversity 0.080 | negative; content too constrained |
+| 0088 | Efficiency table | 45k ticks/s; 10 model rows | complete; descriptive |
 | — | `factory-v0.2` | 10 tasks, 159 core episodes | frozen |
 | — | Wizard | stdlib command runner + summary | shipped |
 
@@ -136,29 +137,26 @@ the pilots.
    unique line sequences and diversity 0.080. The current content cannot
    support a meaningful generative task; a richer grammar is a new mechanic.
 5. **Deep/offline RL.** Still absent as baseline families.
-6. **Efficiency table.** Cost is reported per experiment but not as a public
-   cross-task table.
+6. **Efficiency table.** Delivered in [`efficiency.md`](efficiency.md); descriptive
+   and machine-dependent, not a leaderboard.
 7. **Viewer QoL.** Result summary is in the wizard; a replay browser and task
    card viewer are not.
 
 ## Recommended next slice
 
-**Release-quality work.** The research lines are closed for now: decentralized
-(0081/0082), calibration (0084), the linear transition family (0083/0085/0086),
-and generative feasibility (0087: 7 unique lines, diversity 0.080). The
-remaining high-value work is the public efficiency table and viewer QoL
-(replay browser/task-card viewer). A nonlinear transition model or deep/offline
-RL is a new pre-registration and a larger scope.
+**Viewer QoL or a new scope decision.** The research lines are closed for now:
+decentralized (0081/0082), calibration (0084), the linear transition family
+(0083/0085/0086), generative feasibility (0087), and the efficiency table
+(0088). The remaining release-quality work is viewer QoL: replay browser and
+task-card viewer. A nonlinear transition model or deep/offline RL is a new
+pre-registration and a larger scope.
 
 Options:
 
-1. **Efficiency table.** One public cross-task cost report; no new research
-   claim.
-2. **Viewer QoL.** Replay browser/task-card viewer; headless tests, optional
+1. **Viewer QoL.** Replay browser/task-card viewer; headless tests, optional
    Pygame.
-3. **Nonlinear transition model.** Only as a new pre-registration; do not tune
-   the linear family.
-4. **Deep/offline RL.** Larger baseline track; needs a new scope decision.
+2. **Nonlinear transition model.** Only as a new pre-registration.
+3. **Deep/offline RL.** Larger baseline track; needs a new scope decision.
 
 Do not add another calibration view, decentralized variant, linear transition
 model, beta/K sweep, or generative model on seven lines.

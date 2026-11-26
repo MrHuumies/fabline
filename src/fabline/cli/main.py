@@ -82,6 +82,11 @@ from fabline.harness.crew_visibility import (
     write_crew_visibility_report,
 )
 from fabline.harness.data import load_dataset
+from fabline.harness.efficiency import (
+    EfficiencyConfig,
+    run_efficiency,
+    write_efficiency_report,
+)
 from fabline.harness.factory_v02 import (
     FactoryV02Config,
     build_expected_summary,
@@ -401,6 +406,29 @@ def cmd_human_bc(args: argparse.Namespace) -> int:
     )
     write_human_bc_report(args.out, results)
     print(json.dumps(results, indent=2, sort_keys=True))
+    return 0
+
+
+def cmd_efficiency(args: argparse.Namespace) -> int:
+    report = run_efficiency(
+        EfficiencyConfig(
+            repeats=args.repeats,
+            world_ticks=args.world_ticks,
+        )
+    )
+    path = write_efficiency_report(args.out, report)
+    print(
+        json.dumps(
+            {
+                "report": str(path),
+                "dataset": report["dataset"],
+                "world_ticks_per_second": report["world"]["ticks_per_second"],
+                "models": len(report["models"]),
+            },
+            indent=2,
+            sort_keys=True,
+        )
+    )
     return 0
 
 
@@ -2566,6 +2594,17 @@ def build_parser() -> argparse.ArgumentParser:
     human_bc.add_argument("--episodes", type=int, default=5)
     human_bc.add_argument("--seed", type=int, default=0)
     human_bc.set_defaults(func=cmd_human_bc)
+
+    efficiency = subparsers.add_parser(
+        "efficiency",
+        help="build the cross-task efficiency table",
+    )
+    efficiency.add_argument(
+        "--out", type=str, default="results/efficiency"
+    )
+    efficiency.add_argument("--repeats", type=int, default=3)
+    efficiency.add_argument("--world-ticks", type=int, default=1000)
+    efficiency.set_defaults(func=cmd_efficiency)
 
     generative_audit = subparsers.add_parser(
         "generative-audit",

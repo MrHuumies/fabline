@@ -7,7 +7,8 @@ contract: frozen tasks, frozen splits, fixed budgets, standard reports.
 [`benchmarks/factory-v0.2/card.md`](../benchmarks/factory-v0.2/card.md). It is a
 research benchmark (159 core episodes, 2,948 samples, plus planning,
 calibration, and causal blocks), not a public leaderboard. `factory-v0.1`
-remains frozen for provenance.
+remains frozen for provenance. Cross-task cost is reported separately in the
+[`efficiency table`](efficiency.md); it is descriptive, not a benchmark score.
 
 Run the current benchmark with:
 

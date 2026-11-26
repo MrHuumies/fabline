@@ -137,5 +137,7 @@ The current frozen benchmark is documented separately in
 
 - [0087 — Generative feasibility audit](0087-generative-audit/summary.md) — negative; 7 unique line sequences, diversity 0.080.
 
+- [0088 — Efficiency table](0088-efficiency-table/summary.md) — public cross-task cost table; 45k ticks/s; descriptive.
+
 The `factory-v0.2` freeze review is in
 [`benchmarks/factory-v0.2/freeze-review.md`](../../benchmarks/factory-v0.2/freeze-review.md).

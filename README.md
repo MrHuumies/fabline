@@ -88,7 +88,8 @@ The expected summary is in
 The first frozen benchmark, [`factory-v0.1`](benchmarks/factory-v0.1/card.md),
 remains immutable. The current coverage map is in
 [`docs/coverage-map.md`](docs/coverage-map.md); the
-[0.3.0 review](docs/coverage-review-0.3.0.md) records the next slice.
+[0.3.0 review](docs/coverage-review-0.3.0.md) records the next slice. Cross-task
+cost is in the [`efficiency table`](docs/efficiency.md).
 Small library-version differences are acceptable; headline ordering should be
 stable.
 
