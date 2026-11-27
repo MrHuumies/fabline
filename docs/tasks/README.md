@@ -83,8 +83,10 @@ Current tasks:
   R² 0.910 vs type-only −0.300.
 - [Production mix](production-mix.md) — draft 0.4.0 production-mix pilot.
 - [Order planning](order-planning.md) — draft 0.4.0 order-planning candidate.
-- [Assembly-edge production control](assembly-edge.md) — draft 0.6.0 task; mechanic
-  slice implemented, task wrapper pending.
+- [Assembly-edge production control](assembly-edge.md) — 0.6.0 control task;
+  formal pilot positive.
+- [Assembly-edge planning](assembly-planning.md) — 0.6.0 finite-horizon planning
+  task; CEM 428 vs oracle 430, formal pilot positive.
 - [Order control](order-control.md) — draft 0.4.0 order-control candidate.
 - [View arrival](view-arrival.md) — generic multiview contract and
   episode-grouped view-arrival task.

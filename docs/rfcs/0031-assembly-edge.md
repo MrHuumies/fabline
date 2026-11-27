@@ -71,10 +71,10 @@ product mix is a global switch, not a production graph.
 
 | Task | Kind | Purpose |
 |---|---|---|
-| `assembly-control` | control | choose per-assembler recipe online against orders |
-| `assembly-planning` | planning | choose an initial recipe/line plan for known orders |
-| `bom-forecast` | regression | predict component starvation/gear output |
-| `recipe-intervention` | causal | counterfactual effect of a recipe switch/removal |
+| `assembly-control` | control | online recipe switching; formal pilot positive |
+| `assembly-planning` | planning | five-block recipe plan; CEM 428 vs oracle 430; positive |
+| `bom-forecast` | regression | predict component starvation/gear output; pending |
+| `recipe-intervention` | causal | counterfactual effect of a recipe switch/removal; pending |
 
 The first task wrapper is implemented on `feat/0.6.0-assembly-edge`:
 `factory.assembly.control.v1`, `AssemblyControlEnv`, and
@@ -146,7 +146,7 @@ The Q baseline beats random by 30.8 and succeeds 1.00; all control gates pass.
 
 ## Decision
 
-Proposed. The first slice (state, recipes, logistics, tests) and the
-`factory.assembly.control.v1` task wrapper are implemented on
-`feat/0.6.0-assembly-edge`. The formal pilot is positive and no frozen
-benchmark is changed. Planning/causal/forecast variants remain pending.
+Proposed. The first slice (state, recipes, logistics, tests), the
+`factory.assembly.control.v1` task, and `factory.assembly.plan.v1` are
+implemented. Both formal pilots are positive and no frozen benchmark is
+changed. BOM forecast and causal recipe intervention remain pending.
