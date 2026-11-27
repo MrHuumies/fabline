@@ -13,6 +13,14 @@ are pinned separately; see [`benchmarks/factory-v0.3/card.md`](benchmarks/factor
   Add a two-feed assembly cell and `factory.assembly.control.v1`; the formal
   pilot is positive (Q 460 vs random 429, always gear 260). Add
   `factory.assembly.plan.v1`; CEM 428 vs oracle 430, frontload 410, random 373.
+- Add `factory.assembly.bom.v1`, a short-horizon gear-output forecast under
+  decision noise; GBDT R² 0.503 vs linear 0.343, all gates pass.
+- Add `factory.assembly.recipe_intervention.v1`, a paired counterfactual
+  recipe-switch task; GBDT R² 0.944 and +1.62 of +2.00 oracle decision gain.
+- Freeze `factory-v0.5`, the 0.6.0 assembly suite: four tasks, `assembly-suite`
+  CLI, expected summary, zero-mismatch check, and full CI workflow. Demand
+  uncertainty, layout splits, and logged-data causal identification are
+  documented follow-ups.
 
 ## [0.4.0] — 2026-11-26
 

@@ -1,13 +1,13 @@
 # Coverage map — model families, benchmarks, and mechanics
 
 - **Status:** living design document
-- **Date:** 2026-11-26
+- **Date:** 2026-11-27
 - **Purpose:** choose world mechanics and benchmarks because they expose a
   specific model weakness, not because they add content or serve one consumer.
 - **Related:** [`testbed.md`](testbed.md), [`research-axes.md`](research-axes.md),
   [`coverage-review-0.1.2.md`](coverage-review-0.1.2.md),
   [`coverage-review-0.4.0.md`](coverage-review-0.4.0.md),
-  [`benchmarks/factory-v0.3/card.md`](../benchmarks/factory-v0.3/card.md)
+  [`benchmarks/factory-v0.5/card.md`](../benchmarks/factory-v0.5/card.md)
 
 ## How to use this map
 
@@ -58,6 +58,10 @@ This document is a map, not a commitment to implement every row.
 | view arrival | classification | multiview | contract only; consumer-side update methods |
 | crew coordination | control/multi-agent | crew view | P2 debug; assignment, recall, triage |
 | production scheduling | control/selection | recipe/board | P3; recipe, byproduct, contract board |
+| assembly control | control | cell state | frozen in `factory-v0.5`; Q 460 |
+| assembly planning | planning | initial cell | frozen; CEM 428 vs oracle 430 |
+| assembly BOM | regression | cell state | frozen; GBDT R² 0.503 |
+| assembly intervention | causal effect | cell state | frozen; GBDT R² 0.944 |
 | triage planning | planning | crew-replan state | true CEM = oracle; learned value negative |
 | fault calibration | calibration/detection | context + sensors | top-4 GBDT ECE 0.008 |
 | causal removal | prediction | state + intervention | target GBDT R² 0.910 vs type-only −0.300 |
@@ -329,6 +333,15 @@ random) and PPO 169.0/0.44 (−74.3). `factory-v0.3` is frozen at 12 tasks: the
 v0.2 core plus order control and order planning. Production mix and BC/PPO are
 diagnostics, not headline tasks. The next decision is a 0.5.0 scope decision;
 the leading candidate is the Phase 1b assembly edge, not another order variant.
+
+### 0.6.0 — assembly edge (frozen)
+
+The assembly edge is implemented and frozen as `factory-v0.5`: assembly
+control (Q 460 vs random 429.2), planning (CEM 428 vs oracle 430), BOM forecast
+(GBDT R² 0.503), and recipe intervention (GBDT R² 0.944; +1.62 of +2.00 oracle
+gain). It fills the production-graph, multi-input, causal-intervention, and
+output-forecast gaps. Demand uncertainty, layout splits, and logged-data causal
+identification remain deferred; see the `factory-v0.5` freeze review.
 
 ### P0 progress
 

@@ -1,0 +1,75 @@
+# factory-v0.5 frozen assembly-edge specification.
+# The runner is `fabline assembly-suite`; the frozen v0.4 coverage suite is
+# kept by reference and is not modified.
+
+[benchmark]
+name = "factory-v0.5"
+status = "frozen"
+version = "0.5.0"
+date = "2026-11-27"
+world_version = "factory-0.1.0"
+plan = "assembly-v0.5"
+target_release = "0.6.0"
+command = "python -m fabline assembly-suite --out results/factory-v0.5"
+fast_command = "python -m fabline assembly-suite --out results/factory-v0.5-fast --fast"
+expected = "benchmarks/factory-v0.5/expected/summary.json"
+check = "python -m fabline assembly-suite --out results/factory-v0.5 --check-expected benchmarks/factory-v0.5/expected/summary.json"
+
+[core]
+# Kept by reference; v0.4 is frozen and unchanged.
+benchmark = "factory-v0.4"
+tasks = [
+  "reliability-contract",
+  "partial-throughput",
+  "wired-cascade",
+  "crew-schedule",
+  "crew-triage",
+  "preventive-wire",
+  "recipe-choice",
+  "maintenance-threshold",
+]
+
+[assembly-control]
+task = "factory.assembly.control.v1"
+episode_ticks = 500
+decision_interval = 10
+success_score = 100
+seeds = [0, 1, 2, 3, 4]
+episodes_per_seed = 5
+q_training_episodes = 500
+
+[assembly-planning]
+task = "factory.assembly.plan.v1"
+blocks = 5
+block_ticks = 100
+population = 16
+elites = 4
+iterations = 4
+random_plans = 32
+success_score = 100
+seeds = [0, 1, 2, 3, 4]
+
+[assembly-bom]
+task = "factory.assembly.bom.v1"
+episodes = 50
+warmup_steps = 5
+horizon_steps = 5
+train_fraction = 0.6
+val_fraction = 0.2
+random_action_prob = 0.3
+success_score = 100
+
+[assembly-intervention]
+task = "factory.assembly.recipe_intervention.v1"
+episodes = 200
+seed_start = 58000
+sample_steps = [10, 20, 30, 40]
+warmup_steps = 5
+random_action_prob = 0.3
+success_score = 100
+
+[expected]
+summary = "benchmarks/factory-v0.5/expected/summary.json"
+rtol = 0.03
+atol = 0.02
+check = "python -m fabline assembly-suite --out results/factory-v0.5 --check-expected benchmarks/factory-v0.5/expected/summary.json"

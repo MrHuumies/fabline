@@ -1,8 +1,8 @@
 """The 0.5.0 coverage-suite orchestrator.
 
-This is a draft `factory-v0.4` coverage tier. It runs the public coverage tasks
-that are available in this tree and writes one aggregate report. It is not a
-frozen benchmark; task status and gates are reported per task.
+This is the frozen `factory-v0.4` coverage tier. It runs the public coverage
+tasks that are available in this tree and writes one aggregate report. Task
+status and gates are reported per task.
 """
 
 from __future__ import annotations
@@ -655,7 +655,7 @@ def run_coverage_suite(
     report = {
         "benchmark": COVERAGE_SUITE_ID,
         "version": COVERAGE_SUITE_VERSION,
-        "status": "candidate",
+        "status": "frozen",
         "config": asdict(cfg),
         "tasks": tasks,
         "summary": {
@@ -678,7 +678,7 @@ def run_coverage_suite(
 
 def _render_report(report: dict[str, Any]) -> str:
     lines = [
-        "# factory-v0.4 coverage suite (draft)",
+        "# factory-v0.4 coverage suite (frozen)",
         "",
         f"- status: {report['status']}",
         f"- tasks: {report['summary']['tasks']}",
@@ -747,8 +747,8 @@ def _render_report(report: dict[str, Any]) -> str:
     lines.extend(
         [
             "",
-            "This is a draft coverage tier, not a frozen benchmark. See the task",
-            "cards and the 0.5.0 roadmap for gates and promotion decisions.",
+            "This coverage tier is frozen in `factory-v0.4`. See the task cards,",
+            "the benchmark card, and the freeze review for gates and scope.",
             "",
         ]
     )

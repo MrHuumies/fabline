@@ -3,19 +3,25 @@
 This document defines how methods are compared on FABLINE. The benchmark is a
 contract: frozen tasks, frozen splits, fixed budgets, standard reports.
 
-**Current release:** `factory-v0.3` — see
-[`benchmarks/factory-v0.3/card.md`](../benchmarks/factory-v0.3/card.md). It
-keeps the v0.2 core and adds order control and order planning, for 12 headline
-tasks. `factory-v0.1` and `factory-v0.2` remain frozen for provenance. Cross-task cost is reported separately in the
+**Current release:** `factory-v0.5` — see
+[`benchmarks/factory-v0.5/card.md`](../benchmarks/factory-v0.5/card.md). It
+keeps `factory-v0.4` by reference and adds four assembly-edge tasks. The frozen
+`factory-v0.3` core, the `factory-v0.4` coverage suite, and the earlier v0.1/v0.2
+releases remain immutable. Cross-task cost is reported separately in the
 [`efficiency table`](efficiency.md); it is descriptive, not a benchmark score.
 
-A `factory-v0.4` **coverage suite** now runs alongside the frozen v0.3
-benchmark. It is frozen separately and adds an eight-task coverage tier plus
+The `factory-v0.4` **coverage suite** adds an eight-task coverage tier plus
 public structured baselines; wired-cascade is a diagnostic. Run it with
 `python -m fabline coverage-suite --out results/factory-v0.4-coverage`; see
 [`benchmarks/factory-v0.4/card.md`](../benchmarks/factory-v0.4/card.md).
 
-Run the current frozen benchmark with:
+Run the current assembly benchmark with:
+
+```bash
+.venv/bin/python -m fabline assembly-suite --out results/factory-v0.5
+```
+
+The frozen v0.3 core remains runnable with:
 
 ```bash
 .venv/bin/python -m fabline benchmark-v03 --out results/factory-v0.3
@@ -33,21 +39,14 @@ Run the current frozen benchmark with:
 A benchmark release is a set of tasks with pinned versions:
 
 ```text
-benchmark: factory-v0.3
+benchmark: factory-v0.5
+reference: factory-v0.4
 tasks:
-  - throughput-vector
-  - throughput-grid
-  - throughput-entities
-  - masked-grid
-  - bottleneck
-  - expand-control
-  - control-dynamics
-  - planning-triage
-  - fault-calibration
-  - causal-removal
-  - order-control
-  - order-planning
-splits: train / val / test / shift, plus decision-block seeds
+  - assembly-control
+  - assembly-planning
+  - assembly-bom
+  - assembly-intervention
+splits: episode-level train / val / test; fixed seeds per task
 seeds: fixed per task; see benchmark.toml
 budgets: per task
 ```

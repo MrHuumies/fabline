@@ -84,9 +84,13 @@ Current tasks:
 - [Production mix](production-mix.md) — draft 0.4.0 production-mix pilot.
 - [Order planning](order-planning.md) — draft 0.4.0 order-planning candidate.
 - [Assembly-edge production control](assembly-edge.md) — 0.6.0 control task;
-  formal pilot positive.
+  frozen in `factory-v0.5`; Q 460 vs random 429.
 - [Assembly-edge planning](assembly-planning.md) — 0.6.0 finite-horizon planning
-  task; CEM 428 vs oracle 430, formal pilot positive.
+  task; frozen in `factory-v0.5`; CEM 428 vs oracle 430.
+- [Assembly BOM forecast](assembly-bom.md) — 0.6.0 output regression; frozen in
+  `factory-v0.5`; GBDT R² 0.503.
+- [Assembly recipe intervention](assembly-intervention.md) — 0.6.0
+  counterfactual effect task; frozen in `factory-v0.5`; GBDT R² 0.944.
 - [Order control](order-control.md) — draft 0.4.0 order-control candidate.
 - [View arrival](view-arrival.md) — generic multiview contract and
   episode-grouped view-arrival task.

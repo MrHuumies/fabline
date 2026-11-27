@@ -2,7 +2,7 @@
 
 - **Task ID:** `factory.assembly.plan.v1`
 - **Version:** 0.1.0
-- **Status:** formal pilot positive; not in a frozen benchmark
+- **Status:** frozen in `factory-v0.5`
 - **World:** `factory-0.1.0` + opt-in production tree
 - **Owner:** FABLINE
 - **Date:** 2026-11-27
@@ -36,7 +36,9 @@ not online control.
 | H2 CEM over random | CEM ≥ random + 10 |
 | H3 CEM quality | CEM within 10 of oracle |
 | H4 success | CEM success ≥ 0.60 |
-| H5 frozen benchmark | v0.3/v0.4 unchanged |
+
+Frozen v0.1–v0.4 hashes are enforced by the test suite and CI, not by the task
+runner.
 
 ## Results (formal pilot, 5 seeds)
 
@@ -67,3 +69,4 @@ oracle, success 1.00.
 ## Changelog
 
 - 2026-11-27 — task card created; formal pilot positive.
+- 2026-11-27 — frozen in `factory-v0.5`; full suite reproduces CEM 428.

@@ -39,3 +39,9 @@ The 0.5.0 coverage release is [`factory-v0.4`](factory-v0.4/spec.md), frozen on
 2026-11-27. It keeps v0.3 by reference and adds an eight-task coverage tier plus
 public structured baselines. The expected summary is in
 `factory-v0.4/expected/summary.json`; wired-cascade remains a diagnostic.
+
+The 0.6.0 assembly release is [`factory-v0.5`](factory-v0.5/spec.md), frozen on
+2026-11-27. It keeps v0.4 by reference and adds four tasks on the opt-in
+production tree: assembly control, assembly planning, BOM forecast, and recipe
+intervention. The expected summary is in `factory-v0.5/expected/summary.json`;
+all four tasks pass. Demand uncertainty and layout splits are deferred.
