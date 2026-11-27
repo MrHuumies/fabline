@@ -96,7 +96,7 @@ The expected summary is in
 The earlier [`factory-v0.2`](benchmarks/factory-v0.2/card.md) and
 [`factory-v0.1`](benchmarks/factory-v0.1/card.md) benchmarks remain immutable.
 
-A draft **0.5.0 coverage suite** is also available:
+The **0.5.0 coverage suite** is also available:
 
 ```bash
 .venv/bin/python -m fabline coverage-suite --out results/factory-v0.4-coverage
@@ -105,9 +105,10 @@ A draft **0.5.0 coverage suite** is also available:
 It adds an eight-task coverage tier (`reliability-contract`,
 `partial-throughput`, `wired-cascade`, `crew-schedule`, `crew-triage`,
 `preventive-wire`, `recipe-choice`, `maintenance-threshold`), public structured
-baselines (CNN, MPNN, GRU, Transformer), and a challenge tier. It is **not
-frozen**; see
-[`benchmarks/factory-v0.4/spec.md`](benchmarks/factory-v0.4/spec.md).
+baselines (CNN, MPNN, GRU, Transformer), and a challenge-task list for
+follow-up. The suite is **frozen** as `factory-v0.4`; wired-cascade is a
+diagnostic, not a headline score. See
+[`benchmarks/factory-v0.4/card.md`](benchmarks/factory-v0.4/card.md).
 The current coverage map is in
 [`docs/coverage-map.md`](docs/coverage-map.md); the
 [0.4.0 review](docs/coverage-review-0.4.0.md) records the next slice. Cross-task

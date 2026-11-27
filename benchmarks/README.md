@@ -35,6 +35,7 @@ The 0.4.0 benchmark is [`factory-v0.3`](factory-v0.3/spec.md), frozen on
 order planning. The [freeze review](factory-v0.3/freeze-review.md) records the
 scope cuts.
 
-The 0.5.0 coverage release is [`factory-v0.4`](factory-v0.4/spec.md), **draft
-and not frozen**. It keeps v0.3 by reference and adds a coverage/challenge tier
-plus public structured baselines. There is no expected summary yet.
+The 0.5.0 coverage release is [`factory-v0.4`](factory-v0.4/spec.md), frozen on
+2026-11-27. It keeps v0.3 by reference and adds an eight-task coverage tier plus
+public structured baselines. The expected summary is in
+`factory-v0.4/expected/summary.json`; wired-cascade remains a diagnostic.

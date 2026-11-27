@@ -85,10 +85,10 @@ control (0092) and is negative at 10k steps; offline RL beyond behavior cloning,
 a learned world model, multi-agent RL beyond centralized assignment, and
 generative models remain missing.
 
-### 0.5.0 coverage release (draft)
+### 0.5.0 coverage release (frozen)
 
-The first coverage release is merged on `main`; it is a draft `factory-v0.4`,
-not a frozen benchmark:
+The first coverage release is merged on `main` and frozen as `factory-v0.4`;
+wired-cascade remains a diagnostic:
 
 | Task | Kind | Public result | Status |
 |---|---|---|---|

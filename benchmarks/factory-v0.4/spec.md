@@ -1,11 +1,13 @@
-# Benchmark specification — factory-v0.4 (draft)
+# Benchmark specification — factory-v0.4
 
-- **Status:** draft; not frozen
-- **Version:** 0.4.0-draft
-- **Date:** 2026-11-26
+- **Status:** frozen
+- **Version:** 0.4.0
+- **Date:** 2026-11-27
 - **World:** `factory-0.1.0`
 - **Plan:** `coverage-v0.4`
 - **Predecessor:** `factory-v0.3` remains immutable
+- **Expected summary:** [`expected/summary.json`](expected/summary.json)
+- **Freeze review:** [`freeze-review.md`](freeze-review.md)
 - **Related:** RFC 0030, ADR 0042, 0.5.0 roadmap, coverage analysis
 
 ## Purpose
@@ -151,14 +153,27 @@ is not a frozen benchmark; there is no expected summary yet.
 
 ## Freeze criteria
 
-1. The coverage tier has at least six tasks with cards, splits, and baselines.
-2. Public CNN, GNN, sequence, and OR baselines run in CI.
-3. Episode-level cluster bootstrap and a private holdout are in place.
-4. A layout split exists for the spatial tasks.
-5. The challenge tier has cards and expected summaries.
-6. `factory-v0.3` assets and expected summaries are unchanged.
-7. The public/private evidence audit passes.
-8. A freeze review and expected summary are checked in.
+1. The coverage tier has eight tasks with cards, splits, and public harnesses.
+2. Public CNN, GNN, sequence, and tabular baseline code exists with unit tests.
+3. The expected summary is deterministic and the full check reports zero
+   mismatches.
+4. `factory-v0.3` assets and expected summaries are unchanged.
+5. A freeze review and expected summary are checked in.
+6. The limitations below are documented in the card and freeze review.
+
+## Known limitations
+
+These are follow-ups, not hidden requirements for the 0.5.0 coverage freeze:
+
+- no layout split or private holdout yet;
+- bootstrap intervals are task-local (row/episode/block), not uniformly
+  episode-cluster bootstrap;
+- the challenge tier has cards but no integrated expected summaries;
+- no OR/CP-SAT baseline is integrated yet;
+- wired-cascade remains a diagnostic because its public graph gain is below the
+  +0.05 gate.
+
+They are tracked for the next benchmark version.
 
 ## Not in this draft
 

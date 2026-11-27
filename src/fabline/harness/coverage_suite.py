@@ -25,6 +25,7 @@ from fabline.harness.crew_schedule import (
     run_crew_schedule,
     write_crew_report,
 )
+from fabline.harness.factory_v02 import compare_expected_summary
 from fabline.harness.partial_throughput import (
     PartialThroughputConfig,
     run_partial_throughput,
@@ -54,7 +55,26 @@ from fabline.worlds.factory.power import PowerConfig
 from fabline.worlds.factory.recipe import RecipeConfig
 
 COVERAGE_SUITE_ID = "factory-v0.4-coverage"
-COVERAGE_SUITE_VERSION = "0.1.0"
+COVERAGE_SUITE_VERSION = "0.4.0"
+EXPECTED_TOLERANCE = {"rtol": 0.03, "atol": 0.02}
+
+HEADLINE_TASKS = (
+    "reliability-contract",
+    "partial-throughput",
+    "crew-schedule",
+    "crew-triage",
+    "preventive-wire",
+    "recipe-choice",
+    "maintenance-threshold",
+)
+DIAGNOSTIC_TASKS = ("wired-cascade",)
+CHALLENGE_TASKS = (
+    "crew-layouts",
+    "decentralized-triage",
+    "crew-replacement",
+    "crew-replan-layouts",
+    "maintenance-calibration",
+)
 
 
 @dataclass(frozen=True)
@@ -358,6 +378,136 @@ def _partial_summary(report: dict[str, Any]) -> dict[str, Any]:
             and report["gates"]["H3_no_leakage"]
         ),
     }
+
+
+def _compact_rows(
+    results: dict[str, dict[str, Any]],
+    keys: tuple[str, ...],
+) -> dict[str, dict[str, Any]]:
+    return {
+        name: {
+            key: row[key]
+            for key in keys
+            if key in row
+        }
+        for name, row in results.items()
+    }
+
+
+def build_expected_summary(report: dict[str, Any]) -> dict[str, Any]:
+    """Build the compact, deterministic expected summary for factory-v0.4."""
+
+    tasks: dict[str, Any] = {}
+    reliability = report["tasks"].get("reliability-contract")
+    if reliability is not None:
+        tasks["reliability-contract"] = {
+            "selected": reliability["selected"],
+            "summary": reliability["summary"],
+            "test_policy": reliability["test_policy"],
+            "gates": reliability["gates"],
+        }
+    partial = report["tasks"].get("partial-throughput")
+    if partial is not None:
+        tasks["partial-throughput"] = {
+            "dataset": partial["dataset"],
+            "tests": {
+                view: {
+                    model: {
+                        metric: values[metric]
+                        for metric in ("r2", "mae", "mse", "cosine")
+                        if metric in values
+                    }
+                    for model, values in rows.items()
+                }
+                for view, rows in partial["tests"].items()
+                if view in {"current", "single", "window"}
+            },
+            "gates": partial["gates"],
+        }
+    wired = report["tasks"].get("wired-cascade")
+    if wired is not None:
+        tasks["wired-cascade"] = {
+            "dataset": wired["dataset"],
+            "metrics": {
+                name: {
+                    metric: values[metric]
+                    for metric in ("r2", "mae")
+                    if metric in values
+                }
+                for name, values in wired["metrics"].items()
+            },
+            "gates": wired["gates"],
+        }
+    for name in ("crew-schedule", "crew-triage", "preventive-wire"):
+        task = report["tasks"].get(name)
+        if task is not None:
+            tasks[name] = {
+                "results": _compact_rows(
+                    task["results"],
+                    (
+                        "mean_score",
+                        "score_ci",
+                        "success_rate",
+                        "mean_prevented",
+                        "mean_aborted",
+                        "mean_repairs",
+                        "mean_travel",
+                        "mean_switches",
+                    ),
+                ),
+                "gates": task["gates"],
+            }
+    recipe = report["tasks"].get("recipe-choice")
+    if recipe is not None:
+        tasks["recipe-choice"] = {
+            "results": _compact_rows(
+                recipe["results"],
+                ("mean_score", "score_ci", "success_rate", "mean_switches"),
+            ),
+            "gates": recipe["gates"],
+        }
+    threshold = report["tasks"].get("maintenance-threshold")
+    if threshold is not None:
+        payload = threshold["payload"]
+        tasks["maintenance-threshold"] = {
+            "arms": {
+                key: {
+                    metric: row[metric]
+                    for metric in ("mean_score", "success_rate")
+                    if metric in row
+                }
+                for key, row in payload["arms"].items()
+            },
+            "best_arm": payload["best_arm"],
+            "learners": {
+                name: {
+                    metric: row[metric]
+                    for metric in ("arm", "mean_score", "success_rate")
+                    if metric in row
+                }
+                for name, row in payload["learners"].items()
+            },
+            "gates": threshold["gates"],
+        }
+    return {
+        "benchmark": "factory-v0.4",
+        "version": "0.4.0",
+        "date": "2026-11-27",
+        "world_version": "factory-0.1.0",
+        "plan": "coverage-v0.4",
+        "tolerance": EXPECTED_TOLERANCE,
+        "headline_tasks": list(HEADLINE_TASKS),
+        "diagnostics": list(DIAGNOSTIC_TASKS),
+        "challenge_tasks": list(CHALLENGE_TASKS),
+        "tasks": tasks,
+    }
+
+
+def compare_coverage_expected(
+    expected: dict[str, Any],
+    actual: dict[str, Any],
+) -> list[str]:
+    return compare_expected_summary(expected, actual)
 
 
 def run_coverage_suite(
