@@ -2,6 +2,7 @@
 
 - **Status:** frozen
 - **Version:** 0.4.0
+- **Package release:** 0.5.0
 - **Date:** 2026-11-27
 - **World:** `factory-0.1.0`
 - **Plan:** `coverage-v0.4`
@@ -35,8 +36,8 @@ The goal is to make the benchmark honest about what is covered:
 | recipe-choice | `factory.production.recipe-choice.v1` | production control | queue-aware recipe choice | pass |
 | maintenance-threshold | `factory.fault.preventive-threshold.v1` | bandit/context | threshold selection | pass |
 
-The integrated runner now covers all eight coverage tasks. The remaining work is
-the freeze package, not another task.
+The integrated runner covers all eight coverage tasks and the suite is frozen
+with an expected summary and CI check.
 
 ## Challenge tier
 
@@ -64,7 +65,7 @@ It does not need a winning learned baseline.
 
 ### Partial throughput
 
-- 100 episodes, 1,100 samples in the public draft.
+- 100 episodes, 1,100 samples in the public suite.
 - 150-tick warmup, 300-tick episode, 10-tick sampling, 50-tick horizon.
 - 60% feature dropout; 4-frame masked window.
 - Splits by episode: 770 / 209 / 121.
@@ -175,7 +176,7 @@ These are follow-ups, not hidden requirements for the 0.5.0 coverage freeze:
 
 They are tracked for the next benchmark version.
 
-## Not in this draft
+## Not in this version
 
 - a new world mechanic;
 - a public leaderboard;
@@ -186,4 +187,4 @@ They are tracked for the next benchmark version.
 ## Changelog
 
 - 2026-11-26 - draft spec created for the three-task coverage slice.
-- 2026-11-27 - expanded to eight integrated tasks; freeze package still pending.
+- 2026-11-27 - expanded to eight integrated tasks and frozen as `factory-v0.4`.

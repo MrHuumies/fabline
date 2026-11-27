@@ -73,17 +73,18 @@ make render-install
   on the three-bridge triage task.
 - **Orders (0.4.0):** opt-in gear/component production mix, seeded orders with
   deadlines/values, order control, and five-block order planning.
-- **Assembly edge (0.6.0 slice):** opt-in per-assembler recipe tree
+- **Assembly edge (unreleased 0.6.0 slice):** opt-in per-assembler recipe tree
   (`INGOT + COMPONENT -> 2 GEAR`), component logistics, a fixed two-feed
   assembly cell, and an assembly-control task. This is an incremental code
   slice, not a frozen benchmark.
 
 Every mechanic is opt-in. `factory-v0.1` and `factory-v0.2` remain frozen for
-provenance; `factory-v0.3` is the current benchmark.
+provenance; `factory-v0.3` is the frozen core and `factory-v0.4` is the 0.5.0
+coverage benchmark.
 
 ## Benchmark
 
-The current frozen benchmark is [`factory-v0.3`](benchmarks/factory-v0.3/card.md):
+The frozen core is [`factory-v0.3`](benchmarks/factory-v0.3/card.md):
 
 - 12 headline tasks: the v0.2 core plus order control and order planning;
 - 159 shared core episodes with 20 test and 20 shift episodes;
@@ -111,8 +112,9 @@ diagnostic, not a headline score. See
 [`benchmarks/factory-v0.4/card.md`](benchmarks/factory-v0.4/card.md).
 The current coverage map is in
 [`docs/coverage-map.md`](docs/coverage-map.md); the
-[0.4.0 review](docs/coverage-review-0.4.0.md) records the next slice. Cross-task
-cost is in the [`efficiency table`](docs/efficiency.md).
+[0.5.0 review](docs/coverage-review-0.5.0.md) records the release verdict and
+the next slice. Cross-task cost is in the
+[`efficiency table`](docs/efficiency.md).
 Small library-version differences are acceptable; headline ordering should be
 stable.
 

@@ -5,13 +5,18 @@ are pinned separately; see [`benchmarks/factory-v0.3/card.md`](benchmarks/factor
 
 ## [Unreleased]
 
+## [0.5.0] — 2026-11-27
+
+0.5.0 is the coverage release. It freezes `factory-v0.4` beside the immutable
+`factory-v0.3` core; it does not add a world mechanic.
+
 - Freeze `factory-v0.4`, the 0.5.0 coverage suite: eight tasks, public
   structured baselines, expected summary, and full CI check. Seven tasks pass;
   wired-cascade remains a diagnostic.
-- Add the opt-in assembly-edge production tree: per-assembler recipe state,
-  component logistics, and `INGOT + COMPONENT -> GEAR` (2 gears in the task).
-  Add a two-feed assembly cell and `factory.assembly.control.v1`; the formal
-  pilot is positive (Q 460 vs random 429, always gear 260).
+- Add public CNN, MPNN, GRU, and Transformer baselines in
+  `src/fabline/harness/models/`.
+- Add the `coverage-suite` runner, `--fast` smoke mode, and
+  `--expected`/`--check-expected` regression checks.
 
 ## [0.4.0] — 2026-11-26
 

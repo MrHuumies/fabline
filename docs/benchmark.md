@@ -3,19 +3,21 @@
 This document defines how methods are compared on FABLINE. The benchmark is a
 contract: frozen tasks, frozen splits, fixed budgets, standard reports.
 
-**Current release:** `factory-v0.3` — see
-[`benchmarks/factory-v0.3/card.md`](../benchmarks/factory-v0.3/card.md). It
-keeps the v0.2 core and adds order control and order planning, for 12 headline
-tasks. `factory-v0.1` and `factory-v0.2` remain frozen for provenance. Cross-task cost is reported separately in the
-[`efficiency table`](efficiency.md); it is descriptive, not a benchmark score.
+**Current release:** `factory-v0.4`, the 0.5.0 coverage suite — see
+[`benchmarks/factory-v0.4/card.md`](../benchmarks/factory-v0.4/card.md). It
+keeps the frozen `factory-v0.3` core and adds an eight-task coverage tier plus
+public structured baselines; wired-cascade is a diagnostic. `factory-v0.1`
+through `factory-v0.3` remain frozen for provenance. Cross-task cost is
+reported separately in the [`efficiency table`](efficiency.md); it is
+descriptive, not a benchmark score.
 
-A `factory-v0.4` **coverage suite** now runs alongside the frozen v0.3
-benchmark. It is frozen separately and adds an eight-task coverage tier plus
-public structured baselines; wired-cascade is a diagnostic. Run it with
-`python -m fabline coverage-suite --out results/factory-v0.4-coverage`; see
-[`benchmarks/factory-v0.4/card.md`](../benchmarks/factory-v0.4/card.md).
+Run the coverage suite with:
 
-Run the current frozen benchmark with:
+```bash
+.venv/bin/python -m fabline coverage-suite --out results/factory-v0.4-coverage
+```
+
+The frozen v0.3 core remains runnable with:
 
 ```bash
 .venv/bin/python -m fabline benchmark-v03 --out results/factory-v0.3

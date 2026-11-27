@@ -38,4 +38,6 @@ scope cuts.
 The 0.5.0 coverage release is [`factory-v0.4`](factory-v0.4/spec.md), frozen on
 2026-11-27. It keeps v0.3 by reference and adds an eight-task coverage tier plus
 public structured baselines. The expected summary is in
-`factory-v0.4/expected/summary.json`; wired-cascade remains a diagnostic.
+`factory-v0.4/expected/summary.json`; wired-cascade remains a diagnostic. The
+[0.5.0 coverage review](../docs/coverage-review-0.5.0.md) records the verdict
+and remaining gaps.

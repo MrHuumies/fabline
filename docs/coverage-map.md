@@ -103,7 +103,8 @@ wired-cascade remains a diagnostic:
 
 Run with `python -m fabline coverage-suite --out results/factory-v0.4-coverage`.
 The wired cascade is a **public reproduction gap** versus the private 0032
-result; its +0.05 graph gate is unchanged, so it is not promoted.
+result; its +0.05 graph gate is unchanged, so it is not promoted. See
+[`coverage-review-0.5.0.md`](coverage-review-0.5.0.md) for the release verdict.
 
 ### Current benchmark families
 

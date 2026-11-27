@@ -1,6 +1,6 @@
 # FABLINE coverage analysis — gaps, mechanics, and promotion candidates
 
-- **Status:** analysis; not a release decision, not a frozen benchmark
+- **Status:** historical analysis; superseded by the roadmap and the 0.5.0 review
 - **Date:** 2026-11-26
 - **Inputs:** [`coverage-map.md`](coverage-map.md),
   [`coverage-review-0.4.0.md`](coverage-review-0.4.0.md),
@@ -11,7 +11,9 @@
   public code; inventory benchmark families and model families; review every
   failed or unpromoted task; propose mechanics, tasks, baselines, and gates.
 - **Companion:** this is a local analysis file. It does not change any frozen
-  benchmark, world hash, or public release.
+  benchmark, world hash, or public release. Statements such as "not frozen" are
+  as of 2026-11-26; see [`coverage-review-0.5.0.md`](coverage-review-0.5.0.md)
+  for the final coverage-suite status.
 
 ## 0. Executive summary
 
