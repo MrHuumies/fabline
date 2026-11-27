@@ -39,6 +39,11 @@ from fabline.harness.assembly_control import (
     run_assembly_control,
     write_assembly_control_report,
 )
+from fabline.harness.assembly_planning import (
+    AssemblyPlanningConfig,
+    run_assembly_planning,
+    write_assembly_planning_report,
+)
 from fabline.harness.causal_intervention import (
     CausalConfig,
     run_causal,
@@ -1506,6 +1511,44 @@ def cmd_assembly_control(args: argparse.Namespace) -> int:
         config={
             "success_score": args.success_score,
             "seeds": [0, 1, 2, 3, 4],
+        },
+    )
+    print(json.dumps({"report": str(report), "results": results}, indent=2, sort_keys=True))
+    return 0
+
+
+def cmd_assembly_planning(args: argparse.Namespace) -> int:
+    config = FactoryConfig(
+        width=16,
+        height=8,
+        ticks_per_episode=500,
+        decision_interval=10,
+        entity_budget=32,
+        rock_density=0.0,
+        ore_patches=1,
+        starter_line=False,
+    )
+    planning = AssemblyPlanningConfig(
+        blocks=args.blocks,
+        block_ticks=args.block_ticks,
+        population=args.population,
+        elites=args.elites,
+        iterations=args.iterations,
+        random_plans=args.random_plans,
+        success_score=args.success_score,
+    )
+    results = run_assembly_planning(config, planning)
+    report = write_assembly_planning_report(
+        args.out,
+        results,
+        config={
+            "blocks": planning.blocks,
+            "block_ticks": planning.block_ticks,
+            "population": planning.population,
+            "elites": planning.elites,
+            "iterations": planning.iterations,
+            "random_plans": planning.random_plans,
+            "success_score": planning.success_score,
         },
     )
     print(json.dumps({"report": str(report), "results": results}, indent=2, sort_keys=True))
@@ -3539,6 +3582,20 @@ def build_parser() -> argparse.ArgumentParser:
     assembly_control.add_argument("--q-episodes", type=int, default=500)
     assembly_control.add_argument("--success-score", type=int, default=100)
     assembly_control.set_defaults(func=cmd_assembly_control)
+
+    assembly_planning = subparsers.add_parser(
+        "assembly-planning",
+        help="run the assembly-edge finite-horizon planning benchmark",
+    )
+    assembly_planning.add_argument("--out", type=str, default="results/assembly-planning")
+    assembly_planning.add_argument("--blocks", type=int, default=5)
+    assembly_planning.add_argument("--block-ticks", type=int, default=100)
+    assembly_planning.add_argument("--population", type=int, default=16)
+    assembly_planning.add_argument("--elites", type=int, default=4)
+    assembly_planning.add_argument("--iterations", type=int, default=4)
+    assembly_planning.add_argument("--random-plans", type=int, default=32)
+    assembly_planning.add_argument("--success-score", type=int, default=100)
+    assembly_planning.set_defaults(func=cmd_assembly_planning)
 
     contract_board = subparsers.add_parser(
         "contract-board",
