@@ -27,6 +27,18 @@ def regression_metrics(y_true: np.ndarray, y_pred: np.ndarray) -> dict[str, floa
     return {"mae": mae, "rmse": rmse, "r2": r2}
 
 
+def test_r2(metrics: dict[str, dict[str, object]], name: str) -> float:
+    """Read a test R² from an ``evaluate_baselines`` result."""
+
+    row = metrics[name].get("test")
+    if not isinstance(row, dict):
+        raise RuntimeError(f"baseline {name!r} has no test metrics")
+    value = row.get("r2")
+    if not isinstance(value, (int, float)):
+        raise RuntimeError(f"baseline {name!r} has no test R²")
+    return float(value)
+
+
 def classification_metrics(
     y_true: np.ndarray,
     y_pred: np.ndarray,

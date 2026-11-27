@@ -40,9 +40,9 @@ The wired cascade is published as a diagnostic because the public
 reimplementation does not reproduce the private 0032 graph gain (graph_mp
 R² 0.124 vs vector 0.107, +0.018, below the +0.05 gate). Do not lower the gate.
 
-## Coverage-suite result (draft)
+## Coverage-suite result
 
-Full suite, 2026-11-26, `--skip-sequence`:
+Full suite, 2026-11-27, `--skip-sequence`:
 
 | Task | Status | Key result |
 |---|---|---|
@@ -68,10 +68,11 @@ headline scores; they are open challenges.
 
 ## Caveats
 
-- This is a draft; no expected summary or freeze review exists yet.
-- The coverage suite integrates all eight planned coverage tasks. The remaining
-  work is the freeze package: expected summary, CI check, layout split,
-  private holdout, and challenge-tier integration.
+- The expected summary is checked in and the full check reports zero
+  mismatches.
+- There is no layout split or private holdout yet; that is next-version work.
+- Bootstrap intervals are task-local, not uniformly episode-cluster.
+- Challenge tasks have cards but no integrated expected summaries.
 - Wired cascade is a reproduction gap, not a solved task.
 - `factory-v0.3` remains frozen and unchanged.
 

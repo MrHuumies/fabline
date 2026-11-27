@@ -1,0 +1,241 @@
+{
+  "benchmark": "factory-v0.5",
+  "date": "2026-11-27",
+  "headline_tasks": [
+    "assembly-control",
+    "assembly-planning",
+    "assembly-bom",
+    "assembly-intervention"
+  ],
+  "plan": "assembly-v0.5",
+  "tasks": {
+    "assembly-bom": {
+      "dataset": {
+        "episodes": 50,
+        "label_mean": 4.810500144958496,
+        "label_std": 0.8981034159660339,
+        "samples": 2000,
+        "splits": {
+          "test": 400,
+          "train": 1200,
+          "val": 400
+        }
+      },
+      "gates": {
+        "H1_skill": true,
+        "H2_nonlinear": true,
+        "H3_not_saturated": true,
+        "H4_mlp_skill": true
+      },
+      "metrics": {
+        "gbdt": {
+          "mae": 0.5255375496783167,
+          "r2": 0.503321084178656
+        },
+        "linear": {
+          "mae": 0.6314625840288355,
+          "r2": 0.3430019268181511
+        },
+        "mean": {
+          "mae": 0.7803832721710205,
+          "r2": -0.0008703816858746105
+        },
+        "mlp": {
+          "mae": 0.5883420526981353,
+          "r2": 0.46523208400715144
+        }
+      }
+    },
+    "assembly-control": {
+      "gates": {
+        "H1_scripted_gap": true,
+        "H2_learned_gap": true,
+        "H3_success": true
+      },
+      "results": {
+        "always_assembly": {
+          "mean_score": 360.0,
+          "mean_switches": 1.0,
+          "score_ci": [
+            360.0,
+            360.0
+          ],
+          "success_rate": 1.0
+        },
+        "always_gear": {
+          "mean_score": 260.0,
+          "mean_switches": 0.0,
+          "score_ci": [
+            260.0,
+            260.0
+          ],
+          "success_rate": 1.0
+        },
+        "batch_aware": {
+          "mean_score": 440.0,
+          "mean_switches": 4.0,
+          "score_ci": [
+            440.0,
+            440.0
+          ],
+          "success_rate": 1.0
+        },
+        "buffer_aware": {
+          "mean_score": 420.0,
+          "mean_switches": 22.0,
+          "score_ci": [
+            420.0,
+            420.0
+          ],
+          "success_rate": 1.0
+        },
+        "random": {
+          "mean_score": 429.2,
+          "mean_switches": 25.0,
+          "score_ci": [
+            422.0,
+            436.4
+          ],
+          "success_rate": 1.0
+        },
+        "tabular_q": {
+          "mean_score": 460.0,
+          "mean_switches": 28.0,
+          "score_ci": [
+            460.0,
+            460.0
+          ],
+          "success_rate": 1.0
+        }
+      }
+    },
+    "assembly-intervention": {
+      "dataset": {
+        "effect_mean": -42.962501525878906,
+        "effect_std": 44.758785247802734,
+        "episodes": 200,
+        "positive_effect_rate": 0.10125,
+        "samples": 800,
+        "splits": {
+          "test": 80,
+          "train": 560,
+          "val": 160
+        }
+      },
+      "decisions": {
+        "always_continue": 440.5,
+        "always_switch": 400.5,
+        "model_gain": 1.625,
+        "oracle_gain": 2.0,
+        "oracle_value": 442.5,
+        "policy_value": 442.125,
+        "regret": 0.375
+      },
+      "gates": {
+        "H1_skill": true,
+        "H2_nonlinear": true,
+        "H3_not_saturated": true,
+        "H4_decision": true,
+        "H5_mlp_skill": true
+      },
+      "metrics": {
+        "gbdt": {
+          "mae": 8.05313234796061,
+          "r2": 0.943518138611695
+        },
+        "linear": {
+          "mae": 45.11328604813545,
+          "r2": -0.8381039196325564
+        },
+        "mean": {
+          "mae": 35.161160182952884,
+          "r2": -0.004046333893515275
+        },
+        "mlp": {
+          "mae": 17.595247268676758,
+          "r2": 0.7684895817555735
+        }
+      }
+    },
+    "assembly-planning": {
+      "gates": {
+        "H1_planning_gap": true,
+        "H2_cem_over_random": true,
+        "H3_cem_quality": true,
+        "H4_success": true
+      },
+      "results": {
+        "alternate": {
+          "mean_score": 400.0,
+          "score_ci": [
+            400.0,
+            400.0
+          ],
+          "success_rate": 1.0
+        },
+        "always_assembly": {
+          "mean_score": 360.0,
+          "score_ci": [
+            360.0,
+            360.0
+          ],
+          "success_rate": 1.0
+        },
+        "always_gear": {
+          "mean_score": 260.0,
+          "score_ci": [
+            260.0,
+            260.0
+          ],
+          "success_rate": 1.0
+        },
+        "batch_3": {
+          "mean_score": 350.0,
+          "score_ci": [
+            350.0,
+            350.0
+          ],
+          "success_rate": 1.0
+        },
+        "cem": {
+          "mean_score": 428.0,
+          "score_ci": [
+            424.0,
+            430.0
+          ],
+          "success_rate": 1.0
+        },
+        "frontload": {
+          "mean_score": 410.0,
+          "score_ci": [
+            410.0,
+            410.0
+          ],
+          "success_rate": 1.0
+        },
+        "oracle": {
+          "mean_score": 430.0,
+          "score_ci": [
+            430.0,
+            430.0
+          ],
+          "success_rate": 1.0
+        },
+        "random": {
+          "mean_score": 372.875,
+          "score_ci": [
+            363.9375,
+            380.69375
+          ],
+          "success_rate": 1.0
+        }
+      }
+    }
+  },
+  "tolerance": {
+    "atol": 0.02,
+    "rtol": 0.03
+  },
+  "version": "0.5.0",
+  "world_version": "factory-0.1.0"
+}

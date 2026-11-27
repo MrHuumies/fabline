@@ -35,14 +35,32 @@ from fabline.env.production_mix import ProductionMixConfig
 from fabline.env.recipe import RecipeEnvConfig
 from fabline.env.three_crew_replan import ThreeCrewReplanConfig
 from fabline.env.wire_repair import WireRepairConfig
+from fabline.harness.assembly_bom import (
+    AssemblyBOMConfig,
+    run_assembly_bom,
+    write_assembly_bom_report,
+)
 from fabline.harness.assembly_control import (
     run_assembly_control,
     write_assembly_control_report,
+)
+from fabline.harness.assembly_intervention import (
+    AssemblyInterventionConfig,
+    run_assembly_intervention,
+    write_assembly_intervention_report,
 )
 from fabline.harness.assembly_planning import (
     AssemblyPlanningConfig,
     run_assembly_planning,
     write_assembly_planning_report,
+)
+from fabline.harness.assembly_suite import (
+    AssemblySuiteConfig,
+    compare_assembly_expected,
+    run_assembly_suite,
+)
+from fabline.harness.assembly_suite import (
+    build_expected_summary as build_assembly_expected,
 )
 from fabline.harness.causal_intervention import (
     CausalConfig,
@@ -1035,6 +1053,26 @@ def cmd_coverage_suite(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_assembly_suite(args: argparse.Namespace) -> int:
+    report = run_assembly_suite(
+        args.out, AssemblySuiteConfig(fast=args.fast)
+    )
+    summary = build_assembly_expected(report)
+    if args.expected:
+        expected_path = write_expected_summary(args.expected, summary)
+        print(json.dumps({"expected": str(expected_path)}))
+    if args.check_expected:
+        expected = json.loads(Path(args.check_expected).read_text(encoding="utf-8"))
+        mismatches = compare_assembly_expected(expected, summary)
+        if mismatches:
+            print(json.dumps({"mismatches": mismatches}, indent=2))
+            return 1
+        print(json.dumps({"mismatches": []}))
+        return 0
+    print(json.dumps(report["summary"], indent=2, sort_keys=True))
+    return 0
+
+
 def cmd_partial_throughput(args: argparse.Namespace) -> int:
     config = PartialThroughputConfig(
         episodes=args.episodes,
@@ -1552,6 +1590,58 @@ def cmd_assembly_planning(args: argparse.Namespace) -> int:
         },
     )
     print(json.dumps({"report": str(report), "results": results}, indent=2, sort_keys=True))
+    return 0
+
+
+def cmd_assembly_bom(args: argparse.Namespace) -> int:
+    config = FactoryConfig(
+        width=16,
+        height=8,
+        ticks_per_episode=500,
+        decision_interval=10,
+        entity_budget=32,
+        rock_density=0.0,
+        ore_patches=1,
+        starter_line=False,
+    )
+    task = AssemblyBOMConfig(
+        episodes=args.episodes,
+        warmup_steps=args.warmup_steps,
+        horizon_steps=args.horizon_steps,
+        train_fraction=args.train_fraction,
+        val_fraction=args.val_fraction,
+        success_score=args.success_score,
+        random_action_prob=args.random_action_prob,
+    )
+    report = run_assembly_bom(config, task)
+    path = write_assembly_bom_report(args.out, report)
+    print(json.dumps({"report": str(path), "gates": report["gates"]}, indent=2))
+    return 0
+
+
+def cmd_assembly_intervention(args: argparse.Namespace) -> int:
+    config = FactoryConfig(
+        width=16,
+        height=8,
+        ticks_per_episode=500,
+        decision_interval=10,
+        entity_budget=32,
+        rock_density=0.0,
+        ore_patches=1,
+        starter_line=False,
+    )
+    task = AssemblyInterventionConfig(
+        episodes=args.episodes,
+        sample_steps=tuple(
+            int(value) for value in args.sample_steps.split(",")
+        ),
+        warmup_steps=args.warmup_steps,
+        random_action_prob=args.random_action_prob,
+        success_score=args.success_score,
+    )
+    report = run_assembly_intervention(config, task)
+    path = write_assembly_intervention_report(args.out, report)
+    print(json.dumps({"report": str(path), "gates": report["gates"]}, indent=2))
     return 0
 
 
@@ -3284,7 +3374,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     coverage_suite = subparsers.add_parser(
         "coverage-suite",
-        help="run the draft factory-v0.4 coverage suite",
+        help="run the factory-v0.4 coverage suite",
     )
     coverage_suite.add_argument("--out", type=str, default="results/factory-v0.4-coverage")
     coverage_suite.add_argument("--fast", action="store_true")
@@ -3303,6 +3393,18 @@ def build_parser() -> argparse.ArgumentParser:
     coverage_suite.add_argument("--check-expected", type=str)
     coverage_suite.add_argument("--include-mpnn", action="store_true")
     coverage_suite.set_defaults(func=cmd_coverage_suite)
+
+    assembly_suite = subparsers.add_parser(
+        "assembly-suite",
+        help="run the factory-v0.5 assembly-edge suite",
+    )
+    assembly_suite.add_argument(
+        "--out", type=str, default="results/factory-v0.5-assembly"
+    )
+    assembly_suite.add_argument("--fast", action="store_true")
+    assembly_suite.add_argument("--expected", type=str)
+    assembly_suite.add_argument("--check-expected", type=str)
+    assembly_suite.set_defaults(func=cmd_assembly_suite)
 
     partial_throughput = subparsers.add_parser(
         "partial-throughput",
@@ -3596,6 +3698,38 @@ def build_parser() -> argparse.ArgumentParser:
     assembly_planning.add_argument("--random-plans", type=int, default=32)
     assembly_planning.add_argument("--success-score", type=int, default=100)
     assembly_planning.set_defaults(func=cmd_assembly_planning)
+
+    assembly_bom = subparsers.add_parser(
+        "assembly-bom",
+        help="run the assembly-edge BOM output forecast benchmark",
+    )
+    assembly_bom.add_argument("--out", type=str, default="results/assembly-bom")
+    assembly_bom.add_argument("--episodes", type=int, default=50)
+    assembly_bom.add_argument("--warmup-steps", type=int, default=5)
+    assembly_bom.add_argument("--horizon-steps", type=int, default=5)
+    assembly_bom.add_argument("--train-fraction", type=float, default=0.6)
+    assembly_bom.add_argument("--val-fraction", type=float, default=0.2)
+    assembly_bom.add_argument("--success-score", type=int, default=100)
+    assembly_bom.add_argument("--random-action-prob", type=float, default=0.3)
+    assembly_bom.set_defaults(func=cmd_assembly_bom)
+
+    assembly_intervention = subparsers.add_parser(
+        "assembly-intervention",
+        help="run the assembly recipe-switch counterfactual benchmark",
+    )
+    assembly_intervention.add_argument(
+        "--out", type=str, default="results/assembly-intervention"
+    )
+    assembly_intervention.add_argument("--episodes", type=int, default=200)
+    assembly_intervention.add_argument(
+        "--sample-steps", type=str, default="10,20,30,40"
+    )
+    assembly_intervention.add_argument("--warmup-steps", type=int, default=5)
+    assembly_intervention.add_argument(
+        "--random-action-prob", type=float, default=0.3
+    )
+    assembly_intervention.add_argument("--success-score", type=int, default=100)
+    assembly_intervention.set_defaults(func=cmd_assembly_intervention)
 
     contract_board = subparsers.add_parser(
         "contract-board",

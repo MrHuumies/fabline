@@ -20,7 +20,7 @@ def test_coverage_suite_fast(tmp_path: Path) -> None:
         ),
     )
     assert report["benchmark"] == "factory-v0.4-coverage"
-    assert report["status"] == "candidate"
+    assert report["status"] == "frozen"
     assert set(report["tasks"]) == {
         "reliability-contract",
         "wired-cascade",

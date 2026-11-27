@@ -73,30 +73,34 @@ make render-install
   on the three-bridge triage task.
 - **Orders (0.4.0):** opt-in gear/component production mix, seeded orders with
   deadlines/values, order control, and five-block order planning.
-- **Assembly edge (0.6.0 slice):** opt-in per-assembler recipe tree
+- **Assembly edge (0.6.0):** opt-in per-assembler recipe tree
   (`INGOT + COMPONENT -> 2 GEAR`), component logistics, a fixed two-feed
-  assembly cell, and an assembly-control task. This is an incremental code
-  slice, not a frozen benchmark.
+  assembly cell, and four frozen tasks: control, planning, BOM forecast, and
+  recipe intervention.
 
-Every mechanic is opt-in. `factory-v0.1` and `factory-v0.2` remain frozen for
-provenance; `factory-v0.3` is the current benchmark.
+Every mechanic is opt-in. `factory-v0.1` through `factory-v0.4` remain frozen
+for provenance.
 
 ## Benchmark
 
-The current frozen benchmark is [`factory-v0.3`](benchmarks/factory-v0.3/card.md):
+The current benchmark is [`factory-v0.5`](benchmarks/factory-v0.5/card.md), the
+assembly-edge release:
 
-- 12 headline tasks: the v0.2 core plus order control and order planning;
-- 159 shared core episodes with 20 test and 20 shift episodes;
-- seeded gear/component orders, recipe-switching control, and a five-block
-  planning task;
-- baseline families with seeds, confidence intervals, and replay validation.
+- four assembly tasks: control, planning, BOM forecast, and recipe intervention;
+- a fixed two-feed cell with per-assembler recipes;
+- public baselines and gates for each task;
+- a checked-in expected summary and CI check.
+
+```bash
+.venv/bin/python -m fabline assembly-suite --out results/factory-v0.5
+```
 
 The expected summary is in
-[`benchmarks/factory-v0.3/expected/summary.json`](benchmarks/factory-v0.3/expected/summary.json).
-The earlier [`factory-v0.2`](benchmarks/factory-v0.2/card.md) and
-[`factory-v0.1`](benchmarks/factory-v0.1/card.md) benchmarks remain immutable.
+[`benchmarks/factory-v0.5/expected/summary.json`](benchmarks/factory-v0.5/expected/summary.json).
+`factory-v0.4` keeps the eight-task coverage suite, `factory-v0.3` keeps the
+12-task core, and the earlier benchmarks remain immutable.
 
-The **0.5.0 coverage suite** is also available:
+The **factory-v0.4 coverage suite** is also available:
 
 ```bash
 .venv/bin/python -m fabline coverage-suite --out results/factory-v0.4-coverage

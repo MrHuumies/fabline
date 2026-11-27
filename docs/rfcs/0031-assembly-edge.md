@@ -1,9 +1,9 @@
 # RFC 0031 — Assembly edge and per-assembler recipe state
 
-- **Status:** proposed
+- **Status:** accepted; frozen in `factory-v0.5`
 - **Author:** FABLINE
 - **Date:** 2026-11-26
-- **Related:** RFC 0030, ADR 0042, `factory-v0.4` coverage draft,
+- **Related:** RFC 0030, ADR 0042, `factory-v0.4` coverage suite,
   [`roadmap-0.5.0-0.8.0.md`](../roadmap-0.5.0-0.8.0.md),
   [`coverage-analysis-2026-11-26.md`](../coverage-analysis-2026-11-26.md)
 
@@ -47,7 +47,7 @@ product mix is a global switch, not a production graph.
   hashes stay unchanged.
 - `ProductionConfig` gains opt-in assembly fields:
   - `assembly_enabled`, `assembly_ticks`, `assembly_ingot_cost`,
-    `assembly_component_cost`, `assembly_score`.
+    `assembly_component_cost`, `assembly_output`, `component_score`.
 - `ProductionConfig.enabled` remains the production-tree gate; assembly
   requires it.
 
@@ -71,14 +71,15 @@ product mix is a global switch, not a production graph.
 
 | Task | Kind | Purpose |
 |---|---|---|
-| `assembly-control` | control | online recipe switching; formal pilot positive |
-| `assembly-planning` | planning | five-block recipe plan; CEM 428 vs oracle 430; positive |
-| `bom-forecast` | regression | predict component starvation/gear output; pending |
-| `recipe-intervention` | causal | counterfactual effect of a recipe switch/removal; pending |
+| `assembly-control` | control | online recipe switching; Q 460 vs random 429.2 |
+| `assembly-planning` | planning | five-block recipe plan; CEM 428 vs oracle 430 |
+| `assembly-bom` | regression | future gear output under decision noise; GBDT R² 0.503 |
+| `assembly-intervention` | causal | counterfactual switch effect; GBDT R² 0.944 |
 
-The first task wrapper is implemented on `feat/0.6.0-assembly-edge`:
-`factory.assembly.control.v1`, `AssemblyControlEnv`, and
-`harness/assembly_control.py`.
+All four task wrappers are implemented and frozen in `factory-v0.5`:
+`AssemblyControlEnv` plus `harness/assembly_control.py`,
+`harness/assembly_planning.py`, `harness/assembly_bom.py`, and
+`harness/assembly_intervention.py`.
 
 ## Layout
 
@@ -119,14 +120,30 @@ The formal pilot (5 seeds x 5 episodes) is positive:
 
 The Q baseline beats random by 30.8 and succeeds 1.00; all control gates pass.
 
+The remaining assembly pilots are also positive:
+
+| Task | Result |
+|---|---|
+| planning | CEM 428.0 vs oracle 430.0; frontload 410.0; random 372.9 |
+| BOM | GBDT R² 0.503; linear 0.343; MLP 0.465 |
+| intervention | GBDT R² 0.944; +1.62 of +2.00 oracle switching gain |
+
+The BOM task logs with a stochastic policy so the future is not a deterministic
+function of the observation. The intervention task uses paired simulator
+potential outcomes: force the opposite recipe and hold it versus continue the
+behaviour policy.
+
 ## Gates
 
-- Mechanic: opt-in; default v0.1/v0.2/v0.3 hashes unchanged; component and
-  assembly logistics tested.
-- Control: oracle ≥ best scripted + 10; best learned ≥ random + 10; success ≥
-  0.60.
-- Planning: oracle ≥ best scripted + 10; CEM/OR within 10; success ≥ 0.60.
-- Causal: target R² ≥ 0.30 and ≥ type-only + 0.20.
+- Mechanic: opt-in; default v0.1–v0.4 hashes unchanged; component and assembly
+  logistics tested.
+- Control: best scripted ≥ always gear + 10; best learned ≥ random + 10;
+  success ≥ 0.60.
+- Planning: oracle ≥ best scripted + 10; CEM ≥ random + 10; CEM within 10 of
+  oracle; success ≥ 0.60.
+- BOM: GBDT R² ≥ 0.30; GBDT ≥ linear + 0.05; not saturated; MLP ≥ 0.20.
+- Causal: GBDT R² ≥ 0.30; GBDT ≥ linear + 0.05; model gain at least half of
+  oracle gain and ≥ 0.5; MLP ≥ 0.20.
 
 ## Alternatives
 
@@ -146,7 +163,7 @@ The Q baseline beats random by 30.8 and succeeds 1.00; all control gates pass.
 
 ## Decision
 
-Proposed. The first slice (state, recipes, logistics, tests), the
-`factory.assembly.control.v1` task, and `factory.assembly.plan.v1` are
-implemented. Both formal pilots are positive and no frozen benchmark is
-changed. BOM forecast and causal recipe intervention remain pending.
+Accepted and frozen in `factory-v0.5`. The mechanic (state, recipes, logistics,
+tests) and all four task families are implemented. Every pilot is positive and
+no frozen v0.1–v0.4 asset is changed. Demand uncertainty, layout splits, and
+logged-data causal identification remain follow-ups for a later version.

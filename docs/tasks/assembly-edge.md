@@ -2,7 +2,7 @@
 
 - **Task ID:** `factory.assembly.control.v1`
 - **Version:** 0.1.0
-- **Status:** formal pilot positive; not in a frozen benchmark
+- **Status:** frozen in `factory-v0.5`
 - **World:** `factory-0.1.0` + opt-in production tree
 - **Owner:** FABLINE
 - **Date:** 2026-11-26
@@ -68,8 +68,9 @@ learned baseline is positive.
 | H1 assembly effect | best scripted ≥ always_gear + 10 |
 | H2 learned baseline | Q ≥ random + 10 |
 | H3 success | Q success ≥ 0.60 |
-| H4 default hash | v0.1/v0.2/v0.3 unchanged |
-| H5 cost | report parameters/training/inference |
+
+Frozen v0.1–v0.4 hashes are enforced by the test suite and CI, not by the task
+runner. Q trains for 500 episodes; wall-clock cost is not a gate.
 
 ## Known pitfalls
 
@@ -91,3 +92,4 @@ learned baseline is positive.
 - 2026-11-26 — draft card created; mechanic slice implemented.
 - 2026-11-26 — task wrapper, assembly cell, Q baseline, and formal pilot added;
   Q 460, batch 440, random 429, always gear 260; all gates pass.
+- 2026-11-27 — frozen in `factory-v0.5`; full suite reproduces Q 460.

@@ -47,3 +47,30 @@ def bootstrap_mean_ci(
         means[index] = float(np.mean(data[sample]))
     low, high = np.percentile(means, [2.5, 97.5])
     return (float(low), float(high))
+
+
+def bootstrap_cluster_mean_ci(
+    values: list[float] | np.ndarray,
+    groups: list[int] | np.ndarray,
+    *,
+    n_boot: int = 500,
+    seed: int = 0,
+) -> tuple[float, float]:
+    """Bootstrap the mean by resampling whole clusters, not rows."""
+
+    data = np.asarray(values, dtype=np.float64)
+    cluster = np.asarray(groups)
+    if data.size == 0 or data.size != cluster.size:
+        return (float("nan"), float("nan"))
+    identifiers = np.unique(cluster)
+    if identifiers.size <= 1:
+        return (float(np.mean(data)), float(np.mean(data)))
+    indices = [np.flatnonzero(cluster == item) for item in identifiers]
+    rng = np.random.default_rng(seed)
+    means = np.empty(n_boot, dtype=np.float64)
+    for index in range(n_boot):
+        sample = rng.integers(0, identifiers.size, size=identifiers.size)
+        selected = np.concatenate([indices[item] for item in sample])
+        means[index] = float(np.mean(data[selected]))
+    low, high = np.percentile(means, [2.5, 97.5])
+    return (float(low), float(high))

@@ -55,7 +55,7 @@ The sequence is therefore:
 
 The generative line is conditional: it follows the grammar, not the calendar.
 
-### 1.1 Status snapshot (2026-11-26)
+### 1.1 Status snapshot (2026-11-27)
 
 | Work item | Branch | Status |
 |---|---|---|
@@ -64,21 +64,22 @@ The generative line is conditional: it follows the grammar, not the calendar.
 | Partial throughput | `feat/0.5.0-partial-throughput` | merged; full suite window GBDT R² 0.897 |
 | Wired cascade | `feat/0.5.0-wired-cascade` | merged; graph_mp R² 0.124, +0.018 < +0.05; diagnostic |
 | Coverage suite | `feat/0.5.0-coverage-suite` | merged and frozen as `factory-v0.4`; 8 tasks, 7 pass / 1 diagnostic |
-| Assembly edge | `feat/0.6.0-assembly-edge` | merged to main as an opt-in slice; Q 460 vs random 429, always gear 260; gates pass; 0.6.0 still incomplete |
+| Assembly edge | `feat/0.6.0-assembly-*` | merged and frozen as `factory-v0.5`; four tasks, 4/4 pass; demand uncertainty deferred |
 | 0.7.0 design | `feat/0.7.0-uncertain-repair-design` | branch ready; RFC 0032 and task cards; design only |
 
-`factory-v0.4` is **frozen** on `main`: eight tasks, **7 pass / 1 diagnostic**,
-with a checked-in expected summary and zero-mismatch full check (reliability
-+17.62 CVaR, partial 0.897, crew-schedule Q 256.4/1.00, crew-triage oracle 456
-vs greedy 378, preventive wire 260 vs reactive 195.3, recipe 318 vs fast 278,
-threshold learner 250, wired diagnostic). The assembly-edge slice is merged to
-`main` at `0cbabcd` as opt-in code; 0.6.0 is **not complete** — demand
-uncertainty, assembly planning/BOM/causal tasks, and the `factory-v0.5` freeze
-remain.
+`factory-v0.4` is **frozen**: eight tasks, **7 pass / 1 diagnostic**, with a
+checked-in expected summary and zero-mismatch full check (reliability +17.62
+CVaR, partial 0.897, crew-schedule Q 256.4/1.00, crew-triage oracle 456 vs
+greedy 378, preventive wire 260 vs reactive 195.3, recipe 318 vs fast 278,
+threshold learner 250, wired diagnostic).
 
-The next step is to choose one of: extend the coverage suite with the remaining
-crew/recipe/preventive tasks, finish the assembly-variant tasks, or start the
-0.7.0 sequential-crew implementation.
+`factory-v0.5` is **frozen**: four assembly tasks, **4/4 pass** (control Q 460
+vs random 429.2, planning CEM 428 vs oracle 430, BOM GBDT R² 0.503,
+intervention GBDT R² 0.944 with +1.62 of +2.00 oracle gain). Demand uncertainty,
+layout splits, and logged-data causal identification are deferred to a later
+version; the freeze review records them.
+
+The next step is the 0.7.0 sequential-crew / uncertain-repair implementation.
 
 ### 1.2 How this plan uses the analysis
 
@@ -295,8 +296,9 @@ Do not compare a default MLP to a tuned GBDT and call it a family verdict.
   - `card.md`, `spec.md`, `benchmark.toml`;
   - `expected/summary.json`;
   - `freeze-review.md`.
-- `fabline benchmark-v04` with `--tier core|coverage|challenge` and cheap/full
-  modes.
+- `fabline coverage-suite` with the eight-task coverage tier, a `--fast` smoke
+  mode, and `--expected`/`--check-expected` regression checks. The challenge
+  task list is documented but not integrated.
 - Task cards for the coverage and challenge tasks (some exist; update status).
 - `docs/coverage-map.md` updated to the ledger schema, or a new
   `docs/coverage-ledger.md` linked from it.
@@ -329,7 +331,7 @@ Do not compare a default MLP to a tuned GBDT and call it a family verdict.
 | Challenge tier is misread as "solved" | Label clearly; no headline score; report oracle/scripted |
 | Scope creep into mechanics | Freeze 0.5.0 scope before implementation; defer all new world rules |
 
-## 6. 0.6.0 — Production tree (assembly edge + demand uncertainty)
+## 6. 0.6.0 — Production tree (assembly edge; demand uncertainty deferred)
 
 ### 6.1 Goal
 
@@ -364,9 +366,11 @@ Requirements:
 Keep the recipe set to 3–4 recipes and one intermediate. The point is the DAG,
 the shared intermediate, and the delay, not a content catalog.
 
-### 6.3 Demand uncertainty (conditional)
+### 6.3 Demand uncertainty (deferred)
 
-Add only if the forecast/observation carries measurable skill:
+Demand arrivals were not added in 0.6.0. They remain a conditional follow-up,
+not part of `factory-v0.5`. Add only if the forecast/observation carries
+measurable skill:
 
 - seeded order arrivals, cancellations, and expedites;
 - a noisy lead-time/queue signal with real predictive value;
@@ -385,8 +389,13 @@ the assembly edge alone and defer demand uncertainty.
 | `assembly-planning` | planning | initial state + known orders | initial recipe/line plan; plan value | oracle-scripted ≥10; CEM/OR within 10; success ≥0.60 |
 | `bom-forecast` | regression | graph + buffers + history | predict component starvation/gear output | R²/MAE over persistence; shift |
 | `recipe-intervention` | causal | state + recipe intervention | counterfactual output/order effect | target R² ≥0.30 and ≥type-only +0.20 |
-| `demand-forecast` | temporal | partial order book + history | arrivals/late risk | skill over base; calibration if claimed |
-| `order-arrival-control` | control | partial order book | accept/produce/switch | online-scripted ≥10; success ≥0.60 |
+| `demand-forecast` | temporal | partial order book + history | arrivals/late risk | deferred |
+| `order-arrival-control` | control | partial order book | accept/produce/switch | deferred |
+
+The frozen release includes `assembly-control`, `assembly-planning`,
+`assembly-bom`, and `assembly-intervention`. The demand pair is deferred. The
+BOM and intervention tasks use decision-noise logs and paired counterfactual
+rollouts; they do not require an order stream.
 
 ### 6.5 Baselines
 
@@ -405,13 +414,13 @@ the assembly edge alone and defer demand uncertainty.
 
 ### 6.7 Exit criteria
 
-- [ ] Default world hash and v0.3/v0.4 assets unchanged.
-- [ ] Assembly control and planning gates pass; causal gate passes.
-- [ ] Demand forecast skill gate is reported; tasks are included only if it
-      passes.
-- [ ] At least one GNN and one OR baseline run on the production tier.
-- [ ] Negative/saturated results are reported first.
-- [ ] `factory-v0.4` remains immutable.
+- [x] Default world hash and v0.1–v0.4 assets unchanged.
+- [x] Assembly control, planning, BOM, and causal gates pass.
+- [ ] Demand forecast skill gate is reported; deferred with the demand pair.
+- [ ] At least one GNN and one OR baseline run on the production tier; not
+      integrated, scope cut recorded in the freeze review.
+- [x] Negative/saturated results are reported first.
+- [x] `factory-v0.4` remains immutable.
 
 ### 6.8 Kill criteria
 
