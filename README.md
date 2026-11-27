@@ -102,9 +102,11 @@ A draft **0.5.0 coverage suite** is also available:
 .venv/bin/python -m fabline coverage-suite --out results/factory-v0.4-coverage
 ```
 
-It adds a coverage tier (`reliability-contract`, `partial-throughput`,
-`wired-cascade`, `crew-schedule`, `crew-triage`), public structured baselines
-(CNN, MPNN, GRU, Transformer), and a challenge tier. It is **not frozen**; see
+It adds an eight-task coverage tier (`reliability-contract`,
+`partial-throughput`, `wired-cascade`, `crew-schedule`, `crew-triage`,
+`preventive-wire`, `recipe-choice`, `maintenance-threshold`), public structured
+baselines (CNN, MPNN, GRU, Transformer), and a challenge tier. It is **not
+frozen**; see
 [`benchmarks/factory-v0.4/spec.md`](benchmarks/factory-v0.4/spec.md).
 The current coverage map is in
 [`docs/coverage-map.md`](docs/coverage-map.md); the

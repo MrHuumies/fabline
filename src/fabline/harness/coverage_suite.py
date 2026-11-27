@@ -14,6 +14,9 @@ from typing import Any
 
 from fabline.env.crew_replan import CrewReplanConfig
 from fabline.env.crew_schedule import CrewScheduleConfig
+from fabline.env.preventive_threshold import ThresholdConfig
+from fabline.env.preventive_wire import PreventiveWireConfig
+from fabline.env.recipe import RecipeEnvConfig
 from fabline.harness.crew_multi_orphan import (
     run_crew_multi_orphan,
     write_crew_multi_orphan_report,
@@ -27,6 +30,15 @@ from fabline.harness.partial_throughput import (
     run_partial_throughput,
     write_partial_throughput_report,
 )
+from fabline.harness.preventive_threshold import (
+    run_threshold_selection,
+    write_threshold_report,
+)
+from fabline.harness.preventive_wire import (
+    run_preventive_wire,
+    write_preventive_wire_report,
+)
+from fabline.harness.recipe import run_recipe_choice, write_recipe_report
 from fabline.harness.reliability_contract import (
     ReliabilityContractConfig,
     run_reliability_contract,
@@ -39,6 +51,7 @@ from fabline.harness.wired_cascade import (
 )
 from fabline.worlds.factory.config import FactoryConfig
 from fabline.worlds.factory.power import PowerConfig
+from fabline.worlds.factory.recipe import RecipeConfig
 
 COVERAGE_SUITE_ID = "factory-v0.4-coverage"
 COVERAGE_SUITE_VERSION = "0.1.0"
@@ -52,6 +65,9 @@ class CoverageSuiteConfig:
     include_partial: bool = True
     include_crew_schedule: bool = True
     include_crew_triage: bool = True
+    include_preventive_wire: bool = True
+    include_recipe_choice: bool = True
+    include_maintenance_threshold: bool = True
     include_mpnn: bool = False
     include_sequence: bool = True
 
@@ -212,6 +228,88 @@ def _triage_summary(
     }
 
 
+def _preventive_wire_summary(
+    results: dict[str, dict[str, Any]],
+) -> dict[str, Any]:
+    preventive = float(results["preventive"]["mean_score"])
+    reactive = float(results["reactive"]["mean_score"])
+    learned = float(results["tabular_q"]["mean_score"])
+    gates = {
+        "H1_prevention_gain": preventive >= reactive + 10.0,
+        "H2_learned": learned >= reactive,
+        "H3_success": float(results["preventive"]["success_rate"]) >= 0.60,
+    }
+    return {
+        "task": {
+            "id": "factory.power.wire-maintenance.v1",
+            "version": "0.1.0",
+            "kind": "control",
+        },
+        "results": results,
+        "gates": gates,
+        "passed": all(gates.values()),
+    }
+
+
+def _recipe_summary(
+    results: dict[str, dict[str, Any]],
+) -> dict[str, Any]:
+    buffer = results["buffer_aware"]
+    gates = {
+        "H1_queue_gain": (
+            float(buffer["mean_score"])
+            >= float(results["fast"]["mean_score"]) + 10.0
+        ),
+        "H2_planning": (
+            float(buffer["mean_score"])
+            >= float(results["lookahead"]["mean_score"]) + 10.0
+        ),
+        "H3_success": float(buffer["success_rate"]) >= 0.60,
+    }
+    return {
+        "task": {
+            "id": "factory.production.recipe-choice.v1",
+            "version": "0.1.0",
+            "kind": "control",
+        },
+        "results": results,
+        "gates": gates,
+        "passed": all(gates.values()),
+    }
+
+
+def _threshold_summary(payload: dict[str, Any]) -> dict[str, Any]:
+    best_fixed = max(
+        float(row["mean_score"]) for row in payload["arms"].values()
+    )
+    learners = payload["learners"]
+    best_learned = max(
+        float(row["mean_score"]) for row in learners.values()
+    )
+    best_learned_success = max(
+        float(row["success_rate"]) for row in learners.values()
+    )
+    gates = {
+        "H1_spread": (
+            best_fixed
+            >= min(float(row["mean_score"]) for row in payload["arms"].values())
+            + 10.0
+        ),
+        "H2_learned": best_learned >= best_fixed - 5.0,
+        "H3_success": best_learned_success >= 0.60,
+    }
+    return {
+        "task": {
+            "id": "factory.fault.preventive-threshold.v1",
+            "version": "0.1.0",
+            "kind": "bandit",
+        },
+        "payload": payload,
+        "gates": gates,
+        "passed": all(gates.values()),
+    }
+
+
 def _reliability_summary(report: dict[str, Any]) -> dict[str, Any]:
     return {
         "task": report["task"],
@@ -337,6 +435,73 @@ def run_coverage_suite(
             title="Three-bridge survivor triage",
         )
         tasks["crew-triage"] = _triage_summary(triage)
+    if cfg.include_preventive_wire:
+        preventive_config = PreventiveWireConfig()
+        preventive_seeds = (0,) if cfg.fast else (0, 1, 2)
+        preventive_episodes = 1 if cfg.fast else 5
+        preventive_train = 5 if cfg.fast else 50
+        preventive = run_preventive_wire(
+            _schedule_factory_config(),
+            preventive_config,
+            episodes=preventive_episodes,
+            train_episodes=preventive_train,
+            seeds=preventive_seeds,
+        )
+        write_preventive_wire_report(
+            out / "preventive-wire",
+            preventive,
+            config={
+                "warning_tick": preventive_config.warning_tick,
+                "failure_tick": preventive_config.failure_tick,
+                "repair_ticks": preventive_config.repair_ticks,
+                "repair_budget": preventive_config.repair_budget,
+                "success_score": preventive_config.success_score,
+                "seeds": list(preventive_seeds),
+            },
+        )
+        tasks["preventive-wire"] = _preventive_wire_summary(preventive)
+    if cfg.include_recipe_choice:
+        recipe_config = RecipeEnvConfig(
+            episode_ticks=500,
+            decision_interval=10,
+            scenario="gear",
+            success_score=150,
+            recipe=RecipeConfig(enabled=True),
+            power=PowerConfig(),
+        )
+        recipe_seeds = (
+            (37000, 37001) if cfg.fast else (37000, 37001, 37002, 37003, 37004)
+        )
+        recipe = run_recipe_choice(
+            _schedule_factory_config(),
+            recipe_config,
+            seeds=recipe_seeds,
+        )
+        write_recipe_report(
+            out / "recipe-choice",
+            recipe,
+            config={
+                "fast_ticks": recipe_config.recipe.fast_ticks,
+                "fast_cost": recipe_config.recipe.fast_cost,
+                "slow_ticks": recipe_config.recipe.slow_ticks,
+                "slow_cost": recipe_config.recipe.slow_cost,
+                "success_score": recipe_config.success_score,
+                "seeds": list(recipe_seeds),
+            },
+        )
+        tasks["recipe-choice"] = _recipe_summary(recipe)
+    if cfg.include_maintenance_threshold:
+        threshold_config = ThresholdConfig()
+        threshold_seeds = (700,) if cfg.fast else (700, 701, 702, 703, 704)
+        threshold_episodes = 2 if cfg.fast else 50
+        threshold = run_threshold_selection(
+            _schedule_factory_config(),
+            threshold_config,
+            episodes=threshold_episodes,
+            seeds=threshold_seeds,
+        )
+        write_threshold_report(out / "maintenance-threshold", threshold)
+        tasks["maintenance-threshold"] = _threshold_summary(threshold)
     report = {
         "benchmark": COVERAGE_SUITE_ID,
         "version": COVERAGE_SUITE_VERSION,
@@ -402,6 +567,28 @@ def _render_report(report: dict[str, Any]) -> str:
                 "oracle "
                 f"{task['results']['oracle']['mean_score']:.1f} vs greedy "
                 f"{task['results']['greedy']['mean_score']:.1f}"
+            )
+        elif name == "preventive-wire":
+            key = (
+                "preventive "
+                f"{task['results']['preventive']['mean_score']:.1f} vs reactive "
+                f"{task['results']['reactive']['mean_score']:.1f}"
+            )
+        elif name == "recipe-choice":
+            key = (
+                "buffer-aware "
+                f"{task['results']['buffer_aware']['mean_score']:.1f} vs fast "
+                f"{task['results']['fast']['mean_score']:.1f}"
+            )
+        elif name == "maintenance-threshold":
+            learner_scores = [
+                float(row["mean_score"])
+                for row in task["payload"]["learners"].values()
+            ]
+            key = (
+                "best fixed "
+                f"{task['payload']['best_arm']} vs learner "
+                f"{max(learner_scores):.1f}"
             )
         else:
             key = ""

@@ -20,7 +20,7 @@ v0.3 headline by reference and adds:
 - public structured baselines (CNN, GNN/MPNN, GRU, Transformer);
 - episode-level evaluation methodology;
 
-The first integrated slice contains three tasks:
+The integrated slice contains eight tasks:
 
 | Task | Kind | Observation | Status |
 |---|---|---|---|
@@ -29,6 +29,9 @@ The first integrated slice contains three tasks:
 | wired-cascade | regression | wire graph + fault edge | diagnostic |
 | crew-schedule | control | crew/wire state | pass |
 | crew-triage | control | crew state | pass |
+| preventive-wire | control | degraded wire | pass |
+| recipe-choice | control | production view | pass |
+| maintenance-threshold | bandit | diagnostics | pass |
 
 The wired cascade is published as a diagnostic because the public
 reimplementation does not reproduce the private 0032 graph gain (graph_mp
@@ -45,6 +48,9 @@ Full suite, 2026-11-26, `--skip-sequence`:
 | wired-cascade | diagnostic | graph_mp R² 0.124 |
 | crew-schedule | pass | deadline Q 256.4/1.00 vs EDF 260.0 |
 | crew-triage | pass | oracle 456.0 vs greedy 378.0 |
+| preventive-wire | pass | preventive 260.0 vs reactive 195.3 |
+| recipe-choice | pass | buffer-aware 318.0 vs fast 278.0 |
+| maintenance-threshold | pass | best fixed 0.7 vs learner 250.0 |
 
 ## Challenge tier (proposed)
 
@@ -60,12 +66,14 @@ headline scores; they are open challenges.
 ## Caveats
 
 - This is a draft; no expected summary or freeze review exists yet.
-- The coverage suite currently integrates five tasks. Preventive wire,
-  recipe/contract control, and maintenance threshold still need public runner
-  integration.
+- The coverage suite integrates all eight planned coverage tasks. The remaining
+  work is the freeze package: expected summary, CI check, layout split,
+  private holdout, and challenge-tier integration.
 - Wired cascade is a reproduction gap, not a solved task.
 - `factory-v0.3` remains frozen and unchanged.
 
 ## Changelog
 
 - 2026-11-26 — draft card created with the three-task coverage slice.
+- 2026-11-27 — expanded to eight tasks: crew schedule/triage, preventive wire,
+  recipe choice, and maintenance threshold added.
