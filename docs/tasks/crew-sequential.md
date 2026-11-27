@@ -1,8 +1,8 @@
 # Task card — sequential crew repair control
 
 - **Task ID:** `factory.power.crew-sequential.v1` (draft)
-- **Version:** 0.1.0-draft
-- **Status:** design; not implemented
+- **Version:** 0.1.0-wip
+- **Status:** Phase 1 WIP; not release-ready (ADR 0043)
 - **World:** `factory-0.1.0` + wired power (task-layer crews)
 - **Owner:** FABLINE
 - **Date:** 2026-11-26
@@ -16,18 +16,36 @@ neighborhood, chooses movement/repair/report actions, and contributes to the
 team's restored production. The task tests sequential per-agent control,
 coordination, and communication, not a one-shot assignment.
 
-## Contract (draft)
+## Contract (Phase 1 WIP)
 
-- **Observation (per crew):** own position, local radius view of targets and
-  crews, own repair progress, received reports with age, clock/budget/team
-  score.
-- **Action (per crew):** move N/E/S/W, wait, repair, report.
-- **Joint action:** tuple of per-crew actions; `7^N` with legal masks.
+- **Observation:** shared task observation for Phase 1 (positions, target
+  failure/distance, repair progress, clock, budget); local per-crew views and
+  received reports are Phase 2.
+- **Action (per crew):** move N/E/S/W, wait, repair. `report` is Phase 2.
+- **Joint action:** tuple of per-crew actions; `6^2 = 36` with legal masks.
 - **Reward:** time-weighted restored connectivity/production minus repair and
   abort costs.
-- **Episode:** 300–500 ticks; decision interval 1–5 ticks.
-- **Success:** fixed at pre-registration.
-- **Layout:** spread yard with graded visibility; not the 16x8 binary layout.
+- **Episode:** 500 ticks; decision interval 10; repair ticks 6.
+- **Success:** fixed by the pre-registration after threshold calibration.
+- **Layout:** fixed gear/wired-power layout for Phase 1; a spread yard with
+  graded visibility is Phase 2.
+
+## WIP audit (2026-11-28)
+
+The WIP branch is based on an older `main` and passes ruff/mypy, but it is not
+release-ready:
+
+- no tests, CLI, Makefile target, pre-registration, or task-card update;
+- no centralized oracle (`queue_search` is only a scripted queue search);
+- gates omit the oracle gap, cost, and message volume;
+- evaluation does not retry invalid layouts;
+- mission completion does not terminate the episode;
+- `success_score=150` is uncalibrated: a 1-seed smoke run repaired all three
+  targets but scored 60, so scripted success was 0;
+- the Phase 1 contract (6 actions, shared observation) was implicit.
+
+See [ADR 0043](../decisions/0043-sequential-crew-scope.md) for the scope
+decision and required follow-ups.
 
 ## Baselines
 
@@ -64,3 +82,5 @@ A learned failure is a challenge-tier result, not a reason to lower H4.
 ## Changelog
 
 - 2026-11-26 — design card created.
+- 2026-11-28 — WIP audit; Phase 1 narrowed to deterministic 2-crew control,
+  shared observation, and six actions; stochastic faults deferred to 0.8.0.

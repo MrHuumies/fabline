@@ -43,3 +43,4 @@ Architecture decision records. New behavior or scope changes need an ADR.
 - [0040 — Gear-contract board](0040-contract-board.md)
 - [0041 — 0.3.0 expansion and factory-v0.2](0041-0.3.0-scope.md)
 - [0042 — 0.4.0 scope and demand-driven production](0042-0.4.0-scope.md)
+- [0043 — 0.7.0 scope: deterministic sequential crews](0043-sequential-crew-scope.md)

@@ -1,6 +1,6 @@
 # RFC 0032 — Sequential crew control and uncertain repair
 
-- **Status:** proposed
+- **Status:** accepted for 0.7.0 Phase 1 (deterministic sequential crews); stochastic faults deferred to 0.8.0 (ADR 0043).
 - **Author:** FABLINE
 - **Date:** 2026-11-26
 - **Related:** RFC 0011, RFC 0012, RFC 0015, RFC 0017,
@@ -20,8 +20,9 @@ calibration matter. The integrated theme is **uncertain repair**:
   another centralized assignment sweep.
 
 This is one flagship (sequential crews) with one closer on the same surface
-(stochastic faults). If the scope is too large, ship sequential crews first and
-move stochastic faults to the next release.
+(stochastic faults). ADR 0043 narrows 0.7.0 to Phase 1: deterministic sequential
+crews with a shared observation and no communication. The stochastic
+fault/POMDP closer moves to 0.8.0.
 
 ## Why
 
@@ -171,5 +172,8 @@ Each phase is a separate pre-registration; do not mix phases in one formal run.
 
 ## Decision
 
-Proposed. Design only; no implementation in this RFC. The next step is a
-2-crew deterministic sequential env and a pre-registration.
+Accepted for 0.7.0 Phase 1: deterministic sequential crews, two crews and three
+target wires, six actions (no `report`), shared observation, and no
+communication. ADR 0043 records the WIP audit and the required tests, CLI,
+oracle, and threshold calibration. Stochastic faults/POMDP are deferred to
+0.8.0.

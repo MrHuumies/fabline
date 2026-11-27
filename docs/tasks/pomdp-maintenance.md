@@ -2,7 +2,7 @@
 
 - **Task ID:** `factory.fault.pomdp-maintenance.v1` (draft)
 - **Version:** 0.1.0-draft
-- **Status:** design; not implemented
+- **Status:** deferred to 0.8.0; design only (ADR 0043)
 - **World:** `factory-0.1.0` + opt-in stochastic faults/sensors
 - **Owner:** FABLINE
 - **Date:** 2026-11-26
@@ -62,3 +62,4 @@ estimation, calibration, and preventive control.
 ## Changelog
 
 - 2026-11-26 — design card created.
+- 2026-11-28 — deferred to 0.8.0; 0.7.0 is deterministic sequential crews.

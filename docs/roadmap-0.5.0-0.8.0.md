@@ -1,6 +1,6 @@
 # FABLINE roadmap — 0.5.0 to 0.8.0
 
-- **Status:** active; 0.5.0 and 0.6.0 implemented, 0.7.0 in progress
+- **Status:** active; 0.5.0 and 0.6.0 released, 0.7.0 Phase 1 in progress
 - **Date:** 2026-11-27
 - **Theme:** coverage first, then structural mechanics
 - **Inputs:** [`coverage-analysis-2026-11-26.md`](coverage-analysis-2026-11-26.md),
@@ -67,7 +67,7 @@ The generative line is conditional: it follows the grammar, not the calendar.
 | Wired cascade | `feat/0.5.0-wired-cascade` | merged; graph_mp R² 0.124, +0.018 < +0.05; diagnostic |
 | Coverage suite | `feat/0.5.0-coverage-suite` | merged and frozen as `factory-v0.4`; 8 tasks, 7 pass / 1 diagnostic |
 | Assembly edge | `feat/0.6.0-assembly-*` | merged and frozen as `factory-v0.5`; four tasks, 4/4 pass; demand uncertainty deferred |
-| 0.7.0 design | `feat/0.7.0-uncertain-repair-design` | branch ready; RFC 0032 and task cards; design only |
+| 0.7.0 design | `feat/0.7.0-sequential-crew` | ADR 0043 accepted; deterministic sequential crews are Phase 1; stochastic faults deferred to 0.8.0 |
 
 `factory-v0.4` is **frozen**: eight tasks, **7 pass / 1 diagnostic**, with a
 checked-in expected summary and zero-mismatch full check (reliability +17.62
@@ -81,7 +81,7 @@ intervention GBDT R² 0.944 with +1.62 of +2.00 oracle gain). Demand uncertainty
 layout splits, and logged-data causal identification are deferred to a later
 version; the freeze review records them.
 
-The next step is the 0.7.0 sequential-crew / uncertain-repair implementation.
+The next step is 0.7.0 Phase 1 sequential crews; ADR 0043 defers stochastic faults to 0.8.0.
 
 ### 1.2 How this plan uses the analysis
 
@@ -107,7 +107,7 @@ explicit in every card.
 |---|---|---|---|
 | 0.5.0 | `factory-v0.4` | Coverage suite, challenge tier, public baselines, methodology | new frozen coverage benchmark |
 | 0.6.0 | `factory-v0.5` | Production tree: assembly edge + demand uncertainty | new frozen benchmark |
-| 0.7.0 | `factory-v0.6` | Uncertain repair: sequential crews + stochastic faults | new frozen benchmark |
+| 0.7.0 | `factory-v0.6` | Sequential crews (Phase 1); stochastic faults deferred | new frozen benchmark |
 | 0.8.0 | `factory-v0.7` | Spatial production grammar: layout/scale/splitters | new frozen benchmark |
 | 0.8.0 stretch | `factory-v0.8` | Generative layout/recipe, only if the grammar audit passes | diagnostic or frozen, not both |
 
@@ -433,7 +433,7 @@ rollouts; they do not require an order stream.
 - If the recipe graph grows beyond 3–4 recipes or becomes a content catalog,
   stop and cut scope.
 
-## 7. 0.7.0 — Uncertain repair (sequential crews + stochastic faults)
+## 7. 0.7.0 — Sequential crews (Phase 1; stochastic faults deferred)
 
 ### 7.1 Goal
 
@@ -443,8 +443,9 @@ calibration matter. The integrated theme is **uncertain repair**: multiple
 crews, local views, communication, and stochastic failures.
 
 This is one flagship (sequential multi-agent) with one closer on the same
-surface (stochastic faults/sensors). If the owner wants strictly one mechanic,
-ship sequential crews first and move stochastic faults to 0.8.0.
+surface (stochastic faults/sensors). ADR 0043 makes the split: 0.7.0 is
+Phase 1 deterministic sequential crews; stochastic faults and POMDP
+maintenance move to 0.8.0.
 
 ### 7.2 Sequential crew mechanic
 
