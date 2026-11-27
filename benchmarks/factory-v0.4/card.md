@@ -27,6 +27,8 @@ The first integrated slice contains three tasks:
 | reliability-contract | risk selection | stochastic power scores | pass |
 | partial-throughput | regression | masked feature window | pass |
 | wired-cascade | regression | wire graph + fault edge | diagnostic |
+| crew-schedule | control | crew/wire state | pass |
+| crew-triage | control | crew state | pass |
 
 The wired cascade is published as a diagnostic because the public
 reimplementation does not reproduce the private 0032 graph gain (graph_mp
@@ -41,6 +43,8 @@ Full suite, 2026-11-26, `--skip-sequence`:
 | reliability-contract | pass | CVaR gain +17.62 [13.90, 21.68] |
 | partial-throughput | pass | window GBDT R² 0.897 |
 | wired-cascade | diagnostic | graph_mp R² 0.124 |
+| crew-schedule | pass | deadline Q 256.4/1.00 vs EDF 260.0 |
+| crew-triage | pass | oracle 456.0 vs greedy 378.0 |
 
 ## Challenge tier (proposed)
 
@@ -56,9 +60,9 @@ headline scores; they are open challenges.
 ## Caveats
 
 - This is a draft; no expected summary or freeze review exists yet.
-- The coverage suite currently integrates three tasks. Crew scheduling,
-  crew triage, preventive wire, recipe/contract control, and maintenance
-  threshold still need public runner integration.
+- The coverage suite currently integrates five tasks. Preventive wire,
+  recipe/contract control, and maintenance threshold still need public runner
+  integration.
 - Wired cascade is a reproduction gap, not a solved task.
 - `factory-v0.3` remains frozen and unchanged.
 

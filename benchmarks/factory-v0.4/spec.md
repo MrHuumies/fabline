@@ -27,13 +27,13 @@ The goal is to make the benchmark honest about what is covered:
 | reliability-contract | `factory.power.contract.v1` | risk/uncertainty | mean/CVaR selection | pass |
 | partial-throughput | `factory.throughput.partial.v1` | partial observability | masked frame vs history window | pass |
 | wired-cascade | `factory.power.cascade.v1` | relational/graph | graph cut under a wire fault | diagnostic |
-| crew-schedule | `factory.power.crew-schedule.v1` | spatial scheduling | travel/deadline/budget | proposed |
-| crew-triage | `factory.power.crew-triage.v1` | multi-agent | centralized coordination | proposed |
+| crew-schedule | `factory.power.crew-schedule.v1` | spatial scheduling | travel/deadline/budget | pass |
+| crew-triage | `factory.power.crew-triage.v1` | multi-agent | centralized coordination | pass |
 | preventive-wire | `factory.power.wire-maintenance.v1` | temporal credit | warning-to-action timing | proposed |
 | recipe-choice | `factory.production.recipe-choice.v1` | production control | queue-aware recipe choice | proposed |
 | maintenance-threshold | `factory.fault.preventive-threshold.v1` | bandit/context | threshold selection | proposed |
 
-The first integrated runner covers the first three rows. The other rows are
+The integrated runner covers the first five rows. The other rows are
 implementation work for the same tier, not a new benchmark version.
 
 ## Challenge tier
@@ -75,6 +75,21 @@ It does not need a winning learned baseline.
 - Split by layout: 1,400 / 390 / 200.
 - Label: number of consumers disconnected by the marked fault.
 
+### Crew schedule
+
+- 16×8 gear line, one crew, seeds 800–804, 5 episodes each.
+- Warning 40; failures 90/120/150; budget 2; travel 2 × Manhattan + 40 service.
+- Baselines: noop, impact, nearest, EDF, travel-aware, random, tabular Q,
+  deadline Q, oracle.
+- Suite Q training: 100 episodes per seed.
+
+### Crew triage
+
+- 32×16 twin-line, three positive bridges, seeds 12000–12004, one episode each.
+- Failure/recall 100; two survivor jobs; initial 16 pair actions.
+- Baselines: noop, single EDF, nearest, greedy, aware, no-replan, oracle.
+- Oracle: exhaustive 16×4×4 sequence per seed.
+
 ## Baselines
 
 - Tabular: mean, persistence, linear, GBDT, MLP.
@@ -90,6 +105,10 @@ It does not need a winning learned baseline.
   H3 no leakage.
 - Wired cascade: H1 graph gain ≥ +0.05; H2 report graph_mp vs GNN; H3 oracle;
   H4 seed consistency; H5 budget.
+- Crew schedule: travel gain ≥ +5; oracle ≥ impact +10; deadline Q ≥ 0.85 ×
+  best scripted and success ≥ 0.80.
+- Crew triage: oracle ≥ best scripted +10; coordination gain ≥ +10; nearest
+  below oracle; oracle success ≥ 0.60.
 - A failed gate does not lower the threshold; the task is demoted to
   diagnostic/challenge or redesigned.
 

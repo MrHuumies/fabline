@@ -23,11 +23,18 @@ def test_coverage_suite_fast(tmp_path: Path) -> None:
         "reliability-contract",
         "wired-cascade",
         "partial-throughput",
+        "crew-schedule",
+        "crew-triage",
     }
-    assert report["summary"]["tasks"] == 3
-    assert 0 <= report["summary"]["passed"] <= 3
+    assert report["summary"]["tasks"] == 5
+    assert 0 <= report["summary"]["passed"] <= 5
     assert (tmp_path / "coverage_suite_results.json").exists()
     assert (tmp_path / "coverage_suite_report.md").exists()
-    assert (tmp_path / "reliability-contract").is_dir()
-    assert (tmp_path / "wired-cascade").is_dir()
-    assert (tmp_path / "partial-throughput").is_dir()
+    for name in (
+        "reliability-contract",
+        "wired-cascade",
+        "partial-throughput",
+        "crew-schedule",
+        "crew-triage",
+    ):
+        assert (tmp_path / name).is_dir()
