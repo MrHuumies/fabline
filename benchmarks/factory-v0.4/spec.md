@@ -2,7 +2,7 @@
 
 - **Status:** frozen
 - **Version:** 0.4.0
-- **Package line:** 0.5.0 (tag pending)
+- **Package release:** 0.5.0
 - **Date:** 2026-11-27
 - **World:** `factory-0.1.0`
 - **Plan:** `coverage-v0.4`
@@ -187,4 +187,4 @@ They are tracked for the next benchmark version.
 ## Changelog
 
 - 2026-11-26 - draft spec created for the three-task coverage slice.
-- 2026-11-27 - expanded to eight integrated tasks; freeze package still pending.
+- 2026-11-27 - expanded to eight integrated tasks and frozen as `factory-v0.4`.

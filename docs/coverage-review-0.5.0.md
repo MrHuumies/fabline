@@ -1,13 +1,14 @@
 # Coverage review — FABLINE 0.5.0
 
-- **Status:** complete; benchmark freeze review. Package release tag pending.
+- **Status:** complete; post-release review
 - **Date:** 2026-11-27
 - **Scope:** `factory-v0.4`, the eight-task coverage suite, and the public
   structured-baseline slice
 - **Related:** [coverage map](coverage-map.md), frozen
   [`factory-v0.4` card](../benchmarks/factory-v0.4/card.md),
   [`factory-v0.4` freeze review](../benchmarks/factory-v0.4/freeze-review.md),
-  and the [0.5.0–0.8.0 roadmap](roadmap-0.5.0-0.8.0.md)
+  the [0.5.0–0.8.0 roadmap](roadmap-0.5.0-0.8.0.md), and the public
+  [`v0.5.0` release](https://github.com/MrHuumies/fabline/releases/tag/v0.5.0)
 
 ## Verdict
 
@@ -16,7 +17,7 @@
 expected summary, and a CI check. Seven tasks pass; wired-cascade is a public
 reproduction diagnostic.
 
-`factory-v0.4` is frozen. The package release is not tagged yet; see
+`factory-v0.4` is frozen and the `v0.5.0` package tag is pushed; see
 [Release state](#release-state).
 
 ## Suite result
@@ -100,14 +101,12 @@ That slice is already implemented in the 0.6.0 work on `main` and frozen as
 - [x] `factory-v0.1`–`factory-v0.3` assets are unchanged.
 - [x] Card, spec, freeze review, and this review are checked in.
 - [x] CI workflow for the full check exists.
-- [ ] Package version is not yet `0.5.0` (`pyproject.toml` and
-      `src/fabline/__init__.py` still say `0.4.0`).
-- [ ] No `v0.5.0` git tag or GitHub release exists yet.
-- [ ] The changelog still lists the coverage freeze under `[Unreleased]`.
+- [x] `release/v0.5.0` bumps the package to `0.5.0`.
+- [x] The `v0.5.0` tag is pushed.
+- [x] The changelog records the release under `[0.5.0]`.
 
-The benchmark is publishable. The package release is a release-engineering
-step: bump the version, add the `[0.5.0]` changelog section, tag the freeze
-commit (or the chosen release commit), and publish the GitHub release.
+The tag is published. Creating a GitHub release entry is a web/API step; no
+`gh` CLI is installed in this environment.
 
 ## Map maintenance
 
