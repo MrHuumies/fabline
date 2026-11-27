@@ -2,6 +2,7 @@
 
 - **Status:** frozen as `factory-v0.4`
 - **Version:** 0.4.0
+- **Package line:** 0.5.0 (tag pending)
 - **Date:** 2026-11-27
 - **Scope:** 0.5.0 coverage release
 - **Related:** [card](card.md), [spec](spec.md), 0.5.0 roadmap,

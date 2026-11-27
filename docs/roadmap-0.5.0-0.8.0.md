@@ -1,19 +1,21 @@
 # FABLINE roadmap — 0.5.0 to 0.8.0
 
-- **Status:** proposed; requires owner approval
-- **Date:** 2026-11-26
+- **Status:** active; 0.5.0 and 0.6.0 implemented, 0.7.0 in progress
+- **Date:** 2026-11-27
 - **Theme:** coverage first, then structural mechanics
 - **Inputs:** [`coverage-analysis-2026-11-26.md`](coverage-analysis-2026-11-26.md),
   [`coverage-map.md`](coverage-map.md),
   [`coverage-review-0.4.0.md`](coverage-review-0.4.0.md),
-  [`benchmarks/factory-v0.3/card.md`](../benchmarks/factory-v0.3/card.md),
+  [`coverage-review-0.5.0.md`](coverage-review-0.5.0.md),
+  [`benchmarks/factory-v0.4/card.md`](../benchmarks/factory-v0.4/card.md),
   [`project_intent.md`](../project_intent.md),
   [`docs/testbed.md`](testbed.md)
-- **Related:** RFC 0030, ADR 0042, P2/P3 coverage reviews
-- **Branch:** `plan/0.5.0-0.8.0-roadmap`
+- **Related:** RFC 0030, RFC 0031, RFC 0032, ADR 0042, P2/P3 coverage reviews
+- **Branch:** `main`
 
-This document is a plan, not an approved scope. It turns the gap analysis into
-four release-sized increments. It does not change any frozen benchmark or world
+This document records the approved sequence and its implementation status. It
+turns the gap analysis into four release-sized increments. It does not change
+any frozen benchmark or world
 hash. The owner decides which rows are committed.
 
 ## 1. Why this sequence
