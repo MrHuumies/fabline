@@ -91,6 +91,10 @@ Current tasks:
   `factory-v0.5`; GBDT R² 0.503.
 - [Assembly recipe intervention](assembly-intervention.md) — 0.6.0
   counterfactual effect task; frozen in `factory-v0.5`; GBDT R² 0.944.
+- [Sequential crew repair](crew-sequential.md) — 0.7.0 design; per-crew movement,
+  repair, and communication.
+- [POMDP maintenance](pomdp-maintenance.md) — 0.7.0 design; hidden wear, noisy
+  sensors, inspect/repair/continue.
 - [Order control](order-control.md) — draft 0.4.0 order-control candidate.
 - [View arrival](view-arrival.md) — generic multiview contract and
   episode-grouped view-arrival task.

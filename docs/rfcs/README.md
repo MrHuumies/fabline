@@ -32,4 +32,5 @@ One RFC per new mechanic or major world change. Use
 - [0028 — Gear-contract board](0028-contract-board.md)
 - [0029 — 0.3.0 expansion scope](0029-0.3.0-scope.md)
 - [0030 — 0.4.0 scope: demand-driven production](0030-0.4.0-scope.md) — proposed; pending owner review.
-- [0031 — Assembly edge and per-assembler recipe state](0031-assembly-edge.md) — proposed; mechanic slice implemented.
+- [0031 — Assembly edge and per-assembler recipe state](0031-assembly-edge.md) — accepted; frozen in `factory-v0.5`.
+- [0032 — Sequential crew control and uncertain repair](0032-uncertain-repair.md) — proposed; implementation in progress.
