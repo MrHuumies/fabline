@@ -21,9 +21,9 @@ tasks = ["throughput-vector", "throughput-grid", "throughput-entities", "masked-
 
 [coverage]
 # Integrated in the draft runner.
-integrated = ["reliability-contract", "partial-throughput", "wired-cascade", "crew-schedule", "crew-triage"]
-# Implemented in the repo, public runner integration pending.
-proposed = ["preventive-wire", "recipe-choice", "maintenance-threshold"]
+integrated = ["reliability-contract", "partial-throughput", "wired-cascade", "crew-schedule", "crew-triage", "preventive-wire", "recipe-choice", "maintenance-threshold"]
+# No additional coverage tasks are pending; freeze package is next.
+proposed = []
 
 [challenge]
 tasks = ["crew-layouts", "decentralized-triage", "crew-replacement", "crew-replan-layouts", "maintenance-calibration"]
@@ -73,6 +73,30 @@ episodes = 1
 failure_recall_tick = 100
 replan_jobs = 2
 success_score = 300
+
+[preventive_wire]
+task = "factory.power.wire-maintenance.v1"
+seeds = [0, 1, 2]
+episodes = 5
+q_train_episodes = 50
+warning_tick = 60
+failure_tick = 220
+repair_ticks = 140
+repair_budget = 1
+success_score = 150
+
+[recipe_choice]
+task = "factory.production.recipe-choice.v1"
+seeds = [37000, 37001, 37002, 37003, 37004]
+episodes = 1
+success_score = 150
+
+[maintenance_threshold]
+task = "factory.fault.preventive-threshold.v1"
+seeds = [700, 701, 702, 703, 704]
+training_episodes = 50
+arms = [0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+success_score = 240
 
 [expected]
 # Not frozen yet.

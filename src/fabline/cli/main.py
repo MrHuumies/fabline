@@ -1003,6 +1003,9 @@ def cmd_coverage_suite(args: argparse.Namespace) -> int:
             include_partial=not args.skip_partial,
             include_crew_schedule=not args.skip_crew_schedule,
             include_crew_triage=not args.skip_crew_triage,
+            include_preventive_wire=not args.skip_preventive_wire,
+            include_recipe_choice=not args.skip_recipe_choice,
+            include_maintenance_threshold=not args.skip_maintenance_threshold,
             include_mpnn=args.include_mpnn,
             include_sequence=not args.skip_sequence,
         ),
@@ -3231,6 +3234,11 @@ def build_parser() -> argparse.ArgumentParser:
     coverage_suite.add_argument("--skip-partial", action="store_true")
     coverage_suite.add_argument("--skip-crew-schedule", action="store_true")
     coverage_suite.add_argument("--skip-crew-triage", action="store_true")
+    coverage_suite.add_argument("--skip-preventive-wire", action="store_true")
+    coverage_suite.add_argument("--skip-recipe-choice", action="store_true")
+    coverage_suite.add_argument(
+        "--skip-maintenance-threshold", action="store_true"
+    )
     coverage_suite.add_argument("--skip-sequence", action="store_true")
     coverage_suite.add_argument("--include-mpnn", action="store_true")
     coverage_suite.set_defaults(func=cmd_coverage_suite)

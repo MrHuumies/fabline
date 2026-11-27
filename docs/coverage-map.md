@@ -97,6 +97,9 @@ not a frozen benchmark:
 | wired-cascade | relational regression | graph_mp R² 0.124 (+0.018 vs vector) | diagnostic |
 | crew-schedule | spatial scheduling | deadline Q 256.4/1.00 vs EDF 260 | pass |
 | crew-triage | multi-agent control | oracle 456 vs greedy 378 | pass |
+| preventive-wire | temporal control | preventive 260 vs reactive 195.3 | pass |
+| recipe-choice | production control | buffer-aware 318 vs fast 278 | pass |
+| maintenance-threshold | bandit/context | best fixed 0.7; learner 250 | pass |
 
 Run with `python -m fabline coverage-suite --out results/factory-v0.4-coverage`.
 The wired cascade is a **public reproduction gap** versus the private 0032

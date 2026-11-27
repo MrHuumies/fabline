@@ -63,16 +63,17 @@ The generative line is conditional: it follows the grammar, not the calendar.
 | Reliability contract | `feat/0.5.0-reliability-contract` | merged; full suite CVaR +17.62 [13.90, 21.68] |
 | Partial throughput | `feat/0.5.0-partial-throughput` | merged; full suite window GBDT R² 0.897 |
 | Wired cascade | `feat/0.5.0-wired-cascade` | merged; graph_mp R² 0.124, +0.018 < +0.05; diagnostic |
-| Coverage suite | `feat/0.5.0-coverage-suite` | merged; expanded to 5 tasks, full run 4 pass / 1 diagnostic |
+| Coverage suite | `feat/0.5.0-coverage-suite` | merged; expanded to 8 tasks, full run 7 pass / 1 diagnostic |
 | Assembly edge | `feat/0.6.0-assembly-edge` | merged to main as an opt-in slice; Q 460 vs random 429, always gear 260; gates pass; 0.6.0 still incomplete |
 | 0.7.0 design | `feat/0.7.0-uncertain-repair-design` | branch ready; RFC 0032 and task cards; design only |
 
-0.5.0 coverage merged to `main` at `11af12c`; the expanded coverage-suite run
-is **4 pass / 1 diagnostic** (reliability +17.62 CVaR, partial 0.897,
-crew-schedule Q 256.4/1.00, crew-triage oracle 456 vs greedy 378, wired
-diagnostic). The assembly-edge slice is merged to `main` at `0cbabcd` as opt-in
-code; 0.6.0 is **not complete** — demand uncertainty, assembly
-planning/BOM/causal tasks, and the `factory-v0.5` freeze remain.
+0.5.0 coverage merged to `main` at `11af12c`; the expanded eight-task
+coverage-suite run is **7 pass / 1 diagnostic** (reliability +17.62 CVaR,
+partial 0.897, crew-schedule Q 256.4/1.00, crew-triage oracle 456 vs greedy
+378, preventive wire 260 vs reactive 195.3, recipe 318 vs fast 278, threshold
+learner 250, wired diagnostic). The assembly-edge slice is merged to `main` at
+`0cbabcd` as opt-in code; 0.6.0 is **not complete** — demand uncertainty,
+assembly planning/BOM/causal tasks, and the `factory-v0.5` freeze remain.
 
 The next step is to choose one of: extend the coverage suite with the remaining
 crew/recipe/preventive tasks, finish the assembly-variant tasks, or start the

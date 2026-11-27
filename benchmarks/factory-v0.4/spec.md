@@ -29,12 +29,12 @@ The goal is to make the benchmark honest about what is covered:
 | wired-cascade | `factory.power.cascade.v1` | relational/graph | graph cut under a wire fault | diagnostic |
 | crew-schedule | `factory.power.crew-schedule.v1` | spatial scheduling | travel/deadline/budget | pass |
 | crew-triage | `factory.power.crew-triage.v1` | multi-agent | centralized coordination | pass |
-| preventive-wire | `factory.power.wire-maintenance.v1` | temporal credit | warning-to-action timing | proposed |
-| recipe-choice | `factory.production.recipe-choice.v1` | production control | queue-aware recipe choice | proposed |
-| maintenance-threshold | `factory.fault.preventive-threshold.v1` | bandit/context | threshold selection | proposed |
+| preventive-wire | `factory.power.wire-maintenance.v1` | temporal credit | warning-to-action timing | pass |
+| recipe-choice | `factory.production.recipe-choice.v1` | production control | queue-aware recipe choice | pass |
+| maintenance-threshold | `factory.fault.preventive-threshold.v1` | bandit/context | threshold selection | pass |
 
-The integrated runner covers the first five rows. The other rows are
-implementation work for the same tier, not a new benchmark version.
+The integrated runner now covers all eight coverage tasks. The remaining work is
+the freeze package, not another task.
 
 ## Challenge tier
 
@@ -90,6 +90,25 @@ It does not need a winning learned baseline.
 - Baselines: noop, single EDF, nearest, greedy, aware, no-replan, oracle.
 - Oracle: exhaustive 16×4×4 sequence per seed.
 
+### Preventive wire
+
+- 16×8 gear line, one watched wire, seeds 0–2, 5 episodes each.
+- Warning 60; failure 220; repair 140 ticks; budget 1.
+- Baselines: noop, preventive, reactive, late, random, tabular Q.
+- Suite Q training: 50 episodes per seed.
+
+### Recipe choice
+
+- 16×8 gear line, fast 2 ingots/12 ticks vs slow 1 ingot/20 ticks.
+- Seeds 37000–37004; one episode each.
+- Baselines: fast, slow, alternate, buffer-aware, lookahead, random.
+
+### Maintenance threshold
+
+- 16×8 gear line with wear faults; 7 threshold arms 0.4–1.0.
+- Seeds 700–704; 50 training episodes for UCB/epsilon.
+- Baselines: fixed arms, UCB, epsilon-greedy.
+
 ## Baselines
 
 - Tabular: mean, persistence, linear, GBDT, MLP.
@@ -109,6 +128,12 @@ It does not need a winning learned baseline.
   best scripted and success ≥ 0.80.
 - Crew triage: oracle ≥ best scripted +10; coordination gain ≥ +10; nearest
   below oracle; oracle success ≥ 0.60.
+- Preventive wire: preventive ≥ reactive +10; learned ≥ reactive; preventive
+  success ≥ 0.60.
+- Recipe choice: buffer-aware ≥ fast +10; buffer-aware ≥ lookahead +10;
+  success ≥ 0.60.
+- Maintenance threshold: fixed-arm spread ≥10; best learner within 5 of best
+  fixed; learner success ≥ 0.60.
 - A failed gate does not lower the threshold; the task is demoted to
   diagnostic/challenge or redesigned.
 
@@ -145,4 +170,5 @@ is not a frozen benchmark; there is no expected summary yet.
 
 ## Changelog
 
-- 2026-11-26 — draft spec created for the three-task coverage slice.
+- 2026-11-26 - draft spec created for the three-task coverage slice.
+- 2026-11-27 - expanded to eight integrated tasks; freeze package still pending.
