@@ -103,8 +103,8 @@ A draft **0.5.0 coverage suite** is also available:
 ```
 
 It adds a coverage tier (`reliability-contract`, `partial-throughput`,
-`wired-cascade`), public structured baselines (CNN, MPNN, GRU, Transformer),
-and a challenge tier. It is **not frozen**; see
+`wired-cascade`, `crew-schedule`, `crew-triage`), public structured baselines
+(CNN, MPNN, GRU, Transformer), and a challenge tier. It is **not frozen**; see
 [`benchmarks/factory-v0.4/spec.md`](benchmarks/factory-v0.4/spec.md).
 The current coverage map is in
 [`docs/coverage-map.md`](docs/coverage-map.md); the

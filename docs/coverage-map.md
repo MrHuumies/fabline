@@ -95,6 +95,8 @@ not a frozen benchmark:
 | reliability-contract | risk selection | CVaR +17.62 [13.90, 21.68] | pass |
 | partial-throughput | regression | window GBDT R² 0.897 | pass |
 | wired-cascade | relational regression | graph_mp R² 0.124 (+0.018 vs vector) | diagnostic |
+| crew-schedule | spatial scheduling | deadline Q 256.4/1.00 vs EDF 260 | pass |
+| crew-triage | multi-agent control | oracle 456 vs greedy 378 | pass |
 
 Run with `python -m fabline coverage-suite --out results/factory-v0.4-coverage`.
 The wired cascade is a **public reproduction gap** versus the private 0032
