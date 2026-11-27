@@ -2,6 +2,9 @@ name: factory-v0.5 full check
 
 on:
   workflow_dispatch:
+  push:
+    tags:
+      - "v*"
   schedule:
     - cron: "29 4 * * 1"
 
@@ -15,17 +18,34 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Check benchmark exists
+        id: benchmark
+        run: |
+          if [ -f benchmarks/factory-v0.5/expected/summary.json ]; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - uses: actions/setup-python@v5
+        if: steps.benchmark.outputs.exists == 'true'
         with:
           python-version: "3.12"
 
       - name: Install
+        if: steps.benchmark.outputs.exists == 'true'
         run: |
           python -m pip install --upgrade pip
           pip install -e ".[dev]"
 
       - name: Full assembly-suite check
+        if: steps.benchmark.outputs.exists == 'true'
         run: |
           python -m fabline assembly-suite \
             --out /tmp/factory-v05 \
             --check-expected benchmarks/factory-v0.5/expected/summary.json
+
+      - name: Skip notice
+        if: steps.benchmark.outputs.exists != 'true'
+        run: |
+          echo "::notice::factory-v0.5 is not present at this ref; skipping the full check."

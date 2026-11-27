@@ -5,6 +5,9 @@ are pinned separately; see [`benchmarks/factory-v0.3/card.md`](benchmarks/factor
 
 ## [Unreleased]
 
+- Note: `main` tracks the `0.5.0` package plus the unreleased 0.6.0 assembly
+  suite; the `v0.5.0` release commit was cut from `release/v0.5.0`.
+
 - Add the opt-in assembly-edge production tree: per-assembler recipe state,
   component logistics, and `INGOT + COMPONENT -> GEAR` (2 gears in the task).
   Add a two-feed assembly cell and `factory.assembly.control.v1`; the formal
