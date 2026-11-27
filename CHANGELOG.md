@@ -1,12 +1,14 @@
 # Changelog
 
 All notable changes to FABLINE are recorded here. World and benchmark versions
-are pinned separately; see [`benchmarks/factory-v0.3/card.md`](benchmarks/factory-v0.3/card.md).
+are pinned separately; see [`benchmarks/factory-v0.5/card.md`](benchmarks/factory-v0.5/card.md).
 
 ## [Unreleased]
 
-- Note: `main` tracks the `0.5.0` package plus the unreleased 0.6.0 assembly
-  suite; the `v0.5.0` release commit was cut from `release/v0.5.0`.
+## [0.6.0] — 2026-11-27
+
+0.6.0 is the assembly-edge release. It freezes `factory-v0.5` beside the
+immutable `factory-v0.4` coverage suite; it does not change the default world.
 
 - Add the opt-in assembly-edge production tree: per-assembler recipe state,
   component logistics, and `INGOT + COMPONENT -> GEAR` (2 gears in the task).
@@ -20,7 +22,7 @@ are pinned separately; see [`benchmarks/factory-v0.3/card.md`](benchmarks/factor
 - Freeze `factory-v0.5`, the 0.6.0 assembly suite: four tasks, `assembly-suite`
   CLI, expected summary, zero-mismatch check, and full CI workflow. Demand
   uncertainty, layout splits, and logged-data causal identification are
-  documented follow-ups.
+  documented follow-ups. `factory-v0.4` remains immutable.
 
 ## [0.5.0] — 2026-11-27
 

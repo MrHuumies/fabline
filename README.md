@@ -115,8 +115,10 @@ diagnostic, not a headline score. See
 [`benchmarks/factory-v0.4/card.md`](benchmarks/factory-v0.4/card.md).
 The current coverage map is in
 [`docs/coverage-map.md`](docs/coverage-map.md); the
-[0.4.0 review](docs/coverage-review-0.4.0.md) records the next slice. Cross-task
-cost is in the [`efficiency table`](docs/efficiency.md).
+[0.5.0 review](docs/coverage-review-0.5.0.md) records the coverage release, and
+the [`factory-v0.5` freeze review](benchmarks/factory-v0.5/freeze-review.md)
+records the assembly suite. Cross-task cost is in the
+[`efficiency table`](docs/efficiency.md).
 Small library-version differences are acceptable; headline ordering should be
 stable.
 
