@@ -5,6 +5,9 @@ are pinned separately; see [`benchmarks/factory-v0.3/card.md`](benchmarks/factor
 
 ## [Unreleased]
 
+- Freeze `factory-v0.4`, the 0.5.0 coverage suite: eight tasks, public
+  structured baselines, expected summary, and full CI check. Seven tasks pass;
+  wired-cascade remains a diagnostic.
 - Add the opt-in assembly-edge production tree: per-assembler recipe state,
   component logistics, and `INGOT + COMPONENT -> GEAR` (2 gears in the task).
   Add a two-feed assembly cell and `factory.assembly.control.v1`; the formal

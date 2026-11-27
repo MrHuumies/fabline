@@ -47,7 +47,11 @@ from fabline.harness.causal_intervention import (
 from fabline.harness.contract_board import run_contract_board, write_board_report
 from fabline.harness.coverage_suite import (
     CoverageSuiteConfig,
+    compare_coverage_expected,
     run_coverage_suite,
+)
+from fabline.harness.coverage_suite import (
+    build_expected_summary as build_coverage_expected,
 )
 from fabline.harness.crew_budget import (
     run_crew_budget,
@@ -1010,6 +1014,18 @@ def cmd_coverage_suite(args: argparse.Namespace) -> int:
             include_sequence=not args.skip_sequence,
         ),
     )
+    summary = build_coverage_expected(report)
+    if args.expected:
+        expected_path = write_expected_summary(args.expected, summary)
+        print(json.dumps({"expected": str(expected_path)}))
+    if args.check_expected:
+        expected = json.loads(Path(args.check_expected).read_text(encoding="utf-8"))
+        mismatches = compare_coverage_expected(expected, summary)
+        if mismatches:
+            print(json.dumps({"mismatches": mismatches}, indent=2))
+            return 1
+        print(json.dumps({"mismatches": []}))
+        return 0
     print(json.dumps(report["summary"], indent=2, sort_keys=True))
     return 0
 
@@ -3240,6 +3256,8 @@ def build_parser() -> argparse.ArgumentParser:
         "--skip-maintenance-threshold", action="store_true"
     )
     coverage_suite.add_argument("--skip-sequence", action="store_true")
+    coverage_suite.add_argument("--expected", type=str)
+    coverage_suite.add_argument("--check-expected", type=str)
     coverage_suite.add_argument("--include-mpnn", action="store_true")
     coverage_suite.set_defaults(func=cmd_coverage_suite)
 

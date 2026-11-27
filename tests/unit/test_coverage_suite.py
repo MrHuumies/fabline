@@ -4,6 +4,8 @@ from pathlib import Path
 
 from fabline.harness.coverage_suite import (
     CoverageSuiteConfig,
+    build_expected_summary,
+    compare_coverage_expected,
     run_coverage_suite,
 )
 
@@ -44,3 +46,16 @@ def test_coverage_suite_fast(tmp_path: Path) -> None:
         "maintenance-threshold",
     ):
         assert (tmp_path / name).is_dir()
+    summary = build_expected_summary(report)
+    assert summary["benchmark"] == "factory-v0.4"
+    assert summary["headline_tasks"] == [
+        "reliability-contract",
+        "partial-throughput",
+        "crew-schedule",
+        "crew-triage",
+        "preventive-wire",
+        "recipe-choice",
+        "maintenance-threshold",
+    ]
+    assert summary["diagnostics"] == ["wired-cascade"]
+    assert compare_coverage_expected(summary, summary) == []

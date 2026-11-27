@@ -1,18 +1,19 @@
-# factory-v0.4 draft coverage specification.
-# This benchmark is not frozen; there is no expected summary yet.
+# factory-v0.4 frozen coverage specification.
 # The runner is `fabline coverage-suite`; the frozen v0.3 core is kept by
 # reference and is not modified.
 
 [benchmark]
 name = "factory-v0.4"
-status = "draft"
-version = "0.4.0-draft"
-date = "2026-11-26"
+status = "frozen"
+version = "0.4.0"
+date = "2026-11-27"
 world_version = "factory-0.1.0"
 plan = "coverage-v0.4"
 target_release = "0.5.0"
 command = "python -m fabline coverage-suite --out results/factory-v0.4-coverage"
 fast_command = "python -m fabline coverage-suite --out results/factory-v0.4-coverage-fast --fast"
+expected = "benchmarks/factory-v0.4/expected/summary.json"
+check = "python -m fabline coverage-suite --out results/factory-v0.4-coverage --skip-sequence --check-expected benchmarks/factory-v0.4/expected/summary.json"
 
 [core]
 # Kept by reference; v0.3 is frozen and unchanged.
@@ -99,6 +100,7 @@ arms = [0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
 success_score = 240
 
 [expected]
-# Not frozen yet.
-summary = "none"
-tolerance = "none"
+summary = "benchmarks/factory-v0.4/expected/summary.json"
+rtol = 0.03
+atol = 0.02
+check = "python -m fabline coverage-suite --out results/factory-v0.4-coverage --skip-sequence --check-expected benchmarks/factory-v0.4/expected/summary.json"

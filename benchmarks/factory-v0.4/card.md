@@ -1,24 +1,27 @@
-# Benchmark card — factory-v0.4 (draft)
+# Benchmark card — factory-v0.4
 
-- **Status:** draft; not frozen
-- **Version:** 0.4.0-draft
-- **Date:** 2026-11-26
+- **Status:** frozen
+- **Version:** 0.4.0
+- **Date:** 2026-11-27
 - **World:** `factory-0.1.0`
 - **Plan:** `coverage-v0.4`
 - **Spec:** [`spec.md`](spec.md)
+- **Expected summary:** [`expected/summary.json`](expected/summary.json)
 - **Runner:** `python -m fabline coverage-suite --out results/factory-v0.4-coverage`
+- **Check:** `python -m fabline coverage-suite --out results/factory-v0.4-coverage --skip-sequence --check-expected benchmarks/factory-v0.4/expected/summary.json`
 - **Roadmap:** [`docs/roadmap-0.5.0-0.8.0.md`](../../docs/roadmap-0.5.0-0.8.0.md)
 - **Analysis:** [`docs/coverage-analysis-2026-11-26.md`](../../docs/coverage-analysis-2026-11-26.md)
 
-## What is proposed
+## What is frozen
 
 `factory-v0.4` is a **coverage release**, not a new world. It keeps the frozen
 v0.3 headline by reference and adds:
 
-- a **coverage tier** for positive backlog tasks that were not in v0.3;
-- a **challenge tier** for valid tasks whose current learned baselines fail;
+- an eight-task **coverage tier** for positive backlog tasks that were not in
+  v0.3;
 - public structured baselines (CNN, GNN/MPNN, GRU, Transformer);
-- episode-level evaluation methodology;
+- a compact expected summary and CI check;
+- a challenge-task list for follow-up (not part of the frozen score);
 
 The integrated slice contains eight tasks:
 
