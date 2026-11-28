@@ -348,7 +348,8 @@ identification remain deferred; see the `factory-v0.5` freeze review.
 
 ### 0.7.0 — sequential crew challenge
 
-Phase 1 of the uncertain-repair line is frozen as `factory-v0.6`: two crews,
+Phase 1 of the uncertain-repair line is frozen as `factory-v0.6` and released
+in v0.7.0: two crews,
 five targets, six actions, shared observation, 500 ticks. It is a **challenge**
 task, not a solved control task. H1 coordination +21.6 and H2 scripted success
 1.00 pass; H3 learned gap +9.2 misses by 0.8 and H4 learned success is 0.20

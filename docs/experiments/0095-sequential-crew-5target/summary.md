@@ -1,7 +1,7 @@
 # Experiment 0095 — Sequential crew repair, 5-target redesign
 
 - **Status:** complete (positive task validity; **challenge tier**; frozen as
-  `factory-v0.6`)
+  `factory-v0.6` and released in v0.7.0)
 - **Date:** 2026-11-28
 - **Type:** 0.7.0 Phase 1 redesign
 - **Task:** `factory.power.crew-sequential.v1` (5-target condition)

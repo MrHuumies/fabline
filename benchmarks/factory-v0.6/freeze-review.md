@@ -82,10 +82,11 @@ pre-registration.
 - [x] Task validity H1/H2 passes on fresh seeds.
 - [x] Learned failure is reported honestly and labeled challenge.
 - [x] Expected summary is checked in; no timing fields.
+- [x] Expected-summary check: zero mismatches; tag-triggered check green.
 - [x] Runner and check command are documented.
 - [x] Task card, ADR, and RFC agree on the 5-target challenge scope.
 - [x] Public/private export matches the frozen tree.
-- [x] Tag-triggered `factory-v0.6` check exists.
+- [x] Tag-triggered `factory-v0.6` check exists and passes.
 
 ## Risks
 

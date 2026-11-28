@@ -1,6 +1,6 @@
 # FABLINE roadmap — 0.5.0 to 0.8.0
 
-- **Status:** active; 0.5.0 and 0.6.0 released, 0.7.0 Phase 1 valid as a challenge; `factory-v0.6` frozen
+- **Status:** active; 0.5.0, 0.6.0, and 0.7.0 released; `factory-v0.6` frozen as a challenge
 - **Date:** 2026-11-27
 - **Theme:** coverage first, then structural mechanics
 - **Inputs:** [`coverage-analysis-2026-11-26.md`](coverage-analysis-2026-11-26.md),
@@ -67,7 +67,7 @@ The generative line is conditional: it follows the grammar, not the calendar.
 | Wired cascade | `feat/0.5.0-wired-cascade` | merged; graph_mp R² 0.124, +0.018 < +0.05; diagnostic |
 | Coverage suite | `feat/0.5.0-coverage-suite` | merged and frozen as `factory-v0.4`; 8 tasks, 7 pass / 1 diagnostic |
 | Assembly edge | `feat/0.6.0-assembly-*` | merged and frozen as `factory-v0.5`; four tasks, 4/4 pass; demand uncertainty deferred |
-| 0.7.0 Phase 1 | `feat/0.7.0-sequential-crew` | 0095 H1 +21.6, H2 1.00; H3/H4 fail; challenge; `factory-v0.6` frozen |
+| 0.7.0 Phase 1 | `feat/0.7.0-sequential-crew` | released; 0095 H1 +21.6, H2 1.00; H3/H4 fail; challenge; `factory-v0.6` frozen |
 
 `factory-v0.4` is **frozen**: eight tasks, **7 pass / 1 diagnostic**, with a
 checked-in expected summary and zero-mismatch full check (reliability +17.62
@@ -81,7 +81,7 @@ intervention GBDT R² 0.944 with +1.62 of +2.00 oracle gain). Demand uncertainty
 layout splits, and logged-data causal identification are deferred to a later
 version; the freeze review records them.
 
-The Phase 1 5-target block (0095) is valid as a challenge; `factory-v0.6` is frozen. ADR 0043 defers stochastic faults to 0.8.0.
+The Phase 1 5-target block (0095) is valid as a challenge; `factory-v0.6` is frozen and released in v0.7.0. ADR 0043 defers stochastic faults to 0.8.0.
 
 ### 1.2 How this plan uses the analysis
 
@@ -452,8 +452,8 @@ baseline misses the success gate; label it and report the gap. Do not lower H4.
 **Formal result (2026-11-28).** The 0093 (3 targets) and 0094 (4 targets)
 blocks failed H1 (+4.8 and +6.8). The 0095 5-target block passed H1 (+21.6) and
 H2 (1.00), but H3/H4 failed (BC 9.2/0.20, Q 0.0/0.00). The task is frozen as a
-challenge in `factory-v0.6`; H4 is not lowered. Phase 2 communication and
-stochastic faults/POMDP remain future work.
+challenge in `factory-v0.6` and released in v0.7.0; H4 is not lowered. Phase 2
+communication and stochastic faults/POMDP remain future work.
 
 ### 7.2 Sequential crew mechanic
 
