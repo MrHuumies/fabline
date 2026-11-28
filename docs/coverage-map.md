@@ -357,7 +357,8 @@ task, not a solved control task. H1 coordination +21.6 and H2 scripted success
 (BC 9.2, Q 0.0). The 0093 (3 targets) and 0094 (4 targets) conditions failed H1;
 only 0095 (5 targets) is frozen. Local views and a budgeted report action were
 tested in 0096 and are negative on this layout; the report action is retired.
-Stochastic faults/POMDP remain future work.
+The 0.8.0 scope is proposed as the spatial production grammar (RFC 0033 /
+ADR 0044); stochastic faults/POMDP are deferred.
 
 ### P0 progress
 

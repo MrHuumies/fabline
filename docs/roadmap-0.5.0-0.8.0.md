@@ -1,6 +1,6 @@
 # FABLINE roadmap — 0.5.0 to 0.8.0
 
-- **Status:** active; 0.5.0, 0.6.0, and 0.7.0 released; `factory-v0.6` challenge frozen; Phase 2 communication negative (no freeze)
+- **Status:** active; 0.5.0, 0.6.0, and 0.7.0 released; `factory-v0.6` challenge frozen; Phase 2 communication retired; 0.8.0 spatial grammar proposed (approval pending)
 - **Date:** 2026-11-27
 - **Theme:** coverage first, then structural mechanics
 - **Inputs:** [`coverage-analysis-2026-11-26.md`](coverage-analysis-2026-11-26.md),
@@ -546,6 +546,8 @@ Gates:
   0.8.0 stochastic faults; do not ship both half-finished.
 
 ## 8. 0.8.0 — Spatial production grammar (layout, scale, splitters)
+
+**Status:** proposed via RFC 0033 / ADR 0044; owner approval pending.
 
 ### 8.1 Goal
 

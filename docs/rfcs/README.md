@@ -34,3 +34,4 @@ One RFC per new mechanic or major world change. Use
 - [0030 — 0.4.0 scope: demand-driven production](0030-0.4.0-scope.md) — proposed; pending owner review.
 - [0031 — Assembly edge and per-assembler recipe state](0031-assembly-edge.md) — accepted; frozen in `factory-v0.5`.
 - [0032 — Sequential crew control and uncertain repair](0032-uncertain-repair.md) — proposed; implementation in progress.
+- [0033 — 0.8.0 spatial production grammar](0033-0.8.0-spatial-grammar.md) — proposed; owner approval pending.
