@@ -153,5 +153,7 @@ The current frozen benchmark is documented separately in
 
 - [0095 — Sequential crew redesign (5 targets)](0095-sequential-crew-5target/summary.md) — valid; challenge; H1 +21.6, H2 1.00; H3/H4 fail; frozen as `factory-v0.6`.
 
+- [0096 — Local-view crew communication](0096-crew-communication/summary.md) — negative; local no-report 28.4/0.92 vs report 17.2/0.72; no freeze.
+
 The `factory-v0.3` freeze review is in
 [`benchmarks/factory-v0.3/freeze-review.md`](../../benchmarks/factory-v0.3/freeze-review.md).

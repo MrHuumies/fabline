@@ -5,6 +5,10 @@ are pinned separately; see [`benchmarks/factory-v0.6/card.md`](benchmarks/factor
 
 ## [Unreleased]
 
+- Add the local-view crew communication experiment; it is negative on the
+  current layout (local no-report 28.4/0.92 vs local report 17.2/0.72). No
+  benchmark freeze.
+
 ## [0.7.0] — 2026-11-28
 
 0.7.0 is the sequential-crew challenge release. It freezes `factory-v0.6` beside

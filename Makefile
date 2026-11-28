@@ -1,6 +1,6 @@
 PY ?= .venv/bin/python
 
-.PHONY: test lint smoke dataset benchmark suite shared-suite benchmark-v02 benchmark-v02-check benchmark-v03 benchmark-v03-check wizard planning-transition planning-transition-ensemble planning-transition-two-step generative-audit efficiency production-mix order-planning order-control order-rl sequential-crew replay-browser task-cards maintenance-calibration crew-decentralized-compact crew-decentralized-ctde render-install render play demo human-bc fault-benchmark fault-recovery fault-power power-benchmark power-allocation power-allocation-stochastic perf
+.PHONY: test lint smoke dataset benchmark suite shared-suite benchmark-v02 benchmark-v02-check benchmark-v03 benchmark-v03-check wizard planning-transition planning-transition-ensemble planning-transition-two-step generative-audit efficiency production-mix order-planning order-control order-rl sequential-crew crew-communication replay-browser task-cards maintenance-calibration crew-decentralized-compact crew-decentralized-ctde render-install render play demo human-bc fault-benchmark fault-recovery fault-power power-benchmark power-allocation power-allocation-stochastic perf
 
 test:
 	$(PY) -m pytest -q
@@ -68,6 +68,9 @@ order-rl:
 
 sequential-crew:
 	$(PY) -m fabline sequential-crew --out results/sequential-crew --seeds 110150,110151,110152,110153,110154 --targets 5 --episodes 5 --q-episodes 500 --bc-episodes 50
+
+crew-communication:
+	$(PY) -m fabline crew-communication --out results/crew-communication --seeds 120010,120011,120012,120013,120014
 
 replay-browser:
 	$(PY) -m fabline replay-browser --root datasets --limit 20

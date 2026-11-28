@@ -21,6 +21,7 @@ from fabline.cli.wizard import run_wizard
 from fabline.env.assembly import AssemblyControlConfig
 from fabline.env.contract_board import ContractBoardConfig, ContractBoardEnv
 from fabline.env.control import ControlConfig
+from fabline.env.crew_communication import CrewCommConfig
 from fabline.env.crew_replan import CrewReplanConfig
 from fabline.env.crew_schedule import CrewScheduleConfig
 from fabline.env.fault_power import FaultPowerConfig
@@ -80,6 +81,11 @@ from fabline.harness.coverage_suite import (
 from fabline.harness.crew_budget import (
     run_crew_budget,
     write_crew_budget_report,
+)
+from fabline.harness.crew_communication import (
+    communication_gates,
+    run_crew_communication,
+    write_crew_communication_report,
 )
 from fabline.harness.crew_decentralized import (
     run_decentralized,
@@ -636,6 +642,67 @@ def cmd_sequential_crew(args: argparse.Namespace) -> int:
         print(json.dumps(payload, indent=2, sort_keys=True))
         return 0 if not mismatches else 1
     print(json.dumps(payload, indent=2, sort_keys=True))
+    return 0
+
+
+def cmd_crew_communication(args: argparse.Namespace) -> int:
+    seeds = tuple(int(value) for value in args.seeds.split(","))
+    config = FactoryConfig(
+        width=args.width,
+        height=args.height,
+        ticks_per_episode=args.episode_ticks,
+        decision_interval=args.decision_interval,
+        entity_budget=args.entity_budget,
+        rock_density=args.rock_density,
+        ore_patches=args.ore_patches,
+        starter_line=True,
+        emit_events=True,
+    )
+    crew = SequentialCrewConfig(
+        episode_ticks=args.episode_ticks,
+        decision_interval=args.decision_interval,
+        target_count=args.targets,
+        repair_ticks=args.repair_ticks,
+    )
+    comm = CrewCommConfig(
+        visibility_radius=args.visibility_radius,
+        report_budget=args.report_budget,
+        report_delay=args.report_delay,
+        report_cost=args.report_cost,
+    )
+    results = run_crew_communication(
+        config,
+        crew,
+        comm,
+        seeds=seeds,
+        episodes=args.episodes,
+    )
+    gates = communication_gates(results)
+    path = write_crew_communication_report(
+        args.out,
+        results,
+        config={
+            "width": config.width,
+            "height": config.height,
+            "seeds": list(seeds),
+            "episodes": args.episodes,
+            "target_count": crew.target_count,
+            "repair_ticks": crew.repair_ticks,
+            "episode_ticks": crew.episode_ticks,
+            "decision_interval": crew.decision_interval,
+            "visibility_radius": comm.visibility_radius,
+            "report_budget": comm.report_budget,
+            "report_delay": comm.report_delay,
+            "report_cost": comm.report_cost,
+        },
+    )
+    print(
+        json.dumps(
+            {"report": str(path), "gates": gates},
+            indent=2,
+            sort_keys=True,
+        )
+    )
     return 0
 
 
@@ -3291,6 +3358,32 @@ def build_parser() -> argparse.ArgumentParser:
     sequential_crew.add_argument("--rock-density", type=float, default=0.06)
     sequential_crew.add_argument("--ore-patches", type=int, default=4)
     sequential_crew.set_defaults(func=cmd_sequential_crew)
+
+    crew_communication = subparsers.add_parser(
+        "crew-communication",
+        help="run the local-view crew communication experiment",
+    )
+    crew_communication.add_argument(
+        "--out", type=str, default="results/crew-communication"
+    )
+    crew_communication.add_argument(
+        "--seeds", type=str, default="120010,120011,120012,120013,120014"
+    )
+    crew_communication.add_argument("--episodes", type=int, default=5)
+    crew_communication.add_argument("--targets", type=int, default=5)
+    crew_communication.add_argument("--repair-ticks", type=int, default=6)
+    crew_communication.add_argument("--episode-ticks", type=int, default=500)
+    crew_communication.add_argument("--decision-interval", type=int, default=10)
+    crew_communication.add_argument("--visibility-radius", type=int, default=6)
+    crew_communication.add_argument("--report-budget", type=int, default=2)
+    crew_communication.add_argument("--report-delay", type=int, default=1)
+    crew_communication.add_argument("--report-cost", type=float, default=0.5)
+    crew_communication.add_argument("--width", type=int, default=32)
+    crew_communication.add_argument("--height", type=int, default=32)
+    crew_communication.add_argument("--entity-budget", type=int, default=64)
+    crew_communication.add_argument("--rock-density", type=float, default=0.06)
+    crew_communication.add_argument("--ore-patches", type=int, default=4)
+    crew_communication.set_defaults(func=cmd_crew_communication)
 
     order_control = subparsers.add_parser(
         "order-control",

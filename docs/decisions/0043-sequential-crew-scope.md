@@ -1,6 +1,6 @@
 # ADR 0043 — 0.7.0 scope: deterministic sequential crews
 
-- **Status:** accepted; Phase 1 valid as a challenge task (0095); `factory-v0.6` frozen
+- **Status:** accepted; Phase 1 valid as a challenge task (0095); `factory-v0.6` frozen; Phase 2 communication negative (0096; no freeze)
 - **Date:** 2026-11-28
 - **Related:** RFC 0032, RFC 0030, ADR 0042,
   [`roadmap-0.5.0-0.8.0.md`](../roadmap-0.5.0-0.8.0.md),
@@ -81,8 +81,16 @@ The 0093 (3 targets) and 0094 (4 targets) formal blocks failed H1 (+4.8 and
 +6.8). The 0095 5-target block passed H1 (**+21.6**) and H2 (1.00), while H3
 (+9.2) and H4 (0.20) failed. The challenge tier applies: `factory-v0.6` is
 frozen as a challenge task, H4 is not lowered, and the learned baselines are not
-tuned. Phase 2 (local views, `report`, communication) and stochastic faults/POMDP
-remain future work.
+tuned. Phase 2 communication was tested in 0096 and is negative; see below.
+Stochastic faults/POMDP remain future work.
+
+## Phase 2 outcome (2026-11-28)
+
+0096 added local-view observations and a budgeted, delayed `report` action on
+the five-target layout. It is **negative**: local no-report scores 28.4 with
+success 0.92, while local report scores 17.2 with success 0.72. H1 fails; the
+report action is retired on this layout. A new layout/report contract is a new
+pre-registration, not a tune of 0096. No `factory-v0.7` freeze.
 
 ## Alternatives considered
 
@@ -122,5 +130,6 @@ remain future work.
 - [x] Update the `crew-sequential` task card and RFC 0032 status.
 - [x] Run 0093, 0094, and 0095; 0095 is valid as a challenge.
 - [x] Freeze `factory-v0.6` as a challenge task for the 0.7.0 release.
-- [ ] Phase 2 local views/report/communication (new pre-registration).
+- [x] Phase 2 local-view/report pilot: negative on H1; no freeze.
+- [ ] New layout/report contract (new pre-registration).
 - [ ] 0.8.0 stochastic faults/POMDP (new RFC/pre-registration).

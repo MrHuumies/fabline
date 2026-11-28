@@ -1,6 +1,6 @@
 # FABLINE roadmap — 0.5.0 to 0.8.0
 
-- **Status:** active; 0.5.0, 0.6.0, and 0.7.0 released; `factory-v0.6` frozen as a challenge
+- **Status:** active; 0.5.0, 0.6.0, and 0.7.0 released; `factory-v0.6` challenge frozen; Phase 2 communication negative (no freeze)
 - **Date:** 2026-11-27
 - **Theme:** coverage first, then structural mechanics
 - **Inputs:** [`coverage-analysis-2026-11-26.md`](coverage-analysis-2026-11-26.md),
@@ -452,8 +452,13 @@ baseline misses the success gate; label it and report the gap. Do not lower H4.
 **Formal result (2026-11-28).** The 0093 (3 targets) and 0094 (4 targets)
 blocks failed H1 (+4.8 and +6.8). The 0095 5-target block passed H1 (+21.6) and
 H2 (1.00), but H3/H4 failed (BC 9.2/0.20, Q 0.0/0.00). The task is frozen as a
-challenge in `factory-v0.6` and released in v0.7.0; H4 is not lowered. Phase 2
-communication and stochastic faults/POMDP remain future work.
+challenge in `factory-v0.6` and released in v0.7.0; H4 is not lowered.
+Stochastic faults/POMDP remain future work.
+
+**Phase 2 communication (2026-11-28).** 0096 tested local views with a
+budgeted report action. Local no-report 28.4/0.92 vs local report 17.2/0.72;
+H1 fails. No `factory-v0.7` freeze; the report action is retired on this layout.
+A new layout/report contract is a new pre-registration.
 
 ### 7.2 Sequential crew mechanic
 

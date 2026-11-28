@@ -69,6 +69,7 @@ This document is a map, not a commitment to implement every row.
 | order control | control | production + orders | value 289.8; Q 280.2; random 226.4 |
 | order planning | planning | order set | CEM = oracle 292.4; EDF 263.8 |
 | sequential crew repair | control/multi-agent | shared crew state | challenge in `factory-v0.6`; H1 +21.6, H2 1.00; BC 9.2/0.20 |
+| crew communication | control/communication | local views + reports | negative; no-report 28.4/0.92 vs report 17.2/0.72 |
 
 ### Current baselines
 
@@ -129,7 +130,7 @@ and the remaining package-release steps.
 | Robustness / OOD | partial | scenario splits; stochastic power |
 | Uncertainty / calibration | partial | calibration metrics for stochastic power; maintenance forecasts uncalibrated |
 | Efficiency | partial | cost experiments; not in the public benchmark |
-| Multi-agent | partial | sequential two-crew challenge; no communication/local views; no learned solution |
+| Multi-agent | partial | sequential two-crew challenge; local views/report negative; no learned solution |
 | Generative | absent | no layout/recipe generation task |
 
 ## Model-family map
@@ -354,8 +355,9 @@ five targets, six actions, shared observation, 500 ticks. It is a **challenge**
 task, not a solved control task. H1 coordination +21.6 and H2 scripted success
 1.00 pass; H3 learned gap +9.2 misses by 0.8 and H4 learned success is 0.20
 (BC 9.2, Q 0.0). The 0093 (3 targets) and 0094 (4 targets) conditions failed H1;
-only 0095 (5 targets) is frozen. Local views, communication, and stochastic
-faults/POMDP remain future work.
+only 0095 (5 targets) is frozen. Local views and a budgeted report action were
+tested in 0096 and are negative on this layout; the report action is retired.
+Stochastic faults/POMDP remain future work.
 
 ### P0 progress
 

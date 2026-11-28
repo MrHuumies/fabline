@@ -1,6 +1,6 @@
 # RFC 0032 — Sequential crew control and uncertain repair
 
-- **Status:** accepted for 0.7.0 Phase 1 (deterministic sequential crews); 0095 valid as a challenge; `factory-v0.6` frozen; stochastic faults deferred to 0.8.0 (ADR 0043).
+- **Status:** accepted for 0.7.0 Phase 1 (deterministic sequential crews); 0095 valid as a challenge; `factory-v0.6` frozen; Phase 2 communication negative (0096; no freeze); stochastic faults deferred to 0.8.0 (ADR 0043).
 - **Author:** FABLINE
 - **Date:** 2026-11-26
 - **Related:** RFC 0011, RFC 0012, RFC 0015, RFC 0017,
@@ -178,5 +178,8 @@ communication. ADR 0043 records the WIP audit and the required tests, CLI,
 oracle, and threshold calibration. Stochastic faults/POMDP are deferred to
 0.8.0. The 0093 (3 targets) and 0094 (4 targets) blocks failed H1; the 0095
 5-target block passed H1 (+21.6) and H2 (1.00) but failed H3/H4. The task is
-frozen as a challenge; H4 is not lowered. A larger learned budget or Phase 2
-communication is a new pre-registration.
+frozen as a challenge; H4 is not lowered. A larger learned budget is a new
+pre-registration. Phase 2 communication (0096) is negative on the current
+layout: local no-report 28.4/0.92 vs local report 17.2/0.72; H1 fails. The
+report action is retired on this layout; a new layout/report contract is a new
+pre-registration. No `factory-v0.7` freeze.
