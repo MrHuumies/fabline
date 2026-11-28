@@ -44,4 +44,4 @@ Architecture decision records. New behavior or scope changes need an ADR.
 - [0041 — 0.3.0 expansion and factory-v0.2](0041-0.3.0-scope.md)
 - [0042 — 0.4.0 scope and demand-driven production](0042-0.4.0-scope.md)
 - [0043 — 0.7.0 scope: deterministic sequential crews](0043-sequential-crew-scope.md)
-- [0044 — 0.8.0 scope: spatial production grammar](0044-0.8.0-scope.md) — proposed; owner approval pending.
+- [0044 — 0.8.0 scope: spatial grammar and stochastic faults](0044-0.8.0-scope.md) — accepted; both surfaces; first-slice design pending.

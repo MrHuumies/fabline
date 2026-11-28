@@ -357,8 +357,10 @@ task, not a solved control task. H1 coordination +21.6 and H2 scripted success
 (BC 9.2, Q 0.0). The 0093 (3 targets) and 0094 (4 targets) conditions failed H1;
 only 0095 (5 targets) is frozen. Local views and a budgeted report action were
 tested in 0096 and are negative on this layout; the report action is retired.
-The 0.8.0 scope is proposed as the spatial production grammar (RFC 0033 /
-ADR 0044); stochastic faults/POMDP are deferred.
+The 0.8.0 scope is accepted as two independent benchmarks: the spatial
+production grammar (`factory-v0.7`) and stochastic faults/POMDP
+(`factory-v0.8`); see RFC 0033 / ADR 0044. The spatial generator + layout-shift
+is the first implementation slice.
 
 ### P0 progress
 

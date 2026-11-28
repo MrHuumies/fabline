@@ -1,6 +1,6 @@
 # FABLINE roadmap — 0.5.0 to 0.8.0
 
-- **Status:** active; 0.5.0, 0.6.0, and 0.7.0 released; `factory-v0.6` challenge frozen; Phase 2 communication retired; 0.8.0 spatial grammar proposed (approval pending)
+- **Status:** active; 0.5.0, 0.6.0, and 0.7.0 released; `factory-v0.6` challenge frozen; Phase 2 communication retired; 0.8.0 scope accepted: spatial grammar + stochastic faults/POMDP (two independent benchmarks)
 - **Date:** 2026-11-27
 - **Theme:** coverage first, then structural mechanics
 - **Inputs:** [`coverage-analysis-2026-11-26.md`](coverage-analysis-2026-11-26.md),
@@ -52,7 +52,7 @@ The sequence is therefore:
 0.5.0  publish and measure        (no new world; coverage + baselines + method)
 0.6.0  production tree            (assembly edge; demand uncertainty if skilled)
 0.7.0  uncertain repair           (sequential crews + stochastic faults/POMDP)
-0.8.0  spatial production grammar (layout/scale/splitters; optional inventory/quality)
+0.8.0  spatial grammar + stochastic faults/POMDP (two independent tiers; optional inventory/quality)
 ```
 
 The generative line is conditional: it follows the grammar, not the calendar.
@@ -108,8 +108,8 @@ explicit in every card.
 | 0.5.0 | `factory-v0.4` | Coverage suite, challenge tier, public baselines, methodology | new frozen coverage benchmark |
 | 0.6.0 | `factory-v0.5` | Production tree: assembly edge + demand uncertainty | new frozen benchmark |
 | 0.7.0 | `factory-v0.6` | Sequential crews (Phase 1, challenge); stochastic faults deferred | frozen challenge benchmark |
-| 0.8.0 | `factory-v0.7` | Spatial production grammar: layout/scale/splitters | new frozen benchmark |
-| 0.8.0 stretch | `factory-v0.8` | Generative layout/recipe, only if the grammar audit passes | diagnostic or frozen, not both |
+| 0.8.0 | `factory-v0.7` + `factory-v0.8` | Spatial grammar + stochastic faults/POMDP (independent tiers) | two frozen benchmarks |
+| 0.9.0+ stretch | — | Generative layout/recipe, only if the grammar audit passes | diagnostic or frozen, not both |
 
 `factory-v0.1`, `v0.2`, and `v0.3` stay immutable. A new benchmark version may
 reference the old core, but must not edit the old assets or expected summaries.
@@ -542,12 +542,16 @@ Gates:
   sequential variant.
 - If stochastic faults do not change decisions or calibration, retire them as a
   diagnostic.
-- If the combined theme is too large, split 0.7.0 into sequential crews and
-  0.8.0 stochastic faults; do not ship both half-finished.
+- 0.7.0 ships sequential crews alone. The stochastic fault/POMDP tier is an
+  independent 0.8.0 benchmark; do not combine it with the spatial tier in one
+  task.
 
-## 8. 0.8.0 — Spatial production grammar (layout, scale, splitters)
+## 8. 0.8.0 — Spatial grammar and stochastic faults/POMDP (two tiers)
 
-**Status:** proposed via RFC 0033 / ADR 0044; owner approval pending.
+**Status:** accepted via RFC 0033 / ADR 0044; spatial first slice pending. The
+two tiers are independent: `factory-v0.7` (spatial) and `factory-v0.8`
+(stochastic faults/POMDP). The stochastic-fault tasks and gates described in
+§7.3 are moved to the `factory-v0.8` second tier.
 
 ### 8.1 Goal
 
@@ -625,8 +629,9 @@ If it fails, publish the audit as a negative result and defer to 0.9.0+.
 
 - RFC/ADR for layout/grammar (and optional inventory/quality).
 - Task cards/pre-regs.
-- `factory-v0.7` with `spatial` tier; `factory-v0.8` only if the generative
-  audit passes.
+- `factory-v0.7` with `spatial` tier; `factory-v0.8` with the
+  `stochastic-faults`/POMDP tier; independent expected summaries and freeze
+  reviews.
 - Split definitions and generator tests.
 - Expected summary and freeze review.
 
@@ -637,6 +642,8 @@ If it fails, publish the audit as a negative result and defer to 0.9.0+.
 - [ ] Splitter/merger invariants and item conservation hold.
 - [ ] OOD gap and model ordering are reported.
 - [ ] Inventory/quality tasks are included only if their gates pass.
+- [ ] Fault tier: detection skill, calibration with skill, and POMDP control
+      gates pass; fault-free hashes unchanged.
 - [ ] Generative audit is reported; no generative benchmark on <20 structures.
 
 ### 8.8 Kill criteria
@@ -645,6 +652,8 @@ If it fails, publish the audit as a negative result and defer to 0.9.0+.
 - If splitters/mergers add complexity without a new decision, cut them.
 - If inventory/quality do not add a new decision over existing production
   tasks, defer them.
+- If one 0.8.0 tier fails its validity gate, ship the other independently; do
+  not combine them into a half-finished task.
 - If the generative audit fails, defer; do not train a model on 7 lines.
 
 ## 9. Backlog and dependencies
