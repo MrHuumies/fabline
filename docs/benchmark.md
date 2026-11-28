@@ -3,19 +3,26 @@
 This document defines how methods are compared on FABLINE. The benchmark is a
 contract: frozen tasks, frozen splits, fixed budgets, standard reports.
 
-**Current release:** `factory-v0.5` — see
-[`benchmarks/factory-v0.5/card.md`](../benchmarks/factory-v0.5/card.md). It
-keeps `factory-v0.4` by reference and adds four assembly-edge tasks. The frozen
-`factory-v0.3` core, the `factory-v0.4` coverage suite, and the earlier v0.1/v0.2
-releases remain immutable. Cross-task cost is reported separately in the
-[`efficiency table`](efficiency.md); it is descriptive, not a benchmark score.
+**Current release:** `factory-v0.6` — see
+[`benchmarks/factory-v0.6/card.md`](../benchmarks/factory-v0.6/card.md). It is a
+one-task sequential-crew challenge: two crews, five targets, six actions, shared
+observation, 500 ticks. The task is valid (H1 +21.6, H2 1.00) but the learned
+baselines fail (BC 9.2/0.20, Q 0.0/0.00), so it is a challenge, not a solved
+task. `factory-v0.5` and earlier remain immutable.
 
-The `factory-v0.4` **coverage suite** adds an eight-task coverage tier plus
-public structured baselines; wired-cascade is a diagnostic. Run it with
+Run the current challenge benchmark with:
+
+```bash
+.venv/bin/python -m fabline sequential-crew --out results/factory-v0.6
+```
+
+The `factory-v0.5` assembly suite and `factory-v0.4` coverage suite remain
+available. The `factory-v0.4` coverage suite adds an eight-task tier plus public
+structured baselines; wired-cascade is a diagnostic. Run it with
 `python -m fabline coverage-suite --out results/factory-v0.4-coverage`; see
 [`benchmarks/factory-v0.4/card.md`](../benchmarks/factory-v0.4/card.md).
 
-Run the current assembly benchmark with:
+Run the assembly suite with:
 
 ```bash
 .venv/bin/python -m fabline assembly-suite --out results/factory-v0.5

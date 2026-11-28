@@ -33,6 +33,7 @@ from fabline.env.preventive_threshold import ThresholdConfig
 from fabline.env.preventive_wire import PreventiveWireConfig
 from fabline.env.production_mix import ProductionMixConfig
 from fabline.env.recipe import RecipeEnvConfig
+from fabline.env.sequential_crew import SequentialCrewConfig
 from fabline.env.three_crew_replan import ThreeCrewReplanConfig
 from fabline.env.wire_repair import WireRepairConfig
 from fabline.harness.assembly_bom import (
@@ -247,6 +248,14 @@ from fabline.harness.reliability_contract import (
     write_reliability_contract_report,
 )
 from fabline.harness.runner import run_throughput_benchmark
+from fabline.harness.sequential_crew import (
+    build_expected_summary as build_sequential_expected_summary,
+)
+from fabline.harness.sequential_crew import (
+    run_sequential_crew,
+    sequential_gates,
+    write_sequential_crew_report,
+)
 from fabline.harness.shared_suite import SharedSuiteConfig, run_shared_suite
 from fabline.harness.suite import SuiteConfig, run_suite
 from fabline.harness.wire_repair import (
@@ -549,6 +558,84 @@ def cmd_order_rl(args: argparse.Namespace) -> int:
     report = run_order_rl(config, orders, rl)
     path = write_order_rl_report(args.out, report)
     print(json.dumps({"report": str(path), **report}, indent=2, sort_keys=True))
+    return 0
+
+
+def cmd_sequential_crew(args: argparse.Namespace) -> int:
+    seeds = tuple(int(value) for value in args.seeds.split(","))
+    config = FactoryConfig(
+        width=args.width,
+        height=args.height,
+        ticks_per_episode=args.episode_ticks,
+        decision_interval=args.decision_interval,
+        entity_budget=args.entity_budget,
+        rock_density=args.rock_density,
+        ore_patches=args.ore_patches,
+        starter_line=True,
+        emit_events=True,
+    )
+    crew = SequentialCrewConfig(
+        episode_ticks=args.episode_ticks,
+        decision_interval=args.decision_interval,
+        target_count=args.targets,
+        repair_ticks=args.repair_ticks,
+    )
+    results = run_sequential_crew(
+        config,
+        crew,
+        seeds=seeds,
+        episodes=args.episodes,
+        q_episodes=args.q_episodes,
+        bc_episodes=args.bc_episodes,
+    )
+    gates = sequential_gates(results)
+    config_summary = {
+        "width": config.width,
+        "height": config.height,
+        "seeds": list(seeds),
+        "episodes": args.episodes,
+        "target_count": crew.target_count,
+        "repair_ticks": crew.repair_ticks,
+        "episode_ticks": crew.episode_ticks,
+        "decision_interval": crew.decision_interval,
+        "q_episodes": args.q_episodes,
+        "bc_episodes": args.bc_episodes,
+    }
+    path = write_sequential_crew_report(
+        args.out,
+        results,
+        config=config_summary,
+    )
+    payload: dict[str, object] = {
+        "report": str(path),
+        "gates": gates,
+    }
+    summary = build_sequential_expected_summary(results, config_summary)
+    if args.expected:
+        payload["expected"] = str(
+            write_expected_summary(args.expected, summary)
+        )
+    if args.check_expected:
+        try:
+            expected = json.loads(
+                Path(args.check_expected).read_text(encoding="utf-8")
+            )
+        except (OSError, json.JSONDecodeError) as exc:
+            print(
+                f"error: could not read expected summary "
+                f"{args.check_expected}: {exc}",
+                file=sys.stderr,
+            )
+            return 2
+        mismatches = compare_expected_summary(expected, summary)
+        payload["check"] = {
+            "ok": not mismatches,
+            "mismatches": mismatches[:50],
+            "mismatch_count": len(mismatches),
+        }
+        print(json.dumps(payload, indent=2, sort_keys=True))
+        return 0 if not mismatches else 1
+    print(json.dumps(payload, indent=2, sort_keys=True))
     return 0
 
 
@@ -3176,6 +3263,34 @@ def build_parser() -> argparse.ArgumentParser:
     order_rl.add_argument("--bc-episodes", type=int, default=100)
     order_rl.add_argument("--success-value", type=int, default=160)
     order_rl.set_defaults(func=cmd_order_rl)
+
+    sequential_crew = subparsers.add_parser(
+        "sequential-crew",
+        help="run deterministic two-crew sequential repair",
+    )
+    sequential_crew.add_argument(
+        "--out", type=str, default="results/sequential-crew"
+    )
+    sequential_crew.add_argument(
+        "--seeds",
+        type=str,
+        default="110150,110151,110152,110153,110154",
+    )
+    sequential_crew.add_argument("--episodes", type=int, default=5)
+    sequential_crew.add_argument("--q-episodes", type=int, default=500)
+    sequential_crew.add_argument("--bc-episodes", type=int, default=50)
+    sequential_crew.add_argument("--targets", type=int, default=5)
+    sequential_crew.add_argument("--expected", type=str, default=None)
+    sequential_crew.add_argument("--check-expected", type=str, default=None)
+    sequential_crew.add_argument("--repair-ticks", type=int, default=6)
+    sequential_crew.add_argument("--episode-ticks", type=int, default=500)
+    sequential_crew.add_argument("--decision-interval", type=int, default=10)
+    sequential_crew.add_argument("--width", type=int, default=32)
+    sequential_crew.add_argument("--height", type=int, default=32)
+    sequential_crew.add_argument("--entity-budget", type=int, default=64)
+    sequential_crew.add_argument("--rock-density", type=float, default=0.06)
+    sequential_crew.add_argument("--ore-patches", type=int, default=4)
+    sequential_crew.set_defaults(func=cmd_sequential_crew)
 
     order_control = subparsers.add_parser(
         "order-control",

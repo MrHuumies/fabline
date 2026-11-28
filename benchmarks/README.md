@@ -45,3 +45,10 @@ The 0.6.0 assembly release is [`factory-v0.5`](factory-v0.5/spec.md), frozen on
 production tree: assembly control, assembly planning, BOM forecast, and recipe
 intervention. The expected summary is in `factory-v0.5/expected/summary.json`;
 all four tasks pass. Demand uncertainty and layout splits are deferred.
+
+The 0.7.0 sequential-crew release is [`factory-v0.6`](factory-v0.6/spec.md),
+frozen on 2026-11-28. It adds one **challenge** task: two crews repair five
+failed wires on a 32x32 wired-power layout with six actions per crew and a
+shared observation. The task is valid (H1 +21.6, H2 1.00) but the learned
+baselines fail (BC 9.2/0.20, Q 0.0/0.00), so it is a challenge, not a solved
+control task. The expected summary is in `factory-v0.6/expected/summary.json`.

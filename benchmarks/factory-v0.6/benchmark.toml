@@ -1,0 +1,33 @@
+# factory-v0.6 benchmark specification.
+# The runner is `fabline sequential-crew`; this file is the human-readable contract.
+# Status is frozen as a challenge benchmark.
+
+[benchmark]
+name = "factory-v0.6"
+status = "frozen"
+tier = "challenge"
+version = "0.6.0"
+date = "2026-11-28"
+world_version = "factory-0.1.0"
+plan = "sequential-v0.6"
+target_release = "0.7.0"
+command = ".venv/bin/python -m fabline sequential-crew --out results/factory-v0.6"
+expected = "benchmarks/factory-v0.6/expected/summary.json"
+check = ".venv/bin/python -m fabline sequential-crew --out results/factory-v0.6 --check-expected benchmarks/factory-v0.6/expected/summary.json"
+
+[task]
+id = "factory.power.crew-sequential.v1"
+crews = 2
+targets = 5
+episodes = 5
+episode_ticks = 500
+decision_interval = 10
+repair_ticks = 6
+seeds = [110150, 110151, 110152, 110153, 110154]
+q_episodes = 500
+bc_episodes = 50
+success = "mission completion (all five targets repaired within 500 ticks)"
+
+[expected]
+rtol = 0.03
+atol = 0.02

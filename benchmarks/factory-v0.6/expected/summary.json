@@ -1,0 +1,173 @@
+{
+  "benchmark": "factory-v0.6",
+  "config": {
+    "bc_episodes": 50,
+    "decision_interval": 10,
+    "episode_ticks": 500,
+    "episodes": 5,
+    "height": 32,
+    "q_episodes": 500,
+    "repair_ticks": 6,
+    "seeds": [
+      110150,
+      110151,
+      110152,
+      110153,
+      110154
+    ],
+    "target_count": 5,
+    "width": 32
+  },
+  "date": "2026-11-28",
+  "plan": "sequential-v0.6",
+  "status": "challenge",
+  "tasks": {
+    "crew-sequential": {
+      "gates": {
+        "H1_coordination": true,
+        "H2_scripted_success": true,
+        "H3_learned_gap": false,
+        "H4_learned_success": false,
+        "H5_cost_reported": true,
+        "challenge": true
+      },
+      "oracle_gap": 5.199999999999996,
+      "results": {
+        "assigned": {
+          "mean_repairs": 5.0,
+          "mean_score": 33.6,
+          "mean_steps": 50.0,
+          "per_seed": [
+            52.0,
+            26.0,
+            26.0,
+            38.0,
+            26.0
+          ],
+          "score_ci": [
+            20.59,
+            49.40999999999999
+          ],
+          "success_rate": 1.0
+        },
+        "bc": {
+          "mean_repairs": 2.48,
+          "mean_score": 9.2,
+          "mean_steps": 50.0,
+          "model": {
+            "messages": 0,
+            "models": 2,
+            "table_entries": null
+          },
+          "per_seed": [
+            30.0,
+            4.0,
+            4.0,
+            4.0,
+            4.0
+          ],
+          "score_ci": [
+            1.6,
+            24.229999999999976
+          ],
+          "success_rate": 0.2
+        },
+        "greedy": {
+          "mean_repairs": 5.0,
+          "mean_score": 32.4,
+          "mean_steps": 50.0,
+          "per_seed": [
+            54.0,
+            28.0,
+            28.0,
+            32.0,
+            20.0
+          ],
+          "score_ci": [
+            20.59,
+            46.8
+          ],
+          "success_rate": 1.0
+        },
+        "independent_q": {
+          "mean_repairs": 0.84,
+          "mean_score": 0.0,
+          "mean_steps": 50.0,
+          "model": {
+            "messages": 0,
+            "models": null,
+            "table_entries": 796
+          },
+          "per_seed": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "score_ci": [
+            0.0,
+            0.0
+          ],
+          "success_rate": 0.0
+        },
+        "queue_oracle": {
+          "mean_repairs": 5.0,
+          "mean_score": 38.8,
+          "mean_steps": 50.0,
+          "per_seed": [
+            60.0,
+            34.0,
+            34.0,
+            42.0,
+            24.0
+          ],
+          "score_ci": [
+            24.0,
+            55.2
+          ],
+          "success_rate": 1.0
+        },
+        "random": {
+          "mean_repairs": 0.0,
+          "mean_score": 0.0,
+          "mean_steps": 50.0,
+          "per_seed": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+          ],
+          "score_ci": [
+            0.0,
+            0.0
+          ],
+          "success_rate": 0.0
+        },
+        "single_crew": {
+          "mean_repairs": 3.48,
+          "mean_score": 12.0,
+          "mean_steps": 50.0,
+          "per_seed": [
+            34.0,
+            4.0,
+            4.0,
+            8.0,
+            10.0
+          ],
+          "score_ci": [
+            3.2,
+            29.6
+          ],
+          "success_rate": 0.28
+        }
+      }
+    }
+  },
+  "tolerance": {
+    "atol": 0.02,
+    "rtol": 0.03
+  },
+  "version": "0.6.0"
+}

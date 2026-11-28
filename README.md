@@ -77,50 +77,48 @@ make render-install
   (`INGOT + COMPONENT -> 2 GEAR`), component logistics, a fixed two-feed
   assembly cell, and four frozen tasks: control, planning, BOM forecast, and
   recipe intervention.
+- **Sequential crews (0.7.0):** a two-crew, five-target sequential repair
+  challenge with movement, wait, and repair actions.
 
-Every mechanic is opt-in. `factory-v0.1` through `factory-v0.4` remain frozen
+Every mechanic is opt-in. `factory-v0.1` through `factory-v0.5` remain frozen
 for provenance.
 
 ## Benchmark
 
-The current benchmark is [`factory-v0.5`](benchmarks/factory-v0.5/card.md), the
-assembly-edge release:
+The current benchmark is [`factory-v0.6`](benchmarks/factory-v0.6/card.md), the
+sequential-crew challenge:
 
-- four assembly tasks: control, planning, BOM forecast, and recipe intervention;
-- a fixed two-feed cell with per-assembler recipes;
-- public baselines and gates for each task;
+- one task: two crews repair five failed wires on a 32×32 wired-power layout;
+- six actions per crew, shared observation, 500 ticks, mission-completion
+  success;
+- scripted/oracle references pass H1/H2; Q and BC fail H3/H4, so it is frozen
+  as a challenge, not a solved task;
 - a checked-in expected summary and CI check.
 
 ```bash
-.venv/bin/python -m fabline assembly-suite --out results/factory-v0.5
+.venv/bin/python -m fabline sequential-crew --out results/factory-v0.6
 ```
 
 The expected summary is in
-[`benchmarks/factory-v0.5/expected/summary.json`](benchmarks/factory-v0.5/expected/summary.json).
-`factory-v0.4` keeps the eight-task coverage suite, `factory-v0.3` keeps the
-12-task core, and the earlier benchmarks remain immutable.
+[`benchmarks/factory-v0.6/expected/summary.json`](benchmarks/factory-v0.6/expected/summary.json).
+`factory-v0.5` keeps the four-task assembly suite, `factory-v0.4` the eight-task
+coverage suite, `factory-v0.3` the 12-task core; earlier benchmarks remain
+immutable.
 
-The **factory-v0.4 coverage suite** is also available:
+The `factory-v0.5` **assembly suite** and `factory-v0.4` **coverage suite** are
+also available:
 
 ```bash
+.venv/bin/python -m fabline assembly-suite --out results/factory-v0.5
 .venv/bin/python -m fabline coverage-suite --out results/factory-v0.4-coverage
 ```
 
-It adds an eight-task coverage tier (`reliability-contract`,
-`partial-throughput`, `wired-cascade`, `crew-schedule`, `crew-triage`,
-`preventive-wire`, `recipe-choice`, `maintenance-threshold`), public structured
-baselines (CNN, MPNN, GRU, Transformer), and a challenge-task list for
-follow-up. The suite is **frozen** as `factory-v0.4`; wired-cascade is a
-diagnostic, not a headline score. See
-[`benchmarks/factory-v0.4/card.md`](benchmarks/factory-v0.4/card.md).
-The current coverage map is in
-[`docs/coverage-map.md`](docs/coverage-map.md); the
-[0.5.0 review](docs/coverage-review-0.5.0.md) records the coverage release, and
-the [`factory-v0.5` freeze review](benchmarks/factory-v0.5/freeze-review.md)
+The current coverage map is in [`docs/coverage-map.md`](docs/coverage-map.md);
+the [0.5.0 review](docs/coverage-review-0.5.0.md) records the coverage release,
+and the [`factory-v0.5` freeze review](benchmarks/factory-v0.5/freeze-review.md)
 records the assembly suite. Cross-task cost is in the
-[`efficiency table`](docs/efficiency.md).
-Small library-version differences are acceptable; headline ordering should be
-stable.
+[`efficiency table`](docs/efficiency.md). Small library-version differences are
+acceptable; headline ordering should be stable.
 
 ## Example data
 

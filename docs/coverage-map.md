@@ -7,7 +7,7 @@
 - **Related:** [`testbed.md`](testbed.md), [`research-axes.md`](research-axes.md),
   [`coverage-review-0.1.2.md`](coverage-review-0.1.2.md),
   [`coverage-review-0.4.0.md`](coverage-review-0.4.0.md),
-  [`benchmarks/factory-v0.5/card.md`](../benchmarks/factory-v0.5/card.md)
+  [`benchmarks/factory-v0.6/card.md`](../benchmarks/factory-v0.6/card.md)
 
 ## How to use this map
 
@@ -68,6 +68,7 @@ This document is a map, not a commitment to implement every row.
 | production mix | control | production | component 186 vs gear 150; no schedule gap |
 | order control | control | production + orders | value 289.8; Q 280.2; random 226.4 |
 | order planning | planning | order set | CEM = oracle 292.4; EDF 263.8 |
+| sequential crew repair | control/multi-agent | shared crew state | challenge in `factory-v0.6`; H1 +21.6, H2 1.00; BC 9.2/0.20 |
 
 ### Current baselines
 
@@ -128,7 +129,7 @@ and the remaining package-release steps.
 | Robustness / OOD | partial | scenario splits; stochastic power |
 | Uncertainty / calibration | partial | calibration metrics for stochastic power; maintenance forecasts uncalibrated |
 | Efficiency | partial | cost experiments; not in the public benchmark |
-| Multi-agent | partial | centralized two-crew assignment and recall/replanning (debug); no per-agent policies or communication |
+| Multi-agent | partial | sequential two-crew challenge; no communication/local views; no learned solution |
 | Generative | absent | no layout/recipe generation task |
 
 ## Model-family map
@@ -344,6 +345,16 @@ control (Q 460 vs random 429.2), planning (CEM 428 vs oracle 430), BOM forecast
 gain). It fills the production-graph, multi-input, causal-intervention, and
 output-forecast gaps. Demand uncertainty, layout splits, and logged-data causal
 identification remain deferred; see the `factory-v0.5` freeze review.
+
+### 0.7.0 — sequential crew challenge
+
+Phase 1 of the uncertain-repair line is frozen as `factory-v0.6`: two crews,
+five targets, six actions, shared observation, 500 ticks. It is a **challenge**
+task, not a solved control task. H1 coordination +21.6 and H2 scripted success
+1.00 pass; H3 learned gap +9.2 misses by 0.8 and H4 learned success is 0.20
+(BC 9.2, Q 0.0). The 0093 (3 targets) and 0094 (4 targets) conditions failed H1;
+only 0095 (5 targets) is frozen. Local views, communication, and stochastic
+faults/POMDP remain future work.
 
 ### P0 progress
 

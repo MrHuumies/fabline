@@ -1,11 +1,12 @@
 # ADR 0043 — 0.7.0 scope: deterministic sequential crews
 
-- **Status:** accepted; Phase 1 formal negative on H1 (no freeze)
+- **Status:** accepted; Phase 1 valid as a challenge task (0095); `factory-v0.6` frozen
 - **Date:** 2026-11-28
 - **Related:** RFC 0032, RFC 0030, ADR 0042,
   [`roadmap-0.5.0-0.8.0.md`](../roadmap-0.5.0-0.8.0.md),
   [`crew-sequential.md`](../tasks/crew-sequential.md),
-  [`factory-v0.5`](../../benchmarks/factory-v0.5/card.md)
+  [`factory-v0.5`](../../benchmarks/factory-v0.5/card.md),
+  [`factory-v0.6`](../../benchmarks/factory-v0.6/card.md)
 - **Approved by:** owner
 
 ## Context
@@ -50,7 +51,7 @@ mypy, and a 1-seed smoke run completes, but the audit found:
 2. Defer stochastic faults and POMDP maintenance to **0.8.0**. Do not mix them
    into 0.7.0.
 3. Fix the Phase 1 contract:
-   - two crews and three target wires on a fixed gear/wired-power layout;
+   - two crews and five target wires on a fixed gear/wired-power layout;
    - six actions: north, east, south, west, wait, repair;
    - shared observation for Phase 1; local views, `report`, and communication
      are Phase 2;
@@ -58,7 +59,7 @@ mypy, and a 1-seed smoke run completes, but the audit found:
      factory state;
    - 500 ticks, decision interval 10, repair ticks 6;
    - the default world hash and frozen v0.1–v0.5 assets are unchanged.
-4. Success is **mission completion**: all three targets repaired within the
+4. Success is **mission completion**: all five targets repaired within the
    500-tick budget. The legacy `success_score=150` is retired; the score remains
    a continuous secondary metric. Do not reintroduce a score threshold without a
    new pre-registration.
@@ -70,16 +71,18 @@ mypy, and a 1-seed smoke run completes, but the audit found:
 6. Add tests for movement, action masks, repair progress, determinism, replay
    round-trip, invalid-layout handling, and hash invariance.
 7. Add a `sequential-crew` CLI command and a Makefile target.
-8. Do not freeze `factory-v0.6` until the Phase 1 formal block passes task
-   validity. A challenge-tier freeze is allowed under the policy above.
+8. Phase 1 task validity passed at five targets (0095); freeze `factory-v0.6`
+   as a challenge task under the policy above. Phase 2 (local views, `report`,
+   communication) and stochastic faults/POMDP remain future work.
 
 ## Phase 1 outcome (2026-11-28)
 
-The formal 0093 block failed H1: assigned 93.2 vs single 88.4 (**+4.8**, below
-the +10 gate). H2/H3/H5 passed; H4 failed (BC 0.24, Q 0.16). The pilot's +12 did
-not replicate. Because task validity failed, the challenge tier did not apply
-and `factory-v0.6` was not frozen. The next step is a redesign with a new
-pre-registration or retirement under RFC 0032's kill criterion.
+The 0093 (3 targets) and 0094 (4 targets) formal blocks failed H1 (+4.8 and
++6.8). The 0095 5-target block passed H1 (**+21.6**) and H2 (1.00), while H3
+(+9.2) and H4 (0.20) failed. The challenge tier applies: `factory-v0.6` is
+frozen as a challenge task, H4 is not lowered, and the learned baselines are not
+tuned. Phase 2 (local views, `report`, communication) and stochastic faults/POMDP
+remain future work.
 
 ## Alternatives considered
 
@@ -106,7 +109,7 @@ pre-registration or retirement under RFC 0032's kill criterion.
   challenge task; task validity and baseline quality are separate.
 - The multi-agent gap is addressed first; stochastic faults and belief-state
   calibration remain open for 0.8.0.
-- The WIP branch must be rebased and completed before any formal run.
+- The Phase 1 branch is complete; the benchmark is frozen as a challenge.
 - `factory-v0.1`–`factory-v0.5` remain immutable; no default hash changes.
 
 ## Follow-ups
@@ -117,5 +120,7 @@ pre-registration or retirement under RFC 0032's kill criterion.
 - [x] Fix success at mission completion, validate the layout, and write the
       pre-registration.
 - [x] Update the `crew-sequential` task card and RFC 0032 status.
-- [x] Run the formal five-seed block: H1 failed; `factory-v0.6` not frozen.
-- [ ] Redesign with a new pre-registration or retire the sequential variant.
+- [x] Run 0093, 0094, and 0095; 0095 is valid as a challenge.
+- [x] Freeze `factory-v0.6` as a challenge task for the 0.7.0 release.
+- [ ] Phase 2 local views/report/communication (new pre-registration).
+- [ ] 0.8.0 stochastic faults/POMDP (new RFC/pre-registration).

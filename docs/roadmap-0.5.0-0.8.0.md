@@ -1,6 +1,6 @@
 # FABLINE roadmap — 0.5.0 to 0.8.0
 
-- **Status:** active; 0.5.0 and 0.6.0 released, 0.7.0 Phase 1 negative on H1 (no freeze)
+- **Status:** active; 0.5.0 and 0.6.0 released, 0.7.0 Phase 1 valid as a challenge; `factory-v0.6` frozen
 - **Date:** 2026-11-27
 - **Theme:** coverage first, then structural mechanics
 - **Inputs:** [`coverage-analysis-2026-11-26.md`](coverage-analysis-2026-11-26.md),
@@ -67,7 +67,7 @@ The generative line is conditional: it follows the grammar, not the calendar.
 | Wired cascade | `feat/0.5.0-wired-cascade` | merged; graph_mp R² 0.124, +0.018 < +0.05; diagnostic |
 | Coverage suite | `feat/0.5.0-coverage-suite` | merged and frozen as `factory-v0.4`; 8 tasks, 7 pass / 1 diagnostic |
 | Assembly edge | `feat/0.6.0-assembly-*` | merged and frozen as `factory-v0.5`; four tasks, 4/4 pass; demand uncertainty deferred |
-| 0.7.0 Phase 1 | `feat/0.7.0-sequential-crew` | formal 0093 negative on H1 (+4.8); H2/H3/H5 pass, H4 fails; no `factory-v0.6` freeze; redesign or retire |
+| 0.7.0 Phase 1 | `feat/0.7.0-sequential-crew` | 0095 H1 +21.6, H2 1.00; H3/H4 fail; challenge; `factory-v0.6` frozen |
 
 `factory-v0.4` is **frozen**: eight tasks, **7 pass / 1 diagnostic**, with a
 checked-in expected summary and zero-mismatch full check (reliability +17.62
@@ -81,7 +81,7 @@ intervention GBDT R² 0.944 with +1.62 of +2.00 oracle gain). Demand uncertainty
 layout splits, and logged-data causal identification are deferred to a later
 version; the freeze review records them.
 
-The Phase 1 formal block (0093) is negative on H1; the next step is a redesign with a new pre-registration or retirement of the sequential variant. ADR 0043 defers stochastic faults to 0.8.0.
+The Phase 1 5-target block (0095) is valid as a challenge; `factory-v0.6` is frozen. ADR 0043 defers stochastic faults to 0.8.0.
 
 ### 1.2 How this plan uses the analysis
 
@@ -107,7 +107,7 @@ explicit in every card.
 |---|---|---|---|
 | 0.5.0 | `factory-v0.4` | Coverage suite, challenge tier, public baselines, methodology | new frozen coverage benchmark |
 | 0.6.0 | `factory-v0.5` | Production tree: assembly edge + demand uncertainty | new frozen benchmark |
-| 0.7.0 | `factory-v0.6` | Sequential crews (Phase 1); stochastic faults deferred | new frozen benchmark |
+| 0.7.0 | `factory-v0.6` | Sequential crews (Phase 1, challenge); stochastic faults deferred | frozen challenge benchmark |
 | 0.8.0 | `factory-v0.7` | Spatial production grammar: layout/scale/splitters | new frozen benchmark |
 | 0.8.0 stretch | `factory-v0.8` | Generative layout/recipe, only if the grammar audit passes | diagnostic or frozen, not both |
 
@@ -449,12 +449,11 @@ maintenance move to 0.8.0. A Phase 1 task may freeze as a **challenge task** if
 task validity (coordination and scripted success) passes but the learned
 baseline misses the success gate; label it and report the gap. Do not lower H4.
 
-**Formal result (2026-11-28).** The 0093 block failed H1: assigned 93.2 vs
-single 88.4 (+4.8, below +10). H2/H3/H5 passed; H4 failed (BC 0.24, Q 0.16).
-The pilot's +12 did not replicate. The challenge tier does not apply because
-task validity failed; `factory-v0.6` is not frozen. Redesign with a spread
-layout/more targets or retire the sequential variant under RFC 0032's kill
-criterion.
+**Formal result (2026-11-28).** The 0093 (3 targets) and 0094 (4 targets)
+blocks failed H1 (+4.8 and +6.8). The 0095 5-target block passed H1 (+21.6) and
+H2 (1.00), but H3/H4 failed (BC 9.2/0.20, Q 0.0/0.00). The task is frozen as a
+challenge in `factory-v0.6`; H4 is not lowered. Phase 2 communication and
+stochastic faults/POMDP remain future work.
 
 ### 7.2 Sequential crew mechanic
 

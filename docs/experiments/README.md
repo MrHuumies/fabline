@@ -147,5 +147,11 @@ The current frozen benchmark is documented separately in
 
 - [0092 — Order-control RL](0092-order-rl/summary.md) — negative; BC 249.8, PPO 169.0 vs random 243.2.
 
+- [0093 — Sequential crew repair](0093-sequential-crew/summary.md) — negative on task validity; H1 +4.8 below +10; no freeze.
+
+- [0094 — Sequential crew redesign (4 targets)](0094-sequential-crew-redesign/summary.md) — negative on task validity; H1 +6.8 below +10; no freeze.
+
+- [0095 — Sequential crew redesign (5 targets)](0095-sequential-crew-5target/summary.md) — valid; challenge; H1 +21.6, H2 1.00; H3/H4 fail; frozen as `factory-v0.6`.
+
 The `factory-v0.3` freeze review is in
 [`benchmarks/factory-v0.3/freeze-review.md`](../../benchmarks/factory-v0.3/freeze-review.md).

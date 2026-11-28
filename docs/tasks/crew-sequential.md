@@ -1,73 +1,62 @@
 # Task card — sequential crew repair control
 
-- **Task ID:** `factory.power.crew-sequential.v1` (draft)
-- **Version:** 0.1.0-wip
-- **Status:** Phase 1 formal negative on H1; not frozen (0093)
+- **Task ID:** `factory.power.crew-sequential.v1`
+- **Version:** 0.1.0
+- **Status:** frozen as a **challenge** task in `factory-v0.6`
 - **World:** `factory-0.1.0` + wired power (task-layer crews)
 - **Owner:** FABLINE
-- **Date:** 2026-11-26
+- **Date:** 2026-11-28
 - **RFC:** [`0032-uncertain-repair.md`](../rfcs/0032-uncertain-repair.md)
+- **ADR:** [`0043-sequential-crew-scope.md`](../decisions/0043-sequential-crew-scope.md)
+- **Benchmark:** [`factory-v0.6`](../../benchmarks/factory-v0.6/card.md)
 
 ## Phenomenon
 
-Two or three repair crews move through a repair yard with failed/degraded
-components at different positions. Each crew sees only its local
-neighborhood, chooses movement/repair/report actions, and contributes to the
-team's restored production. The task tests sequential per-agent control,
-coordination, and communication, not a one-shot assignment.
+Two repair crews move through a repair yard with failed wires at different
+positions. Each crew chooses movement, wait, or repair and contributes to the
+team's restored production. The task tests sequential per-crew control and
+coordination, not a one-shot assignment.
 
-## Contract (Phase 1 WIP)
+## Contract (Phase 1)
 
-- **Observation:** shared task observation for Phase 1 (positions, target
-  failure/distance, repair progress, clock, budget); local per-crew views and
-  received reports are Phase 2.
+- **Observation:** shared 20-feature task state for Phase 1 (clock, score,
+  positions, target failure/distance/progress, repaired fraction, budget).
+  Local per-crew views and reports are Phase 2.
 - **Action (per crew):** move N/E/S/W, wait, repair. `report` is Phase 2.
-- **Joint action:** tuple of per-crew actions; `6^2 = 36` with legal masks.
-- **Reward:** time-weighted restored connectivity/production minus repair and
-  abort costs.
+- **Joint action:** `6^2 = 36` with legal masks.
+- **Reward:** time-weighted restored production plus repair/progress bonuses.
 - **Episode:** 500 ticks; decision interval 10; repair ticks 6.
-- **Success:** fixed by the pre-registration after threshold calibration.
-- **Layout:** fixed gear/wired-power layout for Phase 1; a spread yard with
-  graded visibility is Phase 2.
-
-## WIP audit (2026-11-28)
-
-The WIP branch is based on an older `main` and passes ruff/mypy, but it is not
-release-ready:
-
-- no tests, CLI, Makefile target, pre-registration, or task-card update;
-- no centralized oracle (`queue_search` is only a scripted queue search);
-- gates omit the oracle gap, cost, and message volume;
-- evaluation does not retry invalid layouts;
-- mission completion does not terminate the episode;
-- `success_score=150` is uncalibrated: a 1-seed smoke run repaired all three
-  targets but scored 60, so scripted success was 0;
-- the Phase 1 contract (6 actions, shared observation) was implicit.
-
-See [ADR 0043](../decisions/0043-sequential-crew-scope.md) for the scope
-decision and required follow-ups.
+- **Success:** mission completion — all five targets repaired within 500 ticks.
+  Score is a continuous secondary metric.
+- **Layout:** fixed 32×32 gear/wired-power layout.
+- **State:** crew positions and repair progress are task-layer state, not part
+  of the canonical factory hash; they are serialized for replay.
 
 ## Baselines
 
 | Baseline | Rule |
 |---|---|
-| centralized oracle | full view, exhaustive/CP-SAT for small instances |
-| greedy/nearest/EDF | scripted assignment + movement |
-| independent Q | per-crew local state |
-| MAPPO/QMIX/MADDPG/COMA | centralized training, decentralized execution |
-| communication policies | CommNet/TarMAC/DIAL |
+| single_crew | crew 0 repairs; crew 1 waits |
+| greedy | each crew pursues its nearest failed target |
+| assigned | distinct nearest-pair assignment |
+| queue_oracle | best queue assignment/order over the scripted movement policy |
+| random | uniform legal joint action |
+| independent_q | per-crew tabular Q, 500 training episodes |
+| bc | behavior cloning of `assigned`, 50 episodes + 3 DAgger iterations |
 
-## Gates (draft)
+`queue_oracle` is a queue-plan upper bound, not a full joint-action oracle.
+
+## Gates
 
 | Gate | Threshold |
 |---|---|
-| H1 coordination | best multi-crew ≥ single crew + 10 |
-| H2 scripted success | assigned/greedy mission completion ≥ 0.60 |
-| H3 learned | best learned ≥ random + 10; report vs best scripted |
-| H4 success | best learned success ≥ 0.60 for a standard task |
-| H5 cost | report parameters, steps, messages (0 in Phase 1), wall-clock |
+| H1 coordination | best scripted ≥ single crew + 10 |
+| H2 scripted success | best scripted mission completion ≥ 0.60 |
+| H3 learned gap | best learned ≥ random + 10 |
+| H4 learned success | best learned success ≥ 0.60 for a standard task |
+| H5 cost | report parameters, training seconds, messages (0 in Phase 1) |
 
-`queue_oracle` is a queue-plan upper bound, not a full joint-action oracle.
+Oracle gap is a diagnostic, not a freeze gate.
 
 ## Challenge tier
 
@@ -76,31 +65,44 @@ baseline misses H3/H4. Label it challenge in the task card and expected summary,
 report the learned gap, and do not lower H4 or tune after the formal block. If
 H1/H2 fail, the task is not valid and is not frozen.
 
-## Formal result (0093)
+## Phase 1 results
 
-Seeds 100,010–100,014, five episodes: assigned **93.2/1.00** vs single
-**88.4/0.84**, a **+4.8** score gain below the +10 H1 gate. H2 passed (1.00),
-H3 passed only because random scored 0, H4 failed (BC 0.24, Q 0.16), and H5
-passed. The pilot's +12 did not replicate. The challenge tier does not apply
-because H1 failed; `factory-v0.6` is not frozen. Redesign with a new
-pre-registration or retire the sequential variant under RFC 0032.
+Seeds and conditions:
+
+| Experiment | Condition | Single crew | Assigned | H1 | Outcome |
+|---|---|---|---:|---:|---:|---|
+| 0093 | 3 targets, 500 ticks | 88.4 / 0.84 | 93.2 / 1.00 | +4.8 | H1 fail; not frozen |
+| 0094 | 4 targets, 500 ticks | 52.0 / 0.88 | 58.8 / 1.00 | +6.8 | H1 fail; not frozen |
+| **0095** | **5 targets, 500 ticks** | **12.0 / 0.28** | **33.6 / 1.00** | **+21.6** | **H1/H2 pass; challenge** |
+
+0095 details: H2 1.00, H3 +9.2 (BC 9.2 vs random 0) — fail by 0.8, H4 0.20 —
+fail, H5 pass. Oracle gap +5.2. Q is 0.0/0.00; BC is 9.2/0.20. The task is valid
+but too hard for the registered learned baselines, so it is frozen as a
+challenge; H4 is not lowered.
+
+The 5-target condition is the smallest tested condition where one crew is
+clearly insufficient (3.48 of 5 targets) while two crews complete all five.
+The 0093/0094 pilots were optimistic; the formal single crew was stronger on
+fresh seeds.
 
 ## Known pitfalls
 
-- **Action-space growth.** Start with two crews; factorize the policy.
+- **Action-space growth.** Two crews; factorize the policy for larger teams.
 - **Task-layer state.** Crew positions/progress must be serialized for replay;
   they are not in the canonical factory hash.
-- **Binary visibility.** Use a spread layout with graded distance/occlusion.
 - **One-shot leakage.** Do not let a single macro action run a job to
   completion; the policy must make sequential decisions.
 - **Credit assignment.** Team reward; report per-crew contribution.
+- **Challenge interpretation.** A learned failure is an open challenge, not a
+  solved control task; do not tune the formal block.
+- **Communication is Phase 2.** The current task has no `report` action or
+  message budget.
 
 ## Changelog
 
 - 2026-11-26 — design card created.
-- 2026-11-28 — WIP audit; Phase 1 narrowed to deterministic 2-crew control,
-  shared observation, and six actions; stochastic faults deferred to 0.8.0.
-- 2026-11-28 — challenge-tier release allowed when task validity passes but the
-  learned baseline misses the success gate; H4 is not lowered.
-- 2026-11-28 — formal 0093 negative on H1 (+4.8 vs +10); no `factory-v0.6`
-  freeze; redesign or retire.
+- 2026-11-28 — Phase 1 narrowed to deterministic two-crew control; stochastic
+  faults deferred to 0.8.0.
+- 2026-11-28 — 0093 (3 targets) and 0094 (4 targets) negative on H1.
+- 2026-11-28 — 0095 (5 targets) valid; H3/H4 fail; frozen as a challenge in
+  `factory-v0.6`.

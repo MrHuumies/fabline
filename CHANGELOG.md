@@ -1,9 +1,24 @@
 # Changelog
 
 All notable changes to FABLINE are recorded here. World and benchmark versions
-are pinned separately; see [`benchmarks/factory-v0.5/card.md`](benchmarks/factory-v0.5/card.md).
+are pinned separately; see [`benchmarks/factory-v0.6/card.md`](benchmarks/factory-v0.6/card.md).
 
 ## [Unreleased]
+
+## [0.7.0] — 2026-11-28
+
+0.7.0 is the sequential-crew challenge release. It freezes `factory-v0.6` beside
+the immutable `factory-v0.5`; it is Phase 1 of the uncertain-repair line.
+
+- Add deterministic two-crew sequential repair: five targets, six actions,
+  shared observation, 500 ticks, mission-completion success.
+- Freeze `factory-v0.6` as a challenge: H1 +21.6 and H2 1.00 pass, but BC
+  9.2/0.20 and Q 0.0/0.00 fail H3/H4. H4 is not lowered.
+- Add the `sequential-crew` runner with expected-summary checks, tests, and a
+  tag-triggered CI check.
+- 0093 (3 targets) and 0094 (4 targets) are negative H1 results; only 0095
+  (5 targets) is frozen.
+- Phase 2 communication and stochastic faults/POMDP are deferred.
 
 ## [0.6.0] — 2026-11-27
 
