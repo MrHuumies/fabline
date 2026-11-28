@@ -2,7 +2,7 @@
 
 - **Task ID:** `factory.power.crew-sequential.v1` (draft)
 - **Version:** 0.1.0-wip
-- **Status:** Phase 1 WIP; not release-ready (ADR 0043)
+- **Status:** Phase 1 formal negative on H1; not frozen (0093)
 - **World:** `factory-0.1.0` + wired power (task-layer crews)
 - **Owner:** FABLINE
 - **Date:** 2026-11-26
@@ -62,12 +62,28 @@ decision and required follow-ups.
 | Gate | Threshold |
 |---|---|
 | H1 coordination | best multi-crew ≥ single crew + 10 |
-| H2 oracle gap | oracle ≥ best scripted + 10 |
-| H3 learned | best learned ≥ best scripted + 10 |
-| H4 success | best learned success ≥ 0.60 |
-| H5 cost | report parameters, steps, messages, wall-clock |
+| H2 scripted success | assigned/greedy mission completion ≥ 0.60 |
+| H3 learned | best learned ≥ random + 10; report vs best scripted |
+| H4 success | best learned success ≥ 0.60 for a standard task |
+| H5 cost | report parameters, steps, messages (0 in Phase 1), wall-clock |
 
-A learned failure is a challenge-tier result, not a reason to lower H4.
+`queue_oracle` is a queue-plan upper bound, not a full joint-action oracle.
+
+## Challenge tier
+
+A task may freeze as a **challenge task** if H1/H2 pass but the best learned
+baseline misses H3/H4. Label it challenge in the task card and expected summary,
+report the learned gap, and do not lower H4 or tune after the formal block. If
+H1/H2 fail, the task is not valid and is not frozen.
+
+## Formal result (0093)
+
+Seeds 100,010–100,014, five episodes: assigned **93.2/1.00** vs single
+**88.4/0.84**, a **+4.8** score gain below the +10 H1 gate. H2 passed (1.00),
+H3 passed only because random scored 0, H4 failed (BC 0.24, Q 0.16), and H5
+passed. The pilot's +12 did not replicate. The challenge tier does not apply
+because H1 failed; `factory-v0.6` is not frozen. Redesign with a new
+pre-registration or retire the sequential variant under RFC 0032.
 
 ## Known pitfalls
 
@@ -84,3 +100,7 @@ A learned failure is a challenge-tier result, not a reason to lower H4.
 - 2026-11-26 — design card created.
 - 2026-11-28 — WIP audit; Phase 1 narrowed to deterministic 2-crew control,
   shared observation, and six actions; stochastic faults deferred to 0.8.0.
+- 2026-11-28 — challenge-tier release allowed when task validity passes but the
+  learned baseline misses the success gate; H4 is not lowered.
+- 2026-11-28 — formal 0093 negative on H1 (+4.8 vs +10); no `factory-v0.6`
+  freeze; redesign or retire.

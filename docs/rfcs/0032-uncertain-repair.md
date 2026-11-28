@@ -1,6 +1,6 @@
 # RFC 0032 — Sequential crew control and uncertain repair
 
-- **Status:** accepted for 0.7.0 Phase 1 (deterministic sequential crews); stochastic faults deferred to 0.8.0 (ADR 0043).
+- **Status:** accepted for 0.7.0 Phase 1 (deterministic sequential crews); formal 0093 negative on H1 (not frozen); stochastic faults deferred to 0.8.0 (ADR 0043).
 - **Author:** FABLINE
 - **Date:** 2026-11-26
 - **Related:** RFC 0011, RFC 0012, RFC 0015, RFC 0017,
@@ -176,4 +176,6 @@ Accepted for 0.7.0 Phase 1: deterministic sequential crews, two crews and three
 target wires, six actions (no `report`), shared observation, and no
 communication. ADR 0043 records the WIP audit and the required tests, CLI,
 oracle, and threshold calibration. Stochastic faults/POMDP are deferred to
-0.8.0.
+0.8.0. The formal 0093 block failed H1 (+4.8 vs +10); H2/H3/H5 passed and H4
+failed. The challenge tier did not apply because task validity failed, and
+`factory-v0.6` is not frozen. A redesign or retirement is next.

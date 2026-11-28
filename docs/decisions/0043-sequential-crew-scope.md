@@ -1,6 +1,6 @@
 # ADR 0043 — 0.7.0 scope: deterministic sequential crews
 
-- **Status:** accepted
+- **Status:** accepted; Phase 1 formal negative on H1 (no freeze)
 - **Date:** 2026-11-28
 - **Related:** RFC 0032, RFC 0030, ADR 0042,
   [`roadmap-0.5.0-0.8.0.md`](../roadmap-0.5.0-0.8.0.md),
@@ -58,16 +58,28 @@ mypy, and a 1-seed smoke run completes, but the audit found:
      factory state;
    - 500 ticks, decision interval 10, repair ticks 6;
    - the default world hash and frozen v0.1–v0.5 assets are unchanged.
-4. The formal pre-registration must fix the success threshold and layout from a
-   pilot, before the formal five-seed block. Do not tune either after seeing the
-   formal result.
-5. Add a centralized oracle and the task-card gates H1–H5, including the oracle
-   gap and cost/message reporting.
+4. Success is **mission completion**: all three targets repaired within the
+   500-tick budget. The legacy `success_score=150` is retired; the score remains
+   a continuous secondary metric. Do not reintroduce a score threshold without a
+   new pre-registration.
+5. Add a centralized queue oracle as a reference; the freeze gates are task
+   validity (H1 coordination and H2 scripted success). A task may freeze as a
+   **challenge task** if H1/H2 pass but the best learned baseline misses H3/H4;
+   label it challenge, report the gap, and do not lower H4 or tune after the
+   formal block. If H1/H2 fail, do not freeze.
 6. Add tests for movement, action masks, repair progress, determinism, replay
    round-trip, invalid-layout handling, and hash invariance.
 7. Add a `sequential-crew` CLI command and a Makefile target.
-8. Do not freeze `factory-v0.6` until the Phase 1 formal block passes. A learned
-   failure is a challenge-tier result, not a reason to lower the gate.
+8. Do not freeze `factory-v0.6` until the Phase 1 formal block passes task
+   validity. A challenge-tier freeze is allowed under the policy above.
+
+## Phase 1 outcome (2026-11-28)
+
+The formal 0093 block failed H1: assigned 93.2 vs single 88.4 (**+4.8**, below
+the +10 gate). H2/H3/H5 passed; H4 failed (BC 0.24, Q 0.16). The pilot's +12 did
+not replicate. Because task validity failed, the challenge tier did not apply
+and `factory-v0.6` was not frozen. The next step is a redesign with a new
+pre-registration or retirement under RFC 0032's kill criterion.
 
 ## Alternatives considered
 
@@ -78,16 +90,20 @@ mypy, and a 1-seed smoke run completes, but the audit found:
   add them in Phase 2.
 - **Use a macro `move_to(target)` action.** Rejected: it hides sequential
   control and reintroduces one-shot leakage.
-- **Keep `success_score=150`.** Rejected until calibrated: the smoke run scored
-  60 with all targets repaired.
-- **Treat `queue_search` as the oracle.** Rejected: it searches a small scripted
-  queue space, not the centralized oracle in the task card.
+- **Keep `success_score=150`.** Rejected: the score threshold is layout-dependent
+  and made scripted policies fail after repairing all targets. Success is
+  mission completion; score is continuous.
+- **Treat `queue_search` as a full oracle.** Rejected: it searches a small
+  scripted queue space, not the full joint-action space. Keep it as a
+  `queue_oracle` reference and label the limitation.
 - **Move directly to 0.8.0.** Rejected: the sequential multi-agent gap is the
   larger missing coverage and should be tested first.
 
 ## Consequences
 
 - 0.7.0 becomes a smaller, testable sequential-control release.
+- A task that is valid but too hard for the learned baselines can ship as a
+  challenge task; task validity and baseline quality are separate.
 - The multi-agent gap is addressed first; stochastic faults and belief-state
   calibration remain open for 0.8.0.
 - The WIP branch must be rebased and completed before any formal run.
@@ -95,10 +111,11 @@ mypy, and a 1-seed smoke run completes, but the audit found:
 
 ## Follow-ups
 
-- [ ] Rebase `feat/0.7.0-sequential-crew` onto current `main`.
-- [ ] Add tests, CLI, and Makefile target.
-- [ ] Add a centralized oracle and fix the gate set.
-- [ ] Calibrate the success threshold/layout and write the pre-registration.
-- [ ] Update the `crew-sequential` task card and RFC 0032 status.
-- [ ] Run the formal five-seed block; freeze `factory-v0.6` only if the gates
-      pass.
+- [x] Rebase `feat/0.7.0-sequential-crew` onto current `main`.
+- [x] Add tests, CLI, and Makefile target.
+- [x] Add a centralized queue oracle and fix the gate set.
+- [x] Fix success at mission completion, validate the layout, and write the
+      pre-registration.
+- [x] Update the `crew-sequential` task card and RFC 0032 status.
+- [x] Run the formal five-seed block: H1 failed; `factory-v0.6` not frozen.
+- [ ] Redesign with a new pre-registration or retire the sequential variant.
