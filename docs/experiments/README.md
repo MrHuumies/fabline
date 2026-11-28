@@ -155,5 +155,7 @@ The current frozen benchmark is documented separately in
 
 - [0096 — Local-view crew communication](0096-crew-communication/summary.md) — negative; local no-report 28.4/0.92 vs report 17.2/0.72; no freeze.
 
+- [0097 — Layout-shift pilot](0097-layout-shift-pilot/summary.md) — mixed; random shift generalizes, large/obstacle layouts collapse; no freeze.
+
 The `factory-v0.3` freeze review is in
 [`benchmarks/factory-v0.3/freeze-review.md`](../../benchmarks/factory-v0.3/freeze-review.md).

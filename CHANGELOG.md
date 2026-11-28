@@ -9,6 +9,9 @@ are pinned separately; see [`benchmarks/factory-v0.6/card.md`](benchmarks/factor
   current layout (local no-report 28.4/0.92 vs local report 17.2/0.72). No
   benchmark freeze.
 
+- Add the layout-shift pilot; it is mixed (random layouts generalize, large and
+  obstacle layouts collapse under tabular models). No benchmark freeze.
+
 ## [0.7.0] — 2026-11-28
 
 0.7.0 is the sequential-crew challenge release. It freezes `factory-v0.6` beside

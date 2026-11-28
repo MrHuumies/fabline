@@ -1,6 +1,6 @@
 # FABLINE roadmap — 0.5.0 to 0.8.0
 
-- **Status:** active; 0.5.0, 0.6.0, and 0.7.0 released; `factory-v0.6` challenge frozen; Phase 2 communication retired; 0.8.0 scope accepted: spatial grammar + stochastic faults/POMDP (two independent benchmarks)
+- **Status:** active; 0.5.0, 0.6.0, and 0.7.0 released; `factory-v0.6` challenge frozen; Phase 2 communication retired; 0.8.0 scope accepted: spatial grammar + stochastic faults/POMDP; spatial pilot mixed (0097; fixed-grid next)
 - **Date:** 2026-11-27
 - **Theme:** coverage first, then structural mechanics
 - **Inputs:** [`coverage-analysis-2026-11-26.md`](coverage-analysis-2026-11-26.md),
@@ -548,10 +548,12 @@ Gates:
 
 ## 8. 0.8.0 — Spatial grammar and stochastic faults/POMDP (two tiers)
 
-**Status:** accepted via RFC 0033 / ADR 0044; spatial first slice pending. The
-two tiers are independent: `factory-v0.7` (spatial) and `factory-v0.8`
-(stochastic faults/POMDP). The stochastic-fault tasks and gates described in
-§7.3 are moved to the `factory-v0.8` second tier.
+**Status:** accepted via RFC 0033 / ADR 0044. The two tiers are independent:
+`factory-v0.7` (spatial) and `factory-v0.8` (stochastic faults/POMDP). The
+stochastic-fault tasks and gates described in §7.3 are moved to the
+`factory-v0.8` second tier. The spatial pilot (0097) is mixed: random layouts
+generalize, large/obstacle layouts collapse under tabular models; no freeze.
+The next spatial step is a fixed-grid CNN/MPNN/Transformer test.
 
 ### 8.1 Goal
 

@@ -11,6 +11,7 @@ from fabline.core.hashing import config_hash
 from fabline.harness.metrics import regression_metrics
 from fabline.obs.base import ObservationAdapter, flatten_observation
 from fabline.worlds.factory.config import FactoryConfig
+from fabline.worlds.factory.generator import Scenario
 from fabline.worlds.factory.labels import future_score
 from fabline.worlds.factory.world import FactoryWorld
 
@@ -54,16 +55,18 @@ class ThroughputTask:
         observation: ObservationAdapter,
         *,
         keep_events: bool = False,
+        scenario: Scenario | None = None,
     ) -> None:
         self.config = config
         self.task_config = task_config
         self.observation = observation
         self.keep_events = keep_events
+        self.scenario = scenario
 
     def generate_episode(self, seed: int, split: str | None = None) -> EpisodeData:
         split = split or assign_split(seed)
         world = FactoryWorld(self.config)
-        world.reset(seed)
+        world.reset(seed, self.scenario)
         world.run_ticks(self.task_config.warmup_ticks)
 
         observations: list[np.ndarray] = []
@@ -108,6 +111,7 @@ class ThroughputTask:
             "config_hash": config_hash(self.config),
             "seed": seed,
             "split": split,
+            "scenario": self.scenario.name if self.scenario is not None else None,
         }
 
         return EpisodeData(

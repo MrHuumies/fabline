@@ -70,6 +70,7 @@ This document is a map, not a commitment to implement every row.
 | order planning | planning | order set | CEM = oracle 292.4; EDF 263.8 |
 | sequential crew repair | control/multi-agent | shared crew state | challenge in `factory-v0.6`; H1 +21.6, H2 1.00; BC 9.2/0.20 |
 | crew communication | control/communication | local views + reports | negative; no-report 28.4/0.92 vs report 17.2/0.72 |
+| layout-shift | regression | vector/layout summary | pilot mixed; random generalizes, large/obstacles collapse |
 
 ### Current baselines
 
@@ -359,8 +360,9 @@ only 0095 (5 targets) is frozen. Local views and a budgeted report action were
 tested in 0096 and are negative on this layout; the report action is retired.
 The 0.8.0 scope is accepted as two independent benchmarks: the spatial
 production grammar (`factory-v0.7`) and stochastic faults/POMDP
-(`factory-v0.8`); see RFC 0033 / ADR 0044. The spatial generator + layout-shift
-is the first implementation slice.
+(`factory-v0.8`); see RFC 0033 / ADR 0044. The first spatial pilot (0097) is
+mixed: random layouts generalize, large/obstacle layouts collapse under tabular
+models; no freeze. The next spatial step is a fixed-grid CNN/MPNN test.
 
 ### P0 progress
 

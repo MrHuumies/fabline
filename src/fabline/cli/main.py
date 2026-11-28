@@ -181,6 +181,11 @@ from fabline.harness.human_demos import (
     train_human_bc,
     write_human_bc_report,
 )
+from fabline.harness.layout_shift import (
+    LayoutShiftConfig,
+    run_layout_shift,
+    write_layout_shift_report,
+)
 from fabline.harness.maintenance_calibration import (
     MaintenanceCalibrationConfig,
     run_maintenance_calibration,
@@ -699,6 +704,28 @@ def cmd_crew_communication(args: argparse.Namespace) -> int:
     print(
         json.dumps(
             {"report": str(path), "gates": gates},
+            indent=2,
+            sort_keys=True,
+        )
+    )
+    return 0
+
+
+def cmd_layout_shift(args: argparse.Namespace) -> int:
+    report = run_layout_shift(
+        LayoutShiftConfig(
+            observation=args.observation,
+            normalize_target=args.normalize_target,
+        )
+    )
+    path = write_layout_shift_report(args.out, report)
+    print(
+        json.dumps(
+            {
+                "report": str(path),
+                "dataset": report["dataset"],
+                "gates": report["gates"],
+            },
             indent=2,
             sort_keys=True,
         )
@@ -3358,6 +3385,25 @@ def build_parser() -> argparse.ArgumentParser:
     sequential_crew.add_argument("--rock-density", type=float, default=0.06)
     sequential_crew.add_argument("--ore-patches", type=int, default=4)
     sequential_crew.set_defaults(func=cmd_sequential_crew)
+
+    layout_shift = subparsers.add_parser(
+        "layout-shift",
+        help="run the spatial layout-shift pilot",
+    )
+    layout_shift.add_argument(
+        "--out", type=str, default="results/layout-shift"
+    )
+    layout_shift.add_argument(
+        "--observation",
+        choices=("vector", "layout-summary"),
+        default="layout-summary",
+    )
+    layout_shift.add_argument(
+        "--normalize-target",
+        action="store_true",
+        help="predict future score per production line",
+    )
+    layout_shift.set_defaults(func=cmd_layout_shift)
 
     crew_communication = subparsers.add_parser(
         "crew-communication",
