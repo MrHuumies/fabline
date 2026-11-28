@@ -6,7 +6,7 @@ from .base import ObservationSpec, build_observation, flatten_observation
 from .entities import EntitiesObservation, GraphObservation
 from .grid import GridObservation
 from .interaction import FaultPowerObservation
-from .layout import LayoutSummaryObservation
+from .layout import LayoutSummaryObservation, PaddedGridObservation
 from .line import LineStateObservation
 from .multiview import MultiviewFrame, MultiviewObservation, build_registered_view, register_view
 from .partial import DelayedObservation, FeatureDropoutObservation, GridFogObservation
@@ -28,6 +28,7 @@ __all__ = [
     "GridFogObservation",
     "GridObservation",
     "LayoutSummaryObservation",
+    "PaddedGridObservation",
     "LineStateObservation",
     "MultiviewFrame",
     "MultiviewObservation",

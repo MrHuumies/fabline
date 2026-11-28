@@ -3,15 +3,24 @@
 from __future__ import annotations
 
 import json
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Any
 
 import numpy as np
 
 from fabline.harness.baselines import evaluate_baselines
+from fabline.harness.metrics import regression_metrics
+from fabline.harness.models import (
+    CNNRegressor,
+    TorchTrainConfig,
+    torch_available,
+)
 from fabline.obs import build_observation
-from fabline.obs.layout import LayoutSummaryObservation
+from fabline.obs.layout import (
+    LayoutSummaryObservation,
+    PaddedGridObservation,
+)
 from fabline.tasks.throughput import ThroughputConfig, ThroughputTask
 from fabline.worlds.factory.config import FactoryConfig
 from fabline.worlds.factory.generator import SCENARIOS
@@ -139,6 +148,8 @@ class LayoutShiftConfig:
     )
     observation: str = "vector"
     normalize_target: bool = False
+    cnn_epochs: int = 50
+    cnn_hidden: int = 32
 
     def __post_init__(self) -> None:
         if not self.base_specs:
@@ -147,12 +158,18 @@ class LayoutShiftConfig:
             raise ValueError("base seed splits must not be empty")
         if not self.shifts:
             raise ValueError("at least one shift layout is required")
+        if self.cnn_epochs <= 0 or self.cnn_hidden <= 0:
+            raise ValueError("CNN budget must be positive")
 
 
 def _adapter(spec: LayoutSpec, config: LayoutShiftConfig) -> Any:
     factory_config = spec.factory_config()
     if config.observation == "layout-summary":
         return LayoutSummaryObservation(
+            factory_config, line_count=spec.line_count()
+        )
+    if config.observation == "padded-grid":
+        return PaddedGridObservation(
             factory_config, line_count=spec.line_count()
         )
     return build_observation(config.observation, factory_config)
@@ -171,6 +188,7 @@ def _collect(
         config.task_config,
         adapter,
         scenario=SCENARIOS[spec.scenario],
+        flatten=config.observation != "padded-grid",
     )
     observations: list[np.ndarray] = []
     labels: list[np.ndarray] = []
@@ -196,6 +214,46 @@ def _best_model(
         key=lambda item: float(results[item]["test"]["r2"]),
     )
     return name, float(results[name]["test"]["r2"])
+
+
+def _cnn_results(
+    train_x: np.ndarray,
+    train_y: np.ndarray,
+    test_x: np.ndarray,
+    test_y: np.ndarray,
+    shift_data: dict[str, tuple[np.ndarray, np.ndarray]],
+    config: LayoutShiftConfig,
+) -> tuple[dict[str, Any], dict[str, Any]]:
+    if not torch_available():
+        raise RuntimeError(
+            "padded-grid layout shift requires the optional Torch dependency"
+        )
+    model = CNNRegressor(
+        TorchTrainConfig(
+            epochs=config.cnn_epochs,
+            hidden=config.cnn_hidden,
+        )
+    )
+    model.fit(train_x, train_y)
+    test_metrics = regression_metrics(test_y, model.predict(test_x))
+    base = {
+        "cnn": {
+            "test": test_metrics,
+            "model": asdict(model.report) if model.report is not None else None,
+        }
+    }
+    shifts: dict[str, Any] = {}
+    for name, (shift_x, shift_y) in shift_data.items():
+        shift_metrics = regression_metrics(
+            shift_y, model.predict(shift_x)
+        )
+        shifts[name] = {
+            "cnn": {
+                "test": test_metrics,
+                "shift": shift_metrics,
+            }
+        }
+    return base, shifts
 
 
 def run_layout_shift(
@@ -228,17 +286,7 @@ def run_layout_shift(
     test_y = np.concatenate(test_labels)
     adapter = _adapter(cfg.base_specs[0], cfg)
     feature_names = adapter.spec.feature_names
-    base_results = evaluate_baselines(
-        train_x,
-        train_y,
-        val_x,
-        val_y,
-        test_x,
-        test_y,
-        feature_names,
-        include_models=True,
-    )
-    shift_results: dict[str, dict[str, Any]] = {}
+    shift_data: dict[str, tuple[np.ndarray, np.ndarray]] = {}
     shift_sizes: dict[str, int] = {}
     for shift in cfg.shifts:
         seeds = tuple(
@@ -247,8 +295,14 @@ def run_layout_shift(
         shift_x, shift_y = _collect(
             shift.layout, seeds, "shift", cfg
         )
+        shift_data[shift.layout.name] = (shift_x, shift_y)
         shift_sizes[shift.layout.name] = int(len(shift_y))
-        shift_results[shift.layout.name] = evaluate_baselines(
+    if cfg.observation == "padded-grid":
+        base_results, shift_results = _cnn_results(
+            train_x, train_y, test_x, test_y, shift_data, cfg
+        )
+    else:
+        base_results = evaluate_baselines(
             train_x,
             train_y,
             val_x,
@@ -257,9 +311,22 @@ def run_layout_shift(
             test_y,
             feature_names,
             include_models=True,
-            X_extra=shift_x,
-            y_extra=shift_y,
         )
+        shift_results = {
+            name: evaluate_baselines(
+                train_x,
+                train_y,
+                val_x,
+                val_y,
+                test_x,
+                test_y,
+                feature_names,
+                include_models=True,
+                X_extra=shift_x,
+                y_extra=shift_y,
+            )
+            for name, (shift_x, shift_y) in shift_data.items()
+        }
     gates = layout_shift_gates(
         base_results, shift_results, cfg
     )
@@ -268,6 +335,8 @@ def run_layout_shift(
             "base": [spec.name for spec in cfg.base_specs],
             "observation": cfg.observation,
             "target": "score_per_line" if cfg.normalize_target else "score",
+            "cnn_epochs": cfg.cnn_epochs,
+            "cnn_hidden": cfg.cnn_hidden,
             "train_seeds": list(cfg.train_seeds),
             "val_seeds": list(cfg.val_seeds),
             "test_seeds": list(cfg.test_seeds),
@@ -292,6 +361,7 @@ def run_layout_shift(
             "test": int(len(test_y)),
             "shift": shift_sizes,
             "features": len(feature_names) if feature_names else 0,
+            "shape": list(adapter.spec.shape) if adapter.spec.shape else None,
         },
         "metrics": {
             "base": base_results,
@@ -307,7 +377,7 @@ def layout_shift_gates(
     config: LayoutShiftConfig,
 ) -> dict[str, Any]:
     base_model, base_r2 = _best_model(
-        base_results, ("linear", "gradient_boosting", "mlp")
+        base_results, ("linear", "gradient_boosting", "mlp", "cnn")
     )
     gaps = {
         name: base_r2
@@ -365,7 +435,7 @@ def write_layout_shift_report(
     ]
     base = report["metrics"]["base"]
     for name, row in report["metrics"]["shift"].items():
-        for model in ("linear", "gradient_boosting", "mlp"):
+        for model in ("linear", "gradient_boosting", "mlp", "cnn"):
             if model not in row:
                 continue
             lines.append(

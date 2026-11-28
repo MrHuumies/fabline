@@ -56,12 +56,14 @@ class ThroughputTask:
         *,
         keep_events: bool = False,
         scenario: Scenario | None = None,
+        flatten: bool = True,
     ) -> None:
         self.config = config
         self.task_config = task_config
         self.observation = observation
         self.keep_events = keep_events
         self.scenario = scenario
+        self.flatten = flatten
 
     def generate_episode(self, seed: int, split: str | None = None) -> EpisodeData:
         split = split or assign_split(seed)
@@ -75,11 +77,11 @@ class ThroughputTask:
         hashes: list[str] = []
 
         while world.state.tick + self.task_config.horizon <= self.task_config.episode_ticks:
+            raw = self.observation.observe(world.state)
             observations.append(
-                flatten_observation(
-                    self.observation,
-                    self.observation.observe(world.state),
-                )
+                flatten_observation(self.observation, raw)
+                if self.flatten
+                else np.asarray(raw, dtype=np.float32)
             )
             labels.append(future_score(world, self.task_config.horizon))
             sample_ticks.append(world.state.tick)

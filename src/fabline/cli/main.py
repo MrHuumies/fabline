@@ -716,6 +716,8 @@ def cmd_layout_shift(args: argparse.Namespace) -> int:
         LayoutShiftConfig(
             observation=args.observation,
             normalize_target=args.normalize_target,
+            cnn_epochs=args.cnn_epochs,
+            cnn_hidden=args.cnn_hidden,
         )
     )
     path = write_layout_shift_report(args.out, report)
@@ -3395,7 +3397,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     layout_shift.add_argument(
         "--observation",
-        choices=("vector", "layout-summary"),
+        choices=("vector", "layout-summary", "padded-grid"),
         default="layout-summary",
     )
     layout_shift.add_argument(
@@ -3403,6 +3405,8 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="predict future score per production line",
     )
+    layout_shift.add_argument("--cnn-epochs", type=int, default=50)
+    layout_shift.add_argument("--cnn-hidden", type=int, default=32)
     layout_shift.set_defaults(func=cmd_layout_shift)
 
     crew_communication = subparsers.add_parser(
