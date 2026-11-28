@@ -79,6 +79,9 @@ make render-install
   recipe intervention.
 - **Sequential crews (0.7.0):** a two-crew, five-target sequential repair
   challenge with movement, wait, and repair actions.
+- **Spatial grammar (0.8.0):** a layout-shift candidate with larger/random/
+  obstacle layouts and a padded-grid CNN baseline; the seeded formal OOD gate
+  failed, so it is not frozen.
 
 Every mechanic is opt-in. `factory-v0.1` through `factory-v0.5` remain frozen
 for provenance.
@@ -105,8 +108,10 @@ The expected summary is in
 coverage suite, `factory-v0.3` the 12-task core; earlier benchmarks remain
 immutable.
 
-The `factory-v0.5` **assembly suite** and `factory-v0.4` **coverage suite** are
-also available:
+A spatial layout-shift candidate did not pass its seeded formal large/random
+OOD gate, so `factory-v0.7` is **not frozen**. The `factory-v0.8` stochastic
+faults/POMDP tier is next. The `factory-v0.5` **assembly suite** and
+`factory-v0.4` **coverage suite** are also available:
 
 ```bash
 .venv/bin/python -m fabline assembly-suite --out results/factory-v0.5

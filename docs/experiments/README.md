@@ -157,7 +157,9 @@ The current frozen benchmark is documented separately in
 
 - [0097 — Layout-shift pilot](0097-layout-shift-pilot/summary.md) — mixed; random shift generalizes, large/obstacle layouts collapse; no freeze.
 
-- [0098 — Layout-shift CNN follow-up](0098-layout-shift-cnn/summary.md) — positive; CNN base 0.905, shifts 0.785/0.792/0.857; candidate, no freeze.
+- [0098 — Layout-shift CNN follow-up](0098-layout-shift-cnn/summary.md) — superseded by 0099; unseeded CNN numbers are not freeze evidence.
+
+- [0099 — Layout-shift formal block](0099-layout-shift-formal/summary.md) — negative on H2; CNN base 0.967; large/random gaps 0.015/−0.017; no freeze.
 
 The `factory-v0.3` freeze review is in
 [`benchmarks/factory-v0.3/freeze-review.md`](../../benchmarks/factory-v0.3/freeze-review.md).

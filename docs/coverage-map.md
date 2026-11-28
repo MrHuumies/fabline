@@ -70,7 +70,7 @@ This document is a map, not a commitment to implement every row.
 | order planning | planning | order set | CEM = oracle 292.4; EDF 263.8 |
 | sequential crew repair | control/multi-agent | shared crew state | challenge in `factory-v0.6`; H1 +21.6, H2 1.00; BC 9.2/0.20 |
 | crew communication | control/communication | local views + reports | negative; no-report 28.4/0.92 vs report 17.2/0.72 |
-| layout-shift | regression | padded grid / layout summary | CNN base 0.905; shifts 0.785/0.792/0.857; candidate |
+| layout-shift | regression | padded grid / layout summary | formal H2 fail; CNN base 0.967, shifts 0.952/0.984/0.798; diagnostic |
 
 ### Current baselines
 
@@ -360,10 +360,11 @@ only 0095 (5 targets) is frozen. Local views and a budgeted report action were
 tested in 0096 and are negative on this layout; the report action is retired.
 The 0.8.0 scope is accepted as two independent benchmarks: the spatial
 production grammar (`factory-v0.7`) and stochastic faults/POMDP
-(`factory-v0.8`); see RFC 0033 / ADR 0044. The first spatial pilot (0097) is
-mixed: random layouts generalize, large/obstacle layouts collapse under tabular
-models; the padded-grid CNN follow-up (0098) is positive (base 0.905, shifts
-0.785/0.792/0.857). No freeze; formal pre-reg/MPNN next.
+(`factory-v0.8`); see RFC 0033 / ADR 0044. The seeded formal spatial block (0099) fails the registered H2 on the
+large/random shifts: CNN base 0.967; shifts 0.952/0.984/0.798; gaps
+0.015/−0.017; the obstacle gap is 0.169. `factory-v0.7` is not frozen; the task
+is a diagnostic/challenge candidate. `factory-v0.8` fault/POMDP is pending; the
+0.8.0 package release waits.
 
 ### P0 progress
 

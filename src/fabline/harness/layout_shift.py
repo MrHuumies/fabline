@@ -151,6 +151,58 @@ class LayoutShiftConfig:
     cnn_epochs: int = 50
     cnn_hidden: int = 32
 
+    @classmethod
+    def formal(cls) -> LayoutShiftConfig:
+        """Fresh layout seeds for the registered layout-shift block."""
+        return cls(
+            shifts=(
+                ShiftSpec(
+                    LayoutSpec(
+                        "large-32x24",
+                        32,
+                        24,
+                        "spread_gear",
+                        0.06,
+                        4,
+                        64,
+                    ),
+                    seed_start=310_000,
+                    count=10,
+                ),
+                ShiftSpec(
+                    LayoutSpec(
+                        "random-24x20",
+                        24,
+                        20,
+                        "random_gear",
+                        0.10,
+                        3,
+                        64,
+                    ),
+                    seed_start=320_000,
+                    count=10,
+                ),
+                ShiftSpec(
+                    LayoutSpec(
+                        "obstacles-24x20",
+                        24,
+                        20,
+                        "shift_gear",
+                        0.15,
+                        1,
+                        64,
+                    ),
+                    seed_start=330_000,
+                    count=10,
+                ),
+            ),
+            train_seeds=tuple(range(300_000, 300_016)),
+            val_seeds=tuple(range(300_016, 300_022)),
+            test_seeds=tuple(range(300_022, 300_028)),
+            observation="padded-grid",
+            normalize_target=True,
+        )
+
     def __post_init__(self) -> None:
         if not self.base_specs:
             raise ValueError("at least one base layout is required")

@@ -3,7 +3,7 @@
 This document defines how methods are compared on FABLINE. The benchmark is a
 contract: frozen tasks, frozen splits, fixed budgets, standard reports.
 
-**Current release:** `factory-v0.6` — see
+**Current package release:** `factory-v0.6` — see
 [`benchmarks/factory-v0.6/card.md`](../benchmarks/factory-v0.6/card.md). It is a
 one-task sequential-crew challenge: two crews, five targets, six actions, shared
 observation, 500 ticks. The task is valid (H1 +21.6, H2 1.00) but the learned
@@ -15,6 +15,10 @@ Run the current challenge benchmark with:
 ```bash
 .venv/bin/python -m fabline sequential-crew --out results/factory-v0.6
 ```
+
+A spatial layout-shift candidate did not pass its seeded formal large/random
+OOD gate (0099), so `factory-v0.7` is **not frozen**. The `factory-v0.8`
+stochastic faults/POMDP tier is the next 0.8.0 surface.
 
 The `factory-v0.5` assembly suite and `factory-v0.4` coverage suite remain
 available. The `factory-v0.4` coverage suite adds an eight-task tier plus public

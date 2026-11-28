@@ -1,6 +1,6 @@
 # Experiment 0098 — Layout-shift CNN follow-up
 
-- **Status:** positive model-family pilot; layout-shift candidate; no freeze
+- **Status:** superseded by 0099; unseeded pilot; not freeze evidence
 - **Date:** 2026-11-28
 - **Type:** 0.8.0 spatial grammar, first slice follow-up
 - **Task:** layout-shift throughput (draft; no benchmark)
@@ -8,6 +8,12 @@
   `src/fabline/obs/layout.py`, `src/fabline/tasks/throughput.py`
 - **CLI:** `python -m fabline layout-shift --observation padded-grid --normalize-target`
 - **Benchmark:** none; `factory-v0.6` unchanged; `factory-v0.7` not frozen
+
+> **Superseded by 0099.** The CNN in this pilot was initialized before the
+> training seed was applied, so its shift numbers were initialization-sensitive.
+> The seeded formal block (0099) gives base 0.967 and large/random/obstacle
+> 0.952/0.984/0.798; the registered large/random OOD gap fails. Use 0099, not
+> these numbers.
 
 ## Result in one paragraph
 

@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from dataclasses import replace
 from pathlib import Path
 
 from fabline import __version__
@@ -712,8 +713,14 @@ def cmd_crew_communication(args: argparse.Namespace) -> int:
 
 
 def cmd_layout_shift(args: argparse.Namespace) -> int:
+    base_config = (
+        LayoutShiftConfig.formal()
+        if args.formal
+        else LayoutShiftConfig()
+    )
     report = run_layout_shift(
-        LayoutShiftConfig(
+        replace(
+            base_config,
             observation=args.observation,
             normalize_target=args.normalize_target,
             cnn_epochs=args.cnn_epochs,
@@ -3394,6 +3401,11 @@ def build_parser() -> argparse.ArgumentParser:
     )
     layout_shift.add_argument(
         "--out", type=str, default="results/layout-shift"
+    )
+    layout_shift.add_argument(
+        "--formal",
+        action="store_true",
+        help="use the registered fresh layout seeds",
     )
     layout_shift.add_argument(
         "--observation",

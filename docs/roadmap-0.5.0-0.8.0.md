@@ -1,6 +1,6 @@
 # FABLINE roadmap — 0.5.0 to 0.8.0
 
-- **Status:** active; 0.5.0, 0.6.0, and 0.7.0 released; `factory-v0.6` challenge frozen; Phase 2 communication retired; 0.8.0 scope accepted: spatial grammar + stochastic faults/POMDP; spatial CNN follow-up positive (0098; formal pre-reg next)
+- **Status:** active; 0.5.0, 0.6.0, and 0.7.0 released; `factory-v0.6` challenge frozen; Phase 2 communication retired; 0.8.0 scope accepted: spatial grammar + stochastic faults/POMDP; `factory-v0.7` not frozen (0099 H2 fail); spatial diagnostic; `factory-v0.8` fault/POMDP pending; 0.8.0 package pending
 - **Date:** 2026-11-27
 - **Theme:** coverage first, then structural mechanics
 - **Inputs:** [`coverage-analysis-2026-11-26.md`](coverage-analysis-2026-11-26.md),
@@ -108,7 +108,7 @@ explicit in every card.
 | 0.5.0 | `factory-v0.4` | Coverage suite, challenge tier, public baselines, methodology | new frozen coverage benchmark |
 | 0.6.0 | `factory-v0.5` | Production tree: assembly edge + demand uncertainty | new frozen benchmark |
 | 0.7.0 | `factory-v0.6` | Sequential crews (Phase 1, challenge); stochastic faults deferred | frozen challenge benchmark |
-| 0.8.0 | `factory-v0.7` + `factory-v0.8` | Spatial grammar + stochastic faults/POMDP (independent tiers) | two frozen benchmarks |
+| 0.8.0 | `factory-v0.7` + `factory-v0.8` | Spatial grammar + stochastic faults/POMDP (independent tiers) | `factory-v0.7` not frozen (H2 fail); `factory-v0.8` pending |
 | 0.9.0+ stretch | — | Generative layout/recipe, only if the grammar audit passes | diagnostic or frozen, not both |
 
 `factory-v0.1`, `v0.2`, and `v0.3` stay immutable. A new benchmark version may
@@ -551,11 +551,12 @@ Gates:
 **Status:** accepted via RFC 0033 / ADR 0044. The two tiers are independent:
 `factory-v0.7` (spatial) and `factory-v0.8` (stochastic faults/POMDP). The
 stochastic-fault tasks and gates described in §7.3 are moved to the
-`factory-v0.8` second tier. The spatial pilot (0097) is mixed: random layouts
-generalize, large/obstacle layouts collapse under tabular models. The
-padded-grid CNN follow-up (0098) is positive: base 0.905, shifts
-0.785/0.792/0.857. No freeze; the next step is a formal fresh-seed
-pre-registration and MPNN/Transformer checks.
+`factory-v0.8` second tier. The spatial pilot (0097) was mixed under tabular models. The padded-grid CNN
+follow-up (0098) was positive but unseeded. The seeded formal block (0099) gives
+CNN base 0.967; large/random/obstacle shifts 0.952/0.984/0.798; the registered
+H2 on large/random fails (0.015/−0.017). `factory-v0.7` is not frozen; the task
+is a diagnostic/challenge candidate. A harder spatial shift or the
+`factory-v0.8` fault/POMDP tier is next; the 0.8.0 package release waits.
 
 ### 8.1 Goal
 

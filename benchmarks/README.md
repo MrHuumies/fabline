@@ -52,3 +52,7 @@ failed wires on a 32x32 wired-power layout with six actions per crew and a
 shared observation. The task is valid (H1 +21.6, H2 1.00) but the learned
 baselines fail (BC 9.2/0.20, Q 0.0/0.00), so it is a challenge, not a solved
 control task. The expected summary is in `factory-v0.6/expected/summary.json`.
+
+The 0.8.0 spatial candidate is the layout-shift task. The seeded formal block
+(0099) failed the registered large/random OOD gate, so `factory-v0.7` is **not
+frozen**. The `factory-v0.8` stochastic faults/POMDP tier remains next.

@@ -10,7 +10,11 @@ from fabline.harness.layout_shift import (
     layout_shift_gates,
     run_layout_shift,
 )
-from fabline.harness.models import torch_available
+from fabline.harness.models import (
+    CNNRegressor,
+    TorchTrainConfig,
+    torch_available,
+)
 from fabline.obs.layout import LayoutSummaryObservation, PaddedGridObservation
 from fabline.obs.vector import VectorObservation
 from fabline.tasks.throughput import ThroughputConfig, ThroughputTask
@@ -248,3 +252,16 @@ def test_layout_shift_cnn_smoke() -> None:
     report = run_layout_shift(cfg)
     assert "cnn" in report["metrics"]["base"]
     assert "cnn" in report["metrics"]["shift"]["large"]
+
+
+@pytest.mark.skipif(not torch_available(), reason="torch is not installed")
+def test_cnn_seed_is_reproducible() -> None:
+    rng = np.random.default_rng(0)
+    grids = rng.random((8, 4, 4, 2), dtype=np.float32)
+    targets = np.arange(8, dtype=np.float32)
+    config = TorchTrainConfig(epochs=1, batch_size=4, hidden=4, seed=0)
+    first = CNNRegressor(config)
+    second = CNNRegressor(config)
+    first.fit(grids, targets)
+    second.fit(grids, targets)
+    assert np.allclose(first.predict(grids), second.predict(grids))

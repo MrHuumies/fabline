@@ -66,8 +66,10 @@ class CNNRegressor:
         )
 
     def fit(self, grids: np.ndarray, targets: np.ndarray) -> CNNRegressor:
+        _torch().manual_seed(self.config.seed)
         prepared = self._prepare(grids)
         self.input_shape = tuple(prepared.shape[1:])
+        _torch().manual_seed(self.config.seed)
         self.model = self._build(prepared.shape[1])
         self.mean, self.scale, self.report = fit_regressor(
             self.model, prepared, targets, self.config

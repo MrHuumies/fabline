@@ -12,6 +12,10 @@ are pinned separately; see [`benchmarks/factory-v0.6/card.md`](benchmarks/factor
 - Add the layout-shift pilot; it is mixed (random layouts generalize, large and
   obstacle layouts collapse under tabular models). No benchmark freeze.
 
+- The spatial layout-shift candidate did not pass its seeded formal large/random
+  OOD gate (0099): CNN base 0.967; large/random gaps 0.015/−0.017. No
+  `factory-v0.7` freeze; `factory-v0.8` stochastic faults/POMDP is next.
+
 ## [0.7.0] — 2026-11-28
 
 0.7.0 is the sequential-crew challenge release. It freezes `factory-v0.6` beside

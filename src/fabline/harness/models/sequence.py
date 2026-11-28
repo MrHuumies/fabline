@@ -72,6 +72,7 @@ class GRURegressor:
     def fit(self, sequences: np.ndarray, targets: np.ndarray) -> GRURegressor:
         values = _validate_sequences(sequences)
         self.input_shape = (values.shape[1], values.shape[2])
+        _torch().manual_seed(self.config.seed)
         self.model = self._build(values.shape[2])
         self.mean, self.scale, self.report = fit_regressor(
             self.model, values, targets, self.config
